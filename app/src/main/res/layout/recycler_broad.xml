@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="260dp">
+    <androidx.cardview.widget.CardView
+            app:cardCornerRadius="20dp"
+            android:id="@+id/recycler_card"
+            app:cardBackgroundColor="#333333"
+            android:layout_width="290dp"
+            android:layout_height="250dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="290dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center">
+            <ImageView
+                    android:id="@+id/thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/line"
+                    app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+            <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="match_parent" android:layout_height="0dp"
+                    android:id="@+id/error_thumbnail"
+                    app:lottie_fileName="28592-yoga-nature.json"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true"
+                    app:layout_constraintBottom_toTopOf="@+id/line"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="invisible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
+            <View android:layout_width="match_parent"
+                  android:id="@+id/line"
+                  android:layout_height="2dp"
+                  android:layout_marginBottom="5dp"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintBottom_toTopOf="@id/title"
+                  android:background="#A6A6A6"/>
+            <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:singleLine="true"
+                    android:fontFamily="@font/maplestory_bold"
+                    android:ellipsize="marquee"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="#ffffff"
+                    android:text="title"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toTopOf="@+id/bjname"/>
+            <TextView
+                    android:id="@+id/bjname"
+                    android:textSize="12sp"
+                    android:singleLine="true"
+                    android:textColor="#8597fe"
+                    android:ellipsize="marquee"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="name" app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:gravity="center"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:background="@drawable/alert_dialog">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            android:text="화곡동을 나갈까요??\n(밑으로 당겨서 새로고침)"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@android:color/transparent"/>
+
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"/>
+
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:text="안나감"
+                android:textSize="16sp"
+                android:background="@android:color/transparent" android:id="@+id/closeNotOk"/>
+
+        <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000000"/>
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:text="나감"
+                android:textSize="16sp"
+                android:background="@android:color/transparent"
+                android:textStyle="bold"
+                android:textAllCaps="false" android:id="@+id/closeOkButton"/>
+
+    </LinearLayout>
+
+</LinearLayout>
