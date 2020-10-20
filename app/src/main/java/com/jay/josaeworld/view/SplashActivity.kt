@@ -1,9 +1,12 @@
 package com.jay.josaeworld.view
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.jay.josaeworld.databinding.ActivitySplashBinding
 
@@ -14,9 +17,13 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        window.statusBarColor = Color.TRANSPARENT
+
         Handler().postDelayed({
             finish()
-        }, 4000)
+        }, 3000)
     }
 
     override fun onBackPressed() {}

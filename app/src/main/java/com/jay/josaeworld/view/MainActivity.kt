@@ -6,12 +6,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Pair
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.ActivityMainBinding
@@ -34,6 +35,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         // View 생성
         setContentView(view)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        window.statusBarColor = Color.TRANSPARENT
+
         loadInitData()
         buttonListener()
         refreshListener()
@@ -71,30 +76,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadInitData() {
-        GetData().teamData(object : DataCallback {
-            override fun finishLoading(list: List<String>) {
-                teamInfo = list
-                Log.d(TAG, "MainActivity ~ finishLoading() called $teamInfo")
-                binding.teamOne.text = teamInfo[0]
-                binding.teamTwo.text = teamInfo[1]
-                binding.teamThree.text = teamInfo[2]
-            }
-        })
 
         GetData().liveOnData(object : DataCallback {
             override fun finishBjDataLoading(bjlist: Array<ArrayList<BroadInfo>>) {
                 Log.d(TAG + "y", "MainActivity ~ finishOnOffLoading() called ${bjlist.contentDeepToString()}")
 
+                binding.loadingbar.pauseAnimation()
+                binding.loadingbar.visibility = View.GONE
+
                 if (bjlist[bjlist.size - 1].size == 1) {
                     bjDataList = null
                     Toast.makeText(
                         baseContext, "정보를 완벽히 불러오지 못했습니다\n" +
-                                "화면을 당겨서 새로고침을 해주세염보성", Toast.LENGTH_SHORT
+                                "화면을 당겨서 새로고침을 해주세요", Toast.LENGTH_LONG
                     ).show()
                 } else {
-                    binding.loadingbar.pauseAnimation()
-                    binding.loadingbar.visibility = View.GONE
-
                     val nextOff = listOf(
                         binding.teamOnelotti, binding.teamTwolotti, binding.teamThreelotti
                     )
@@ -158,6 +154,16 @@ class MainActivity : AppCompatActivity() {
                 binding.mainLoadingbar.visibility = View.GONE
             }
         })
+
+        GetData().teamData(object : DataCallback {
+            override fun finishLoading(list: List<String>) {
+                teamInfo = list
+                Log.d(TAG, "MainActivity ~ finishLoading() called $teamInfo")
+                binding.teamOne.text = teamInfo[0]
+                binding.teamTwo.text = teamInfo[1]
+                binding.teamThree.text = teamInfo[2]
+            }
+        })
     }
 
 
@@ -170,12 +176,11 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this, BroadCastActivity::class.java)
                     intent.putExtra("teamName", teamInfo[0])
                     intent.putExtra("teamINfo", bjDataList!![0])
-                    val options: ActivityOptions = ActivityOptions.makeSceneTransitionAnimation(
-                        this,
-                        Pair.create(binding.teamOne, "changeAct"),
-                        Pair.create(binding.teamOneImg, "changeActImg")
-                    )
-                    startActivity(intent, options.toBundle())
+//                    val options: ActivityOptions = ActivityOptions.makeSceneTransitionAnimation(
+//                        this,
+//                        Pair.create(binding.teamOne, "changeAct"),
+//                    )
+                    startActivity(intent)
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "MainActivity ~ buttonListener() called $e")
@@ -191,7 +196,6 @@ class MainActivity : AppCompatActivity() {
                     val options: ActivityOptions = ActivityOptions.makeSceneTransitionAnimation(
                         this,
                         Pair.create(binding.teamTwo, "changeAct"),
-                        Pair.create(binding.teamTwoImg, "changeActImg")
                     )
                     startActivity(intent, options.toBundle())
                 }
@@ -209,7 +213,7 @@ class MainActivity : AppCompatActivity() {
                     val options: ActivityOptions = ActivityOptions.makeSceneTransitionAnimation(
                         this,
                         Pair.create(binding.teamThree, "changeAct"),
-                        Pair.create(binding.teamThreeImg, "changeActImg")
+//                        Pair.create(binding.teamThreeImg, "changeActImg")
                     )
                     startActivity(intent, options.toBundle())
                 }
@@ -234,7 +238,7 @@ class MainActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
                     }
-                } catch (e : Exception){
+                } catch (e: Exception){
                     Toast.makeText(baseContext, "당겨서 새로고침을 해주세요", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -246,13 +250,16 @@ class MainActivity : AppCompatActivity() {
         val nextOn = listOf(
             binding.teamOnelottiOn, binding.teamTwolottiOn, binding.teamThreelottiOn
         )
+        val perfomClick = listOf(
+            binding.teamFirst, binding.teamSecond, binding.teamThird
+        )
 
         repeat(3){
             nextOff[it].setOnClickListener { _->
-                nextOff[it].playAnimation()
+                perfomClick[it].performClick()
             }
             nextOn[it].setOnClickListener { _->
-                nextOn[it].playAnimation()
+                perfomClick[it].performClick()
             }
         }
 

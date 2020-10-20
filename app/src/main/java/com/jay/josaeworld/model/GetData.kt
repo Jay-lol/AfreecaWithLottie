@@ -84,12 +84,14 @@ class GetData {
         return Single.fromObservable(
             Observable.create {
                 val bjDataList = Array(bid.size + 1) { arrayListOf<BroadInfo>() }
-
+                var isError = false
                 for ((index, team) in bid.withIndex()) {
+                    if (isError) break
                     for (member in team) {
                         try {
+
                             val doc: Document =
-                                Jsoup.connect("http://play.afreecatv.com/$member")
+                                Jsoup.connect("http://play.afreecatv.com/$member").timeout(5000)
                                     .get()
 
                             var title = doc.select("meta[property=og:title]")
@@ -126,10 +128,13 @@ class GetData {
                         } catch (e: Exception) {
                             bjDataList[bid.size].add(BroadInfo(1, "", "", "", ""))
                             Log.e(TAG, "GetData ~ getLiveOnData() called")
+                            isError = true
                             break
                         }
                     }
+//                    it.onNext(bjDataList) // 팀 단위로 정보를 보낼꺼면 사용
                 }
+
                 it.onNext(bjDataList)
                 it.onComplete()
             }

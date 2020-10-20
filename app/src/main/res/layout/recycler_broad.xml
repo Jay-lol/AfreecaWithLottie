@@ -27,7 +27,7 @@
                     android:layout_width="match_parent" android:layout_height="0dp"
                     android:id="@+id/error_thumbnail"
                     app:lottie_fileName="28592-yoga-nature.json"
-                    app:lottie_loop="true"
+                    app:lottie_loop="false"
                     app:lottie_autoPlay="true"
                     app:layout_constraintBottom_toTopOf="@+id/line"
                     app:layout_constraintTop_toTopOf="parent"

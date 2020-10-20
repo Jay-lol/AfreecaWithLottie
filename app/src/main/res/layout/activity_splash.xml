@@ -5,6 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#282828"
         tools:context=".view.SplashActivity">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -13,11 +14,11 @@
             app:lottie_autoPlay="true"
             app:lottie_loop="true" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" android:id="@+id/lottieAnimationView2"/>
     <com.airbnb.lottie.LottieAnimationView
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="40dp"
             app:lottie_fileName="34763-hero-on-its-way.json"
             app:lottie_loop="true"
             app:lottie_autoPlay="true"
