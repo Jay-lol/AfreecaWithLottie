@@ -6,7 +6,7 @@ import android.util.Log
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.model.GetData
 import com.jay.josaeworld.model.response.BroadInfo
-import java.util.ArrayList
+import java.util.*
 
 class MainPresenter : MainContract.Presenter {
 

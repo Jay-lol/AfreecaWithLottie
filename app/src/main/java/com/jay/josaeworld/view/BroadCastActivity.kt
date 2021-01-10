@@ -5,10 +5,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
@@ -21,7 +21,6 @@ import com.jay.josaeworld.databinding.ActivityBroadCastBinding
 import com.jay.josaeworld.model.GetData
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.model.response.SearchBJInfo
-import com.jay.josaeworld.model.response.gsonParse.RealBroad
 import kotlinx.android.synthetic.main.custom_dialog2.*
 import kotlinx.android.synthetic.main.info_dialog.*
 

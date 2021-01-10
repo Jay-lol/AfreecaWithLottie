@@ -1,6 +1,5 @@
 package com.jay.josaeworld.model
 
-import com.jay.josaeworld.R
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -19,7 +18,6 @@ object RetrofitBuilder {
         REQUEST = z
     }
 
-    const val x = R.string.BASE_URL
     val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)

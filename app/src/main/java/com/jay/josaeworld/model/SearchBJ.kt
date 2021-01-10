@@ -1,14 +1,12 @@
 package com.jay.josaeworld.model
 
 import android.util.Log
-import com.google.gson.JsonObject
 import com.jay.josaeworld.model.response.AfSearchResponse
 import com.jay.josaeworld.model.response.BallonInfo
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.model.response.gsonParse.RealBroad
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import java.sql.Time
 import java.util.concurrent.TimeUnit
 
 class SearchBJ {

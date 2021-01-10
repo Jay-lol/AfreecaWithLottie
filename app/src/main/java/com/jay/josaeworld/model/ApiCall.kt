@@ -1,15 +1,11 @@
 package com.jay.josaeworld.model
 
-import com.google.gson.JsonObject
-import com.jay.josaeworld.R
 import com.jay.josaeworld.model.response.AfSearchResponse
 import com.jay.josaeworld.model.response.gsonParse.RealBroad
-import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface ApiCall {
     /**

@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jay.josaeworld.R
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.model.RetrofitBuilder
-import com.jay.josaeworld.presenter.MainPresenter
 
 abstract class BaseActivity<T : MainContract.Presenter> : AppCompatActivity(), MainContract.View {
 

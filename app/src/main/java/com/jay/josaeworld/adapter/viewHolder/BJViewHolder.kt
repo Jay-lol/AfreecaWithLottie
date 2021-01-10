@@ -2,20 +2,18 @@ package com.jay.josaeworld.adapter.viewHolder
 
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
-import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.R
 import com.jay.josaeworld.model.response.BroadInfo
 import kotlinx.android.synthetic.main.recycler_broad.view.*
 import java.util.*
-import android.util.TypedValue
-import com.bumptech.glide.RequestManager
-
 
 class BJViewHolder(itemView: View, memberClick: (BroadInfo, Int) -> Unit, cntext: Context) : RecyclerView.ViewHolder(itemView) {
     private val random = Random()

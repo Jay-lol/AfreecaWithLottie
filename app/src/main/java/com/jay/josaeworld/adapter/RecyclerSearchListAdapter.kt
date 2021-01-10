@@ -7,7 +7,6 @@ import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.R
 import com.jay.josaeworld.adapter.viewHolder.SearchListViewHolder
 import com.jay.josaeworld.model.response.SearchBJInfo
-import com.jay.josaeworld.model.response.gsonParse.RealBroad
 
 class RecyclerSearchListAdapter(
     private val glide: RequestManager,

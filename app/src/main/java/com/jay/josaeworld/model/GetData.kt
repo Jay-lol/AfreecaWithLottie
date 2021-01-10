@@ -1,8 +1,6 @@
 package com.jay.josaeworld.model
 
 import android.util.Log
-import android.view.Gravity
-import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -12,8 +10,8 @@ import com.jay.josaeworld.MainApp.Companion.disposable
 import com.jay.josaeworld.model.response.BallonInfo
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.model.response.gsonParse.RealBroad
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 object GetData {
@@ -186,185 +184,8 @@ object GetData {
                     Log.e(TAG, "liveOnData: $it")
                     complete(false, 0, "")
                 })
-//        getLiveOnData(bidlist, bjlist)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({ bjdata ->
-//                // 함수 전체가 오류라면
-//                if (bjdata[bjdata.size - 1].size == 1 && bjdata[bjdata.size - 1][0].teamCode == 404) {
-//                    complete(false, 0, "")
-//                }
-//                // 일부 비제이 정보만 누락된 경우
-//                else {
-//                    sendUpdateData(bjdata.dropLast(1).toTypedArray(), completion = { result ->
-//                        Log.d(TAG, "GetData ~ finishSendBjStatus() called")
-//                        val errorCnt: Int
-//                        val name: String
-//                        if (bjdata[bjdata.size - 1].size == 1) {
-//                            errorCnt = bjdata[bjdata.size - 1][0].teamCode
-//                            name = bjdata[bjdata.size - 1][0].bid
-//                        } else {
-//                            errorCnt = 0
-//                            name = ""
-//                        }
-//                        complete(result, errorCnt, name)
-//                    })
-//                }
-//            }, { error ->
-//                Log.e(TAG, "liveOnData: $error")
-//                complete(false, 0, "")
-//            })
     }
 
-    // 실시간 정보 함수
-//    private fun getLiveOnData(
-//        bid: Array<ArrayList<String>>, bjlist: Array<ArrayList<BroadInfo>>
-//    ): Single<Array<ArrayList<BroadInfo>>> {
-//        try {
-//            val factory = Factory()
-//            return Single.fromObservable(
-//                Observable
-//                    .create {
-//                        val bjDataList = Array(bid.size + 1) { arrayListOf<BroadInfo>() }
-//
-//                        var errorCnt = 0
-//
-//                        var teamSize = 0
-//                        for (team in bjlist) {
-//                            teamSize += team.size
-//                        }
-//
-//                        var finishCount = 0
-//
-//                        for (team in bjlist) {
-//                            for (member in team) {
-//                                factory.doc(member.bid, member.teamCode, complete = { bj ->
-//                                    Log.d(TAG + "test", "$finishCount ${member.bjname} ~ finishLoding() called")
-//                                    if (bj == null) {
-//                                        if (errorCnt + 1 == teamSize)
-//                                            errorCnt = 403
-//                                        bjDataList[bid.size] =
-//                                            arrayListOf(
-//                                                BroadInfo(
-//                                                    ++errorCnt, 1, member.bid, "", "",
-//                                                    "", "", "", "error", "",
-//                                                    BallonInfo("0", "0", "0", "0분", "0", "0")
-//                                                )
-//                                            )
-//                                    } else {
-//                                        bjDataList[member.teamCode].add(bj)
-//                                    }
-//
-//                                    if (++finishCount == teamSize) {
-//                                        Log.d(TAG + "test", "GetData ~ bjFactory end() called")
-//                                        it.onNext(bjDataList)
-//                                        it.onComplete()
-//                                    }
-//                                })
-//                            }
-//                        }
-////                    for ((index, team) in bid.withIndex()) {
-////                        for (member in team) {
-////                            try {
-////
-////                                val doc = Jsoup.connect("http://bjapi.afreecatv.com/api/$member/station")
-////                                    .timeout(2000)
-////                                    .ignoreContentType(true)
-////                                    .execute().body()
-////
-////                                val broadInfo = JSONObject(doc)
-////
-////                                var onOff1 = 0
-////                                var title = "방송 중이지 않습니다"
-////                                val bjname = broadInfo.getJSONObject("station")["user_nick"] as String
-////                                var imgurl = "http://res.afreecatv.com/images/default_logo_300x300.jpg"
-////                                var allviewers = "0"    // 전체 시청자
-////                                var fanCnt: String // 팬 숫자
-////                                var okCnt: String  // 추천 숫자
-////                                var incFanCnt: String  // 오늘 추가된 즐겨찾기 수
-////
-////                                // 방송중이면 제목,시청자수,썸네일 로딩
-////                                if (!broadInfo["broad"].equals(null)) {
-////                                    onOff1 = 1
-////                                    title =
-////                                        (broadInfo.getJSONObject("broad")["broad_title"] as String).replace("   ", "")
-////                                    allviewers =
-////                                        (broadInfo.getJSONObject("broad")["current_sum_viewer"] as Int).toString()
-////                                    allviewers = UtilFnc.goodString(allviewers)
-////
-////                                    val broadNum = broadInfo.getJSONObject("broad")["broad_no"] as Int
-////                                    imgurl = "http://liveimg.afreecatv.com/${broadNum}_480x270.jpg?dummy="
-////                                }
-////
-////                                // 0아니면 1 today0, today1
-////                                val activeNo = broadInfo.getJSONObject("station")["active_no"] as Int
-////
-////                                fanCnt = (broadInfo.getJSONObject("station")
-////                                    .getJSONObject("upd")["fan_cnt"] as Int).toString()
-////                                fanCnt = UtilFnc.goodString(fanCnt)
-////
-////                                okCnt = UtilFnc.goodString(
-////                                    (broadInfo.getJSONObject("station")
-////                                        .getJSONObject("upd")["today${activeNo}_ok_cnt"] as Int)
-////                                        .toString()
-////                                )
-////
-////                                incFanCnt = (broadInfo.getJSONObject("station")
-////                                    .getJSONObject("upd")["today${activeNo}_fav_cnt"] as Int)
-////                                    .toString()
-////
-////                                incFanCnt = if (incFanCnt.toInt() < 0)
-////                                    "-" + UtilFnc.goodString(incFanCnt.slice(1 until incFanCnt.length))
-////                                else UtilFnc.goodString(incFanCnt)
-////
-////                                bjDataList[index].add(
-////                                    BroadInfo(
-////                                        index,
-////                                        onOff1,
-////                                        member,
-////                                        title,
-////                                        bjname,
-////                                        imgurl,
-////                                        allviewers,
-////                                        fanCnt,
-////                                        okCnt,
-////                                        incFanCnt
-////                                    )
-////                                )
-////
-////                                Log.d(
-////                                    TAG,
-////                                    "GetJson() $bjname $title $allviewers $imgurl $fanCnt $okCnt $incFanCnt"
-////                                )
-////                            } catch (e: Exception) {
-////                                bjDataList[bid.size] =
-////                                    arrayListOf(BroadInfo(++errorCnt, 1, member, "", "", "", "", "", "error", ""))
-////                                Log.e(TAG, "GetData ~ getLiveOnData() called3 $member $e")
-////                            }
-////                        }
-////                    }
-////
-////                    it.onNext(bjDataList)
-////                    it.onComplete()
-//                    }
-//            )
-//        } catch (e: Exception) {
-//            Log.e(TAG, "getLiveOnData: $e")
-//            return Single.fromObservable(
-//                Observable.create {
-//                    it.onNext(Array(1) {
-//                        arrayListOf(
-//                            BroadInfo(
-//                                404, 1, "", "", "", "", "",
-//                                "", "error", "",
-//                                BallonInfo("0", "0", "0", "0분", "0", "0")
-//                            )
-//                        )
-//                    })
-//                }
-//            )
-//        }
-//    }
     fun sendReport(reportlist: List<String>, completion: (Boolean) -> Unit) {
         try {
             val childUpdates = hashMapOf<String, Any>()

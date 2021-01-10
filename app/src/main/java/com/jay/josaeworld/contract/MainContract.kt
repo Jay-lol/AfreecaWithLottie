@@ -4,8 +4,7 @@ import android.content.Context
 import com.jay.josaeworld.base.BasePresenter
 import com.jay.josaeworld.base.BaseView
 import com.jay.josaeworld.model.response.BroadInfo
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 interface MainContract {
 

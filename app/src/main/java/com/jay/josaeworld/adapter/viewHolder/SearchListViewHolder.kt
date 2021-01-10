@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.model.response.SearchBJInfo
-import com.jay.josaeworld.model.response.gsonParse.RealBroad
 import kotlinx.android.synthetic.main.recycler_broad2.view.*
 import java.util.*
 
