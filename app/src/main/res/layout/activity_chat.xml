@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools" android:background="@drawable/splash_logo"
+                                                   android:layout_width="fill_parent"
+                                                   android:layout_height="fill_parent"
+                                                   xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.gms.ads.AdView
+            android:id="@id/adView" android:layout_width="fill_parent" android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" android:layout_centerHorizontal="true" app:adSize="BANNER"
+            app:adUnitId="@string/bannerId" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/messageList" android:layout_width="fill_parent"
+                                               android:layout_height="0.0dip"
+                                               app:layout_constraintBottom_toTopOf="@id/messageView"
+                                               app:layout_constraintEnd_toEndOf="parent"
+                                               app:layout_constraintStart_toStartOf="parent"
+                                               app:layout_constraintTop_toBottomOf="@id/adView"/>
+    <LinearLayout android:orientation="horizontal" android:id="@+id/messageView" android:background="#ff282828"
+                  android:layout_width="fill_parent" android:layout_height="wrap_content"
+                  app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout android:background="@drawable/message_area"
+                                                           android:layout_width="0.0dip" android:layout_height="50.0dip"
+                                                           android:layout_marginTop="6.0dip"
+                                                           android:layout_marginBottom="6.0dip"
+                                                           android:layout_weight="1.0">
+            <EditText android:textSize="16.0sp" android:textColor="#ffffffff" android:textColorHint="#94ffffff"
+                      android:layout_gravity="center" android:id="@id/content" android:background="@null"
+                      android:layout_width="fill_parent" android:layout_height="fill_parent" android:hint="  메세지"
+                      android:singleLine="true" android:maxLength="50" android:inputType="textNoSuggestions"
+                      android:imeOptions="actionSend" android:textAllCaps="true" android:textAlignment="viewStart"
+                      android:paddingStart="10.0dip" android:paddingEnd="10.0dip"
+                      app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                      tools:ignore="RtlCompat"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageButton android:layout_gravity="center" android:id="@+id/sendMessage" android:layout_width="wrap_content"
+                     android:layout_height="wrap_content" android:src="@android:drawable/ic_menu_send"
+                     android:layout_marginEnd="8.0dip" android:backgroundTint="#ff9490f6"
+                     app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                     app:layout_constraintTop_toTopOf="parent"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
