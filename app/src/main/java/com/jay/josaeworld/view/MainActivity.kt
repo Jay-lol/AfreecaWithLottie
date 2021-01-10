@@ -18,13 +18,12 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.jay.josaeworld.MainApp.Companion.disposable
 import com.jay.josaeworld.R
-import com.jay.josaeworld.base.BaseActivity
+import com.jay.josaeworld.base.BaseMainActivity
 import com.jay.josaeworld.databinding.ActivityMainBinding
 import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.model.GetData
 import com.jay.josaeworld.model.UtilFnc
 import com.jay.josaeworld.model.response.BroadInfo
-import com.jay.josaeworld.presenter.MainPresenter
 import kotlinx.android.synthetic.main.custom_dialog.*
 import kotlinx.android.synthetic.main.custom_dialog2.*
 import kotlinx.android.synthetic.main.info_dialog.*
@@ -32,7 +31,7 @@ import kotlinx.android.synthetic.main.memberchangereport_dialog.*
 import java.util.*
 
 
-class MainActivity : BaseActivity<MainPresenter>(), View.OnClickListener {
+class MainActivity : BaseMainActivity(), View.OnClickListener {
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private lateinit var binding: ActivityMainBinding
     private lateinit var teamInfo: List<String>
@@ -47,7 +46,6 @@ class MainActivity : BaseActivity<MainPresenter>(), View.OnClickListener {
     private var secondSujangList: HashMap<String, String> = hashMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        presenter = MainPresenter()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
@@ -74,8 +72,8 @@ class MainActivity : BaseActivity<MainPresenter>(), View.OnClickListener {
         secondSujangList = newList
     }
 
-    override fun initTeamData(newList: List<String>, time : Long) {
-        teamInfo = newList
+    override fun initTeamData(teamInfo: List<String>, time : Long) {
+        this.teamInfo = teamInfo
         val now = System.currentTimeMillis()
         // 30초 보다 크면 백그라운드에서 업데이트 함수 돌려놈
         if (now - time > 30000 && isFirst == 0) {
@@ -84,9 +82,9 @@ class MainActivity : BaseActivity<MainPresenter>(), View.OnClickListener {
         setDataListener()  // 팀 데이터 오면 리스너 등록
         splashException = true
         if (!isLoading) {
-            binding.teamOne.text = teamInfo[0]
-            binding.teamTwo.text = teamInfo[1]
-            binding.teamThree.text = teamInfo[2]
+            binding.teamOne.text = this.teamInfo[0]
+            binding.teamTwo.text = this.teamInfo[1]
+            binding.teamThree.text = this.teamInfo[2]
         }
     }
 

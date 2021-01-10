@@ -9,11 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jay.josaeworld.R
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.model.RetrofitBuilder
+import com.jay.josaeworld.presenter.MainPresenter
 
-abstract class BaseActivity<T : MainContract.Presenter> : AppCompatActivity(), MainContract.View {
+/**
+ * presenter 주입
+ */
+abstract class BaseMainActivity : AppCompatActivity(), MainContract.View {
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
-    lateinit var presenter : T
+    lateinit var presenter : MainPresenter
     var splashException = false
     companion object{
         var isSplash = false
@@ -21,6 +25,7 @@ abstract class BaseActivity<T : MainContract.Presenter> : AppCompatActivity(), M
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = MainPresenter()
         RetrofitBuilder.setBaseURL(
             getString(R.string.BASE_URL),
             getString(R.string.SEARCH_BASE_URL),
@@ -32,7 +37,7 @@ abstract class BaseActivity<T : MainContract.Presenter> : AppCompatActivity(), M
         window.statusBarColor = Color.TRANSPARENT
     }
 
-    open fun initPresenter(){
+    private fun initPresenter(){
         presenter.takeView(this)
     }
     abstract fun setDataListener()

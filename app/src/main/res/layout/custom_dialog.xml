@@ -2,7 +2,8 @@
 <LinearLayout android:layout_gravity="center" android:orientation="vertical" android:background="@drawable/alert_dialog"
               android:layout_width="300.0dip" android:layout_height="wrap_content"
               xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textSize="16.0sp" android:textColor="#ffffffff" android:gravity="center" android:id="@+id/question"
+    <TextView android:textSize="16.0sp" android:textColor="#ffffffff" android:gravity="center"
+              android:id="@+id/question"
               android:background="@android:color/transparent" android:paddingTop="20.0dip"
               android:layout_width="fill_parent" android:layout_height="110.0dip" android:layout_marginLeft="1.0dip"
               android:layout_marginTop="1.0dip" android:layout_marginRight="1.0dip" android:text="@string/exit"

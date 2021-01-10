@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
@@ -17,14 +16,16 @@ import com.google.android.gms.ads.MobileAds
 import com.jay.josaeworld.R
 import com.jay.josaeworld.adapter.RecyclerBroadListAdapter
 import com.jay.josaeworld.adapter.RecyclerSearchListAdapter
+import com.jay.josaeworld.base.BaseBroadActivity
 import com.jay.josaeworld.databinding.ActivityBroadCastBinding
+import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.model.GetData
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.model.response.SearchBJInfo
 import kotlinx.android.synthetic.main.custom_dialog2.*
 import kotlinx.android.synthetic.main.info_dialog.*
 
-class BroadCastActivity : AppCompatActivity(), BaseBroadCastActivity {
+class BroadCastActivity : BaseBroadActivity() {
     private lateinit var binding: ActivityBroadCastBinding
     private lateinit var mAdapter: RecyclerBroadListAdapter
     private lateinit var sAdapter: RecyclerSearchListAdapter
@@ -54,7 +55,7 @@ class BroadCastActivity : AppCompatActivity(), BaseBroadCastActivity {
     /**
      * 팀원 목록 보여주기
      */
-    override fun setBroadView(list: ArrayList<BroadInfo>) {
+    private fun setBroadView(list: ArrayList<BroadInfo>) {
         mAdapter = RecyclerBroadListAdapter(Glide.with(this), list.sortedWith(
             compareBy({ -it.viewCnt.filter { c -> c.isDigit() }.toInt() },   // 시청자순
                 { -it.onOff }, // 방송켜져있는지, 비번방 처리
@@ -70,7 +71,7 @@ class BroadCastActivity : AppCompatActivity(), BaseBroadCastActivity {
     /**
      * 검색 목록 보여주기
      */
-    override fun setSearchView() {
+    private fun setSearchView() {
         binding.searchLoading.visibility = View.VISIBLE
         binding.searchLoading.playAnimation()
 
@@ -148,13 +149,15 @@ class BroadCastActivity : AppCompatActivity(), BaseBroadCastActivity {
         }
     }
 
-    override fun finish() {
-        super.finish()
-        // 새로운 액티비티, 기존 액티비티
-        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+    override fun showError(code: Int) {
+
     }
 
-    override fun loadAd() {
+    override fun showToast(msg: String) {
+        this.toast(msg)
+    }
+
+    private fun loadAd() {
         MobileAds.initialize(this) {}
         mAdView = binding.adView
         val adRequest = AdRequest.Builder().build()
