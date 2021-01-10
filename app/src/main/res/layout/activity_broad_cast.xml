@@ -7,11 +7,22 @@
         android:layout_height="match_parent"
         android:background="#282828"
         tools:context=".view.BroadCastActivity">
-
+    <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_fileName="8438-mr-cookie-drink2.json"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            android:id="@+id/search_loading"
+            app:lottie_loop="true"
+    />
     <TextView
             android:id="@+id/teamName"
             android:text="teamName"
-            android:fitsSystemWindows = "true"
+            android:fitsSystemWindows="true"
             android:fontFamily="@font/maplestory_bold"
             android:transitionName="changeAct"
             android:textColor="#ffffff"

@@ -1,13 +1,12 @@
 package com.jay.josaeworld.view
 
-import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.WindowManager
-import android.widget.Toast
+import com.jay.josaeworld.base.BaseActivity.Companion.isSplash
 import com.jay.josaeworld.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
@@ -23,8 +22,16 @@ class SplashActivity : AppCompatActivity() {
 
         Handler().postDelayed({
             finish()
-        }, 3000)
+        }, 1500)
     }
 
+    override fun onPause() {
+        isSplash = false
+        super.onPause()
+    }
+    override fun onStop() {
+        isSplash = false
+        super.onStop()
+    }
     override fun onBackPressed() {}
 }

@@ -205,10 +205,8 @@ class MainActivity : BaseActivity<MainPresenter>(), View.OnClickListener {
         presenter.getRecentBJData(bjlists, mainBJDataList)
     }
 
-
     private fun buttonListener() {
         Log.d(TAG, "MainActivity ~ buttonListener() called")
-
         binding.teamFirst.setOnClickListener(this)
         binding.teamSecond.setOnClickListener(this)
         binding.teamThird.setOnClickListener(this)
@@ -216,26 +214,6 @@ class MainActivity : BaseActivity<MainPresenter>(), View.OnClickListener {
         binding.sujang.setOnClickListener(this)
         binding.moreInfo.setOnClickListener(this)
         binding.searchSijosae.setOnClickListener(this)
-
-//        val nextOff = listOf(
-//            binding.teamOnelotti, binding.teamTwolotti, binding.teamThreelotti
-//        )
-//        val nextOn = listOf(
-//            binding.teamOnelottiOn, binding.teamTwolottiOn, binding.teamThreelottiOn
-//        )
-//        val perfomClick = listOf(
-//            binding.teamFirst, binding.teamSecond, binding.teamThird
-//        )
-//
-//        repeat(3) {
-//            nextOff[it].setOnClickListener { _ ->
-//                perfomClick[it].performClick()
-//            }
-//            nextOn[it].setOnClickListener { _ ->
-//                perfomClick[it].performClick()
-//            }
-//        }
-
     }
 
 

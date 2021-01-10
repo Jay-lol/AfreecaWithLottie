@@ -11,4 +11,8 @@
         <item name="android:windowActivityTransitions">true</item>
     </style>
 
+    <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
 </resources>
