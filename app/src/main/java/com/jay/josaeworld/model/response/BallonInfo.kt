@@ -6,7 +6,7 @@ data class BallonInfo(
     val dayballon: String,
     val monthballon: String,
     val monthmaxview: String,
-    val monthpay: String,
     val monthtime: String,
-    val monthview: String
+    val monthview: String,
+    val monthpay: String
 ) : Serializable

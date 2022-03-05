@@ -17,11 +17,8 @@ import com.jay.josaeworld.presenter.MainPresenter
 abstract class BaseMainActivity : AppCompatActivity(), MainContract.View {
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
-    lateinit var presenter : MainPresenter
+    lateinit var presenter: MainPresenter
     var splashException = false
-    companion object{
-        var isSplash = false
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +34,7 @@ abstract class BaseMainActivity : AppCompatActivity(), MainContract.View {
         window.statusBarColor = Color.TRANSPARENT
     }
 
-    private fun initPresenter(){
+    private fun initPresenter() {
         presenter.takeView(this)
     }
     abstract fun setDataListener()
@@ -75,4 +72,7 @@ abstract class BaseMainActivity : AppCompatActivity(), MainContract.View {
         presenter.dropView()
     }
 
+    companion object {
+        var isSplash = false
+    }
 }

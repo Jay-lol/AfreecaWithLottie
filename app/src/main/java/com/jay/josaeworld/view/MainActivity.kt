@@ -110,8 +110,16 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                 }
         }
         binding.fabRounge.setOnClickListener {
-            if (!isLoading)
-                startActivity(Intent(this, RoungeActivity::class.java))
+            if (!isLoading) {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(
+                            "https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)"
+                        )
+                    )
+                )
+            }
         }
         binding.fabReport.setOnClickListener {
             if (!isLoading) {
@@ -238,6 +246,8 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                 binding.teamOne, binding.teamTwo, binding.teamThree, binding.teamFour
             )
 
+            val teamCardViewList = listOf(binding.teamFirst, binding.teamSecond, binding.teamThird, binding.teamFourth)
+
             for ((index, team) in bjlist.withIndex()) {
                 // 수장 처리는 따로
                 if (team[0].bid == "superbsw123") {
@@ -257,6 +267,13 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                     val l = listOf("시", "조", "새", "!")
                     teamName[index].text = l[teamNum]
                 }
+
+                if (teamName[index].text == "X") {
+                    teamCardViewList[index].visibility = View.GONE
+                } else {
+                    teamCardViewList[index].visibility = View.VISIBLE
+                }
+
 
                 for (member in team) {
                     if (member.onOff == 1) {
@@ -517,7 +534,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
     }
 
     override fun makeRefreshstate(state: Boolean) {
-        disposable.dispose()
+//        disposable.dispose()
         binding.refreshLayout.isRefreshing = state
     }
 

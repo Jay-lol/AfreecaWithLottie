@@ -16,8 +16,8 @@ android {
         applicationId "com.jay.josaeworld"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 35
-        versionName "2.1.47"
+        versionCode 38
+        versionName "2.1.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

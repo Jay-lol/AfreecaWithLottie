@@ -1,5 +1,6 @@
 package com.jay.josaeworld.model
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -147,6 +148,7 @@ object GetData {
     /**
     비제이 고유 아이디 가져와서 데이터 요청
      */
+    @SuppressLint("CheckResult")
     fun liveOnData(bjlist: Array<ArrayList<BroadInfo>>, complete: (Boolean, Int, String) -> Unit) {
 
         val bidList = arrayListOf<Pair<Int, String>>()
@@ -161,29 +163,27 @@ object GetData {
             searchBJ.doSearch(targetBJ.first, targetBJ.second)
         }.toList()
 
-        disposable =
-            Single.zip(singles) { array ->
-                array.map { it as BroadInfo }
-            }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ bjdata ->
-                    val errorCnt: Int = bjdata.count { Bj -> Bj.teamCode == 403 }
-                    // 전부 에러일 경우
-                    if (errorCnt == bjdata.size) {
-                        complete(false, 0, "")
-                    }
-                    // 일부 비제이 정보만 누락된 경우
-                    else {
-                        sendUpdateData(bjdata.filter { bj -> bj.teamCode != 403 }, completion = { result ->
-                            val name: String = bjdata.find { it.teamCode == 403 }?.bid ?: ""
-                            complete(result, errorCnt, name)
-                        })
-                    }
-                }, {
-                    Log.e(TAG, "liveOnData: $it")
+        Single.zip(singles) { array ->
+            array.map { it as BroadInfo } }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ bjdata ->
+                val errorCnt: Int = bjdata.count { Bj -> Bj.teamCode == 403 }
+                // 전부 에러일 경우
+                if (errorCnt == bjdata.size) {
                     complete(false, 0, "")
-                })
+                }
+                // 일부 비제이 정보만 누락된 경우
+                else {
+                    sendUpdateData(bjdata.filter { bj -> bj.teamCode != 403 }, completion = { result ->
+                        val name: String = bjdata.find { it.teamCode == 403 }?.bid ?: ""
+                        complete(result, errorCnt, name)
+                    })
+                }
+            }, {
+                Log.e(TAG, "liveOnData: $it")
+                complete(false, 0, "")
+            })
     }
 
     fun sendReport(reportlist: List<String>, completion: (Boolean) -> Unit) {
@@ -209,8 +209,9 @@ object GetData {
         }
     }
 
+    @SuppressLint("CheckResult")
     fun searchJosae(complete: (RealBroad?) -> Unit) {
-        disposable = SearchBJ().searchJosae()
+        SearchBJ().searchJosae()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it != null) {
@@ -223,18 +224,19 @@ object GetData {
             }, {
                 Log.e(TAG, "searchJosae: $it")
                 complete(null)
-            }) ?: disposable
+            })
     }
 
     /**
      * 파이어베이스 서버에 리스너를 설정해서 최신 정보를 계속 업데이트
      */
-    fun setBjDataListener(teamSize: Int,
+    fun setBjDataListener(
+        teamSize: Int,
         callback: (Boolean, Array<java.util.ArrayList<BroadInfo>>?) -> Unit
     ) {
         // 이미 등록 되어있으면 처리안되게 설정
-        if (bjStatusListener!=null) return
-        
+        if (bjStatusListener != null) return
+
         var recentBJList: Array<java.util.ArrayList<BroadInfo>>
         bjStatusListener = refBJStatus.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -266,6 +268,7 @@ object GetData {
                     Log.e(TAG, "onDataChange: $e")
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
                 Log.e(TAG, "onCancelled: $error")
                 callback(false, null)
@@ -273,8 +276,8 @@ object GetData {
         })
     }
 
-    fun removeBjDataListener(){
-        bjStatusListener?:return
+    fun removeBjDataListener() {
+        bjStatusListener ?: return
         refBJStatus.removeEventListener(bjStatusListener!!)
         bjStatusListener = null
     }
