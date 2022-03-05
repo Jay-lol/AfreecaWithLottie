@@ -27,8 +27,8 @@ object Libs {
     const val OKHTTP = "com.squareup.okhttp3:okhttp:${Versions.OKHTTP}"
     const val RETROFIT = "com.squareup.retrofit2:retrofit:${Versions.RETROFIT}"
     const val RETROFIT_CONVERTER = "com.squareup.retrofit2:converter-gson:${Versions.RETROFIT}"
-    const val RETROFIT_ADAPTER = "com.squareup.retrofit2:adapter-rxjava2:2.7.1${Versions.RETROFIT}"
-    const val PLAY_SERVICES_ADS = "com.google.android.gms:play-services-ads:19.6.0${Versions.PLAY_SERVICES_ADS}"
+    const val RETROFIT_ADAPTER = "com.squareup.retrofit2:adapter-rxjava2:${Versions.RETROFIT}"
+    const val PLAY_SERVICES_ADS = "com.google.android.gms:play-services-ads:${Versions.PLAY_SERVICES_ADS}"
 }
 
 object TestLibs {
