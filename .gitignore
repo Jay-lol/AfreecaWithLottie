@@ -11,6 +11,8 @@
 /app/google-services.json
 .DS_Store
 /build
+/buildSrc/build
+/buildSrc/.gradle
 /captures
 .externalNativeBuild
 .cxx

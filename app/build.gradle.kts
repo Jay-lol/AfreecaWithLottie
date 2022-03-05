@@ -1,0 +1,90 @@
+plugins {
+    id("com.android.application")
+    kotlin("android")
+    kotlin("android.extensions")
+    kotlin("kapt")
+    id("com.google.firebase.crashlytics")
+    id("com.google.gms.google-services")
+}
+apply {
+    plugin("kotlin-android")
+}
+
+android {
+    compileSdk = Android.COMPILE_SDK
+    defaultConfig {
+        applicationId = "com.jay.josaeworld"
+        minSdk = Android.MIN_SDK
+        targetSdk = Android.TARGET_SDK
+        versionCode = Versions.versionCode
+        versionName = Versions.versionName
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+
+    viewBinding {
+        isEnabled = true
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(Libs.KOTLIN)
+    implementation(Libs.CORE_KTX)
+    implementation(Libs.APPCOMPAT)
+    implementation(Libs.ANDROIDX_CONSTRAINTLAYOUT)
+    implementation(Libs.ANDROIDX_RECYCLERVIEW)
+    testImplementation(TestLibs.JUNIT)
+    androidTestImplementation(TestLibs.ANDROIDX_JUNIT)
+
+    // rxjava
+    implementation(Libs.RXANDROID3)
+    implementation(Libs.RXANDROID)
+    implementation(Libs.RXJAVA3)
+    implementation(Libs.RXBINDING4)
+
+    // Lottie for Android
+    implementation(Libs.LOTTIE)
+
+    // Glide
+    implementation(Libs.GLIDE)
+    annotationProcessor(Libs.GLIDE_COMPILER)
+
+    // firebase
+    implementation(platform(Libs.FIREBASE))
+    implementation(Libs.FIREBASE_ANALYTICS)
+    implementation(Libs.FIREBASE_CRASHLYTICS)
+    implementation(Libs.FIREBASE_DATABASE)
+
+    // swiperefreshlayout
+    implementation(Libs.SWRFLAYOUT)
+
+    implementation(Libs.CARDVIEW)
+    implementation(Libs.GITHUB_CLANS_FAB)
+
+    // Retrofit
+    implementation(Libs.OKHTTP)
+    implementation(Libs.RETROFIT)
+    implementation(Libs.RETROFIT_CONVERTER)
+    implementation(Libs.RETROFIT_ADAPTER)
+
+    implementation(Libs.PLAY_SERVICES_ADS)
+}
+repositories {
+    mavenCentral()
+}
