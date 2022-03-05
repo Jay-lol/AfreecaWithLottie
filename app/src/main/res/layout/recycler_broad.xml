@@ -1,136 +1,291 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent" android:layout_height="280dp">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="280dp">
 
     <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/secondsujang" android:visibility="invisible"
-            android:layout_width="match_parent" android:layout_height="match_parent"
-            android:scaleType="center"
-            app:lottie_fileName="lf30_editor_cecsqjtv.json" app:lottie_loop="true"
-            app:lottie_scale="0.8" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+        android:id="@+id/secondsujang"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_fileName="lf30_editor_cecsqjtv.json"
+        app:lottie_loop="true" />
+
     <androidx.cardview.widget.CardView
-            android:id="@+id/recycler_card" android:layout_width="0dp"
-            android:layout_height="0dp" app:cardBackgroundColor="#333333"
-            app:cardCornerRadius="20dp" app:layout_constrainedHeight="true"
-            app:layout_constrainedWidth="true" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHeight_max="250dp"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="295dp">
+        android:id="@+id/recycler_card"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardBackgroundColor="#333333"
+        app:cardCornerRadius="20dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="250dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="295dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+
             <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/moreInfo"
-                    android:background="@android:color/transparent"
-                    android:layout_width="40dp" android:layout_height="45dp"
-                    android:layout_marginTop="4dp" android:layout_marginEnd="4dp"
-                    android:elevation="20dp" app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" app:lottie_autoPlay="true"
-                    app:lottie_fileName="12246-info.json" app:lottie_loop="false"/>
-            <ImageView android:id="@+id/thumbnail" android:layout_width="match_parent" android:layout_height="0dp"
-                       app:layout_constraintBottom_toTopOf="@+id/line" app:layout_constraintEnd_toEndOf="parent"
-                       app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"/>
-            <com.airbnb.lottie.LottieAnimationView android:id="@+id/error_thumbnail" android:visibility="invisible"
-                                                   android:layout_width="match_parent" android:layout_height="0dp"
-                                                   android:layout_marginStart="77dp"
-                                                   app:layout_constraintBottom_toTopOf="@+id/line"
-                                                   app:layout_constraintEnd_toEndOf="parent"
-                                                   app:layout_constraintStart_toStartOf="parent"
-                                                   app:layout_constraintTop_toTopOf="parent" app:lottie_autoPlay="true"
-                                                   app:lottie_fileName="8438-mr-cookie-drink.json"
-                                                   app:lottie_loop="false"/>
-            <View android:id="@+id/line" android:background="#a6a6a6" android:layout_width="match_parent"
-                  android:layout_height="2dp" android:layout_marginBottom="5dp"
-                  app:layout_constraintBottom_toTopOf="@+id/title" app:layout_constraintStart_toStartOf="parent"/>
-            <TextView android:textSize="14sp" android:textColor="#e6ffffff" android:ellipsize="marquee"
-                      android:gravity="center" android:id="@+id/title" android:layout_width="match_parent"
-                      android:layout_height="wrap_content" android:layout_marginTop="2dp"
-                      android:layout_marginBottom="9dp" android:text="title" android:singleLine="true"
-                      android:fontFamily="@font/maplestory_bold" android:layout_marginStart="8dp"
-                      android:layout_marginEnd="8dp" app:layout_constraintBottom_toTopOf="@+id/bjImportInfo"
-                      app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"/>
+                android:id="@+id/moreInfo"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@android:color/transparent"
+                android:elevation="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="12246-info.json"
+                app:lottie_loop="false" />
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/error_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="77dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="8438-mr-cookie-drink.json"
+                app:lottie_loop="false" />
+
+            <View
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="5dp"
+                android:background="#a6a6a6"
+                app:layout_constraintBottom_toTopOf="@+id/title"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="9dp"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/maplestory_bold"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="title"
+                android:textColor="#e6ffffff"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/bjImportInfo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/bjImportInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    app:layout_constraintBottom_toTopOf="@+id/bjInfoview"
-                    app:layout_constraintStart_toStartOf="parent">
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="0dp"
-                              app:layout_constraintBottom_toBottomOf="@+id/bjname"
-                              app:layout_constraintEnd_toStartOf="@+id/bjname"
-                              app:layout_constraintHorizontal_bias="0"
-                              app:layout_constraintStart_toStartOf="parent"
-                              app:layout_constraintTop_toTopOf="@+id/bjname">
-                    <ImageView android:layout_gravity="center" android:layout_width="12dp"
-                               android:layout_height="match_parent" android:src="@drawable/ic_baseline_star_border_24"/>
-                    <TextView android:textSize="9sp" android:textColor="#fff" android:gravity="bottom"
-                              android:layout_gravity="center" android:id="@+id/fan_cnt" android:paddingTop="2dp"
-                              android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-"
-                              android:layout_marginStart="1dp"/>
-                    <ImageView android:id="@+id/ok_img" android:layout_width="12dp" android:layout_height="match_parent"
-                               android:src="@drawable/ic_outline_thumb_up_alt_24" android:layout_marginStart="2dp"/>
-                    <TextView android:textSize="9sp" android:textColor="#fff" android:layout_gravity="center"
-                              android:id="@+id/ok_cnt" android:paddingTop="2dp" android:layout_width="wrap_content"
-                              android:layout_height="wrap_content" android:text="-" android:layout_marginStart="1dp"/>
+                android:id="@+id/bjImportInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/bjInfoview"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/bjname"
+                    app:layout_constraintEnd_toStartOf="@+id/bjname"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/bjname">
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_star_border_24" />
+
+                    <TextView
+                        android:id="@+id/fan_cnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="1dp"
+                        android:gravity="bottom"
+                        android:paddingTop="2dp"
+                        android:text="-"
+                        android:textColor="#fff"
+                        android:textSize="9sp" />
+
+                    <ImageView
+                        android:id="@+id/ok_img"
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="2dp"
+                        android:src="@drawable/ic_outline_thumb_up_alt_24" />
+
+                    <TextView
+                        android:id="@+id/ok_cnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="1dp"
+                        android:paddingTop="2dp"
+                        android:text="-"
+                        android:textColor="#fff"
+                        android:textSize="9sp" />
                 </LinearLayout>
-                <TextView android:textSize="13sp" android:textColor="#8587fe" android:ellipsize="marquee"
-                          android:gravity="center" android:id="@+id/bjname" android:layout_width="wrap_content"
-                          android:layout_height="wrap_content" android:text="Bj명" android:singleLine="true"
-                          android:textAlignment="center" app:layout_constrainedWidth="true"
-                          app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
-                          app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
-                          app:layout_constraintWidth_max="80dp"/>
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-                              android:layout_marginEnd="6dp" app:layout_constraintBottom_toBottomOf="@+id/bjname"
-                              app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="1"
-                              app:layout_constraintStart_toEndOf="@+id/bjname"
-                              app:layout_constraintTop_toTopOf="@+id/bjname">
-                    <ImageView android:layout_width="wrap_content" android:layout_height="match_parent"
-                               android:src="@drawable/ic_baseline_people_alt_24"/>
-                    <TextView android:textColor="#fff" android:layout_gravity="center" android:id="@+id/view_cnt"
-                              android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=""/>
+
+                <TextView
+                    android:id="@+id/bjname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="Bj명"
+                    android:textAlignment="center"
+                    android:textColor="#8587fe"
+                    android:textSize="13sp"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_max="80dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/bjname"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toEndOf="@+id/bjname"
+                    app:layout_constraintTop_toTopOf="@+id/bjname">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_baseline_people_alt_24" />
+
+                    <TextView
+                        android:id="@+id/view_cnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text=""
+                        android:textColor="#fff" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <LinearLayout android:id="@+id/bjInfoview" android:layout_width="match_parent"
-                          android:layout_height="wrap_content" android:layout_marginBottom="2dp"
-                          android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
-                          app:layout_constraintBottom_toTopOf="@+id/bjmore3" app:layout_constraintEnd_toEndOf="parent"
-                          app:layout_constraintStart_toStartOf="parent">
-                <TextView android:textSize="9sp" android:textColor="#e4d5d5d5" android:layout_gravity="center"
-                          android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="오늘의 즐겨찾기 : "/>
-                <TextView android:textSize="9sp" android:textColor="#fff" android:layout_gravity="center"
-                          android:id="@+id/incFanCnt" android:layout_width="wrap_content"
-                          android:layout_height="wrap_content" android:text="0" android:textAlignment="center"/>
-                <LinearLayout android:gravity="end" android:layout_width="match_parent"
-                              android:layout_height="wrap_content">
-                    <TextView android:textSize="9sp" android:textColor="#e4d5d5d5" android:layout_gravity="center"
-                              android:layout_width="wrap_content" android:layout_height="wrap_content"
-                              android:text="일일 풍력 : " android:paddingStart="10dp"/>
-                    <TextView android:textSize="11sp" android:textColor="#46e9ff" android:id="@+id/dballon"
-                              android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-"
-                              android:textAlignment="viewEnd"/>
+
+            <LinearLayout
+                android:id="@+id/bjInfoview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="2dp"
+                app:layout_constraintBottom_toTopOf="@+id/bjmore3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="오늘의 즐겨찾기 : "
+                    android:textColor="#e4d5d5d5"
+                    android:textSize="9sp" />
+
+                <TextView
+                    android:id="@+id/incFanCnt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="9sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingStart="10dp"
+                        android:text="일일 풍력 : "
+                        android:textColor="#e4d5d5d5"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:id="@+id/dballon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textAlignment="viewEnd"
+                        android:textColor="#46e9ff"
+                        android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
-            <LinearLayout android:gravity="end" android:id="@+id/bjmore3" android:layout_width="match_parent"
-                          android:layout_height="wrap_content" android:layout_marginBottom="2dp"
-                          android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
-                          app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
-                          app:layout_constraintStart_toStartOf="parent">
-                <TextView android:textSize="9sp" android:textColor="#e4d5d5d5" android:layout_gravity="center"
-                          android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="월간 풍력 : " android:paddingStart="10dp"/>
-                <TextView android:textSize="11sp" android:textColor="#46e9ff" android:id="@+id/mballon"
-                          android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-"
-                          android:textAlignment="viewEnd"/>
+
+            <LinearLayout
+                android:id="@+id/bjmore3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="2dp"
+                android:gravity="end"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingStart="10dp"
+                    android:text="월간 풍력 : "
+                    android:textColor="#e4d5d5d5"
+                    android:textSize="9sp" />
+
+                <TextView
+                    android:id="@+id/mballon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textAlignment="viewEnd"
+                    android:textColor="#46e9ff"
+                    android:textSize="11sp" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

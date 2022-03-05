@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:background="@drawable/alert_dialog"
-        android:layout_width="300.0dip"
-        android:layout_height="wrap_content">
+    android:layout_width="300.0dip"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/alert_dialog"
+    android:orientation="vertical">
 
     <TextView
-            android:textSize="16.0sp"
-            android:textColor="#ffffffff"
-            android:gravity="center"
-            android:id="@+id/question"
-            android:background="@android:color/transparent"
-            android:paddingTop="20.0dip"
-            android:layout_width="fill_parent"
-            android:layout_height="110.0dip"
-            android:layout_marginLeft="1.0dip"
-            android:layout_marginTop="1.0dip"
-            android:layout_marginRight="1.0dip"
-            android:text="@string/exit"
-            android:textAlignment="center" />
+        android:id="@+id/question"
+        android:layout_width="fill_parent"
+        android:layout_height="110.0dip"
+        android:layout_marginLeft="1.0dip"
+        android:layout_marginTop="1.0dip"
+        android:layout_marginRight="1.0dip"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:paddingTop="20.0dip"
+        android:text="@string/exit"
+        android:textAlignment="center"
+        android:textColor="#ffffffff"
+        android:textSize="16.0sp" />
 
     <TextView
-            android:textSize="12.0sp"
-            android:textColor="#a6ffffff"
-            android:ellipsize="marquee"
-            android:gravity="center"
-            android:id="@+id/warning"
-            android:layout_width="fill_parent"
-            android:layout_height="20.0dip"
-            android:text="            너무 짧은 간격의 새로고침은 핸드폰에 무리를 줄 수 있습니다 :)"
-            android:singleLine="true"
-            android:textAlignment="center" />
+        android:id="@+id/warning"
+        android:layout_width="fill_parent"
+        android:layout_height="20.0dip"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="            너무 짧은 간격의 새로고침은 핸드폰에 무리를 줄 수 있습니다 :)"
+        android:textAlignment="center"
+        android:textColor="#a6ffffff"
+        android:textSize="12.0sp" />
 
     <View
-            android:background="#ff000000"
-            android:layout_width="fill_parent"
-            android:layout_height="1.0dip"
-            android:layout_marginLeft="1.0dip"
-            android:layout_marginRight="1.0dip" />
+        android:layout_width="fill_parent"
+        android:layout_height="1.0dip"
+        android:layout_marginLeft="1.0dip"
+        android:layout_marginRight="1.0dip"
+        android:background="#ff000000" />
 
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="60.0dip">
+        android:layout_width="fill_parent"
+        android:layout_height="60.0dip"
+        android:orientation="horizontal">
 
         <Button
-                android:textSize="14.0sp"
-                android:textColor="#99ffffff"
-                android:gravity="center"
-                android:id="@+id/closeNotOk"
-                android:background="@android:color/transparent"
-                android:layout_width="fill_parent"
-                android:layout_height="60.0dip"
-                android:text="안나감"
-                android:layout_weight="1.0" />
+            android:id="@+id/closeNotOk"
+            android:layout_width="fill_parent"
+            android:layout_height="60.0dip"
+            android:layout_weight="1.0"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="안나감"
+            android:textColor="#99ffffff"
+            android:textSize="14.0sp" />
 
         <View
-                android:background="#ff000000"
-                android:layout_width="1.0dip"
-                android:layout_height="fill_parent" />
+            android:layout_width="1.0dip"
+            android:layout_height="fill_parent"
+            android:background="#ff000000" />
 
         <Button
-                android:textSize="14.0sp"
-                android:textStyle="bold"
-                android:textColor="#ffffffff"
-                android:gravity="center"
-                android:id="@+id/closeOkButton"
-                android:background="@android:color/transparent"
-                android:layout_width="fill_parent"
-                android:layout_height="60.0dip"
-                android:text="나감"
-                android:layout_weight="1.0"
-                android:textAllCaps="false" />
+            android:id="@+id/closeOkButton"
+            android:layout_width="fill_parent"
+            android:layout_height="60.0dip"
+            android:layout_weight="1.0"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="나감"
+            android:textAllCaps="false"
+            android:textColor="#ffffffff"
+            android:textSize="14.0sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

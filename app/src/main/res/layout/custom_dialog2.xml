@@ -1,68 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:layout_marginStart="20dp"
-              android:layout_marginEnd="20dp"
-              android:layout_gravity="center"
-              android:background="@drawable/alert_dialog2">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:background="@drawable/alert_dialog2"
+    android:orientation="vertical">
 
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:gravity="center"
-            android:textColor="#CCCCCC"
-            android:paddingTop="20dp"
-            android:textSize="16sp"
-            android:id="@+id/move_question"
-            android:textAlignment="center"
-            android:text="해당 BJ로 이동?"
-            android:layout_marginTop="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:background="@android:color/transparent"/>
+        android:id="@+id/move_question"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginRight="1dp"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:text="해당 BJ로 이동?"
+        android:textAlignment="center"
+        android:textColor="#CCCCCC"
+        android:textSize="16sp" />
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#000000"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:background="#000000" />
 
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/moveWeb"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:orientation="horizontal">
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="#BFFFFFFF"
-                android:text="Web"
-                android:textSize="14sp"
-                android:background="@android:color/transparent"
-                android:textAllCaps="false"
-                android:id="@+id/moveWeb"/>
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="Web"
+            android:textAllCaps="false"
+            android:textColor="#BFFFFFFF"
+            android:textSize="14sp" />
 
         <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="#000000"/>
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#000000" />
 
         <Button
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="#BFFFFFFF"
-                android:text="App"
-                android:textSize="14sp"
-                android:background="@android:color/transparent"
-                android:textStyle="bold"
-                android:textAllCaps="false" android:id="@+id/moveApp"/>
+            android:id="@+id/moveApp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="App"
+            android:textAllCaps="false"
+            android:textColor="#BFFFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
