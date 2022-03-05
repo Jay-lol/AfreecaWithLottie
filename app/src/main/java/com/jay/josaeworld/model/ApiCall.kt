@@ -12,13 +12,15 @@ interface ApiCall {
      * BJ 정보
      */
     @GET("api/{user}/station")
-    fun getBjInfo(@Header("User-Agent") head : String,
-                  @Path("user") user: String): Single<AfSearchResponse>
+    fun getBjInfo(
+        @Header("User-Agent") head: String,
+        @Path("user") user: String
+    ): Single<AfSearchResponse>
 
     /**
      * 시조새 키워드로 검색한 결과
      */
     @GET("api.php?m=liveSearch&v=1.0&szOrder=&c=UTF-8&szKeyword=%25EC%258B%259C%25EC%25A1%25B0%25EC%2583%2588&nPageNo=&nListCnt=20&hl=1&onlyParent=1")
-    fun getSearchInfo(@Header("User-Agent") head : String) : Single<RealBroad>
+    fun getSearchInfo(@Header("User-Agent") head: String): Single<RealBroad>
     // &_=
 }

@@ -56,14 +56,20 @@ class BroadCastActivity : BaseBroadActivity() {
      * 팀원 목록 보여주기
      */
     private fun setBroadView(list: ArrayList<BroadInfo>) {
-        mAdapter = RecyclerBroadListAdapter(Glide.with(this), list.sortedWith(
-            compareBy({ -it.viewCnt.filter { c -> c.isDigit() }.toInt() },   // 시청자순
-                { -it.onOff }, // 방송켜져있는지, 비번방 처리
-                { it.bid != secondSujang },
-                { it.balloninfo?.dayballon?.filter { c -> c.isDigit() }?.toInt()?.times(-1) },
-                { it.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toInt()?.times(-1) },
-                { -it.fanCnt.filter { c -> c.isDigit() }.toInt() })  // 즐찾 순
-        ), secondSujang, memberClick)
+        mAdapter = RecyclerBroadListAdapter(
+            Glide.with(this),
+            list.sortedWith(
+                compareBy(
+                    { -it.viewCnt.filter { c -> c.isDigit() }.toInt() }, // 시청자순
+                    { -it.onOff }, // 방송켜져있는지, 비번방 처리
+                    { it.bid != secondSujang },
+                    { it.balloninfo?.dayballon?.filter { c -> c.isDigit() }?.toInt()?.times(-1) },
+                    { it.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toInt()?.times(-1) },
+                    { -it.fanCnt.filter { c -> c.isDigit() }.toInt() }
+                ) // 즐찾 순
+            ),
+            secondSujang, memberClick
+        )
 
         binding.broadRecyclerView.adapter = mAdapter
     }
@@ -85,7 +91,7 @@ class BroadCastActivity : BaseBroadActivity() {
                 binding.broadRecyclerView.adapter = sAdapter
             }
 
-            if (it==null)
+            if (it == null)
                 Toast.makeText(this, "검색 실패!", Toast.LENGTH_SHORT).show()
         })
     }
@@ -120,13 +126,13 @@ class BroadCastActivity : BaseBroadActivity() {
 
         dlg.setContentView(R.layout.custom_dialog2)
 
-        dlg.move_question.text = "$viewCnt 명이 시청중입니다!\n${bjname} 방송으로 이동할까요?"
+        dlg.move_question.text = "$viewCnt 명이 시청중입니다!\n$bjname 방송으로 이동할까요?"
 
         dlg.show()
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dlg.moveApp.setOnClickListener {
-            intent.data = Uri.parse("afreeca://player/live?user_id=${bid}")
+            intent.data = Uri.parse("afreeca://player/live?user_id=$bid")
             try {
                 startActivity(intent)
             } catch (e: Exception) {
@@ -142,7 +148,7 @@ class BroadCastActivity : BaseBroadActivity() {
         dlg.moveWeb.setOnClickListener {
             intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("http://m.afreecatv.com/#/player/${bid}")
+                Uri.parse("http://m.afreecatv.com/#/player/$bid")
             )
             startActivity(intent)
             dlg.dismiss()
@@ -150,7 +156,6 @@ class BroadCastActivity : BaseBroadActivity() {
     }
 
     override fun showError(code: Int) {
-
     }
 
     override fun showToast(msg: String) {

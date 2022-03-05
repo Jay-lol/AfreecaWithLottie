@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
-import com.jay.josaeworld.MainApp.Companion.disposable
 import com.jay.josaeworld.R
 import com.jay.josaeworld.base.BaseMainActivity
 import com.jay.josaeworld.databinding.ActivityMainBinding
@@ -30,7 +29,6 @@ import kotlinx.android.synthetic.main.info_dialog.*
 import kotlinx.android.synthetic.main.memberchangereport_dialog.*
 import java.util.*
 
-
 class MainActivity : BaseMainActivity(), View.OnClickListener {
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private lateinit var binding: ActivityMainBinding
@@ -39,7 +37,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
     private var isLoading = false
     private var allViewers = 0
     private var allBallon = 0
-    private var isFirst: Int = 0   // 0 아무것도안함, 1 최초로딩 상태만 변경 ,2 이미 데이터가 로딩된상태
+    private var isFirst: Int = 0 // 0 아무것도안함, 1 최초로딩 상태만 변경 ,2 이미 데이터가 로딩된상태
     private var random = Random()
     lateinit var mAdView: AdView
     private var isRecentData = false
@@ -72,14 +70,14 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
         secondSujangList = newList
     }
 
-    override fun initTeamData(teamInfo: List<String>, time : Long) {
+    override fun initTeamData(teamInfo: List<String>, time: Long) {
         this.teamInfo = teamInfo
         val now = System.currentTimeMillis()
         // 30초 보다 크면 백그라운드에서 업데이트 함수 돌려놈
         if (now - time > 30000 && isFirst == 0) {
             isFirst = 1
         }
-        setDataListener()  // 팀 데이터 오면 리스너 등록
+        setDataListener() // 팀 데이터 오면 리스너 등록
         splashException = true
         if (!isLoading) {
             binding.teamOne.text = this.teamInfo[0]
@@ -99,15 +97,14 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
         binding.fabChat.setOnClickListener {
             if (true) {
                 Toast.makeText(baseContext, "서버 비용 문제로 준비중입니다\n빠른 시일내에 업데이트 하겠습니다", Toast.LENGTH_SHORT).show()
-            } else
-                if (!isLoading) {
-                    val intent = Intent(this, ChatActivity::class.java)
-                    val androidId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
-                    val nickname = UtilFnc.makeCuteNickName(androidId) + androidId.slice(0..1)
-                    intent.putExtra("userId", nickname)
-                    intent.putExtra("uid", androidId)
-                    startActivity(intent)
-                }
+            } else if (!isLoading) {
+                val intent = Intent(this, ChatActivity::class.java)
+                val androidId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+                val nickname = UtilFnc.makeCuteNickName(androidId) + androidId.slice(0..1)
+                intent.putExtra("userId", nickname)
+                intent.putExtra("uid", androidId)
+                startActivity(intent)
+            }
         }
         binding.fabRounge.setOnClickListener {
             if (!isLoading) {
@@ -221,7 +218,6 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
         binding.searchSijosae.setOnClickListener(this)
     }
 
-
     private fun upDateUi(bjlist: Array<ArrayList<BroadInfo>>) {
 
         if (!isLoading) {
@@ -274,7 +270,6 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                     teamCardViewList[index].visibility = View.VISIBLE
                 }
 
-
                 for (member in team) {
                     if (member.onOff == 1) {
                         onOff = true
@@ -324,7 +319,6 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                 startCountAnimation(nAllballon, 1)
                 allBallon = nAllballon
             }
-
         } catch (e: Exception) {
             Log.e(TAG, "upDateUi: $e")
             this.showError(1)
@@ -347,7 +341,6 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                 .into(binding.sujangThumbnail)
 
             view += v.viewCnt.filter { it.isDigit() }.toInt()
-
         } else {
             binding.viewCnt.text = ""
             binding.sujangThumbnail.visibility = View.INVISIBLE
@@ -426,7 +419,6 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
             }
             dlg.dismiss()
         }
-
     }
 
     private fun startCountAnimation(num: Int, code: Int) {
@@ -597,7 +589,6 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                             popDialog(v.bid, question, 0)
                         } else if (isLoading)
                             this.showError(3)
-
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
                         toast = Toast.makeText(
@@ -628,10 +619,8 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                             }
                             dlg.show()
                             dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
                         } else
                             this.showError(3)
-
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
                         toast = Toast.makeText(

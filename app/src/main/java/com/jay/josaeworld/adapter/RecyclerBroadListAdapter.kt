@@ -24,7 +24,8 @@ class RecyclerBroadListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BJViewHolder {
         return BJViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.recycler_broad, parent, false), memberClick, parent.context
+                .inflate(R.layout.recycler_broad, parent, false),
+            memberClick, parent.context
         )
     }
 

@@ -9,11 +9,10 @@ import com.google.android.gms.ads.MobileAds
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.ActivityChatBinding
 
-
 class ChatActivity : AppCompatActivity() {
-    lateinit var binding : ActivityChatBinding
-    lateinit var mAdView : AdView
-    lateinit var nickname : String
+    lateinit var binding: ActivityChatBinding
+    lateinit var mAdView: AdView
+    lateinit var nickname: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
@@ -24,7 +23,7 @@ class ChatActivity : AppCompatActivity() {
         val uid = intent.getStringExtra("uid") ?: "123456789"
         Toast.makeText(baseContext, "${nickname}으로 접속", Toast.LENGTH_SHORT).show()
 
-        MobileAds.initialize(this){}
+        MobileAds.initialize(this) {}
         mAdView = binding.adView
 
 //        val lyparams = mAdView.layoutParams as ConstraintLayout.LayoutParams
@@ -49,7 +48,7 @@ class ChatActivity : AppCompatActivity() {
         super.onStop()
     }
 
-    //status bar의 높이 계산
+    // status bar의 높이 계산
     fun getStatusBarHeight(): Int {
         var result = 0
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")

@@ -30,13 +30,15 @@ abstract class BaseMainActivity : AppCompatActivity(), MainContract.View {
         )
         initPresenter()
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         window.statusBarColor = Color.TRANSPARENT
     }
 
     private fun initPresenter() {
         presenter.takeView(this)
     }
+
     abstract fun setDataListener()
     abstract fun removeDataListener()
 

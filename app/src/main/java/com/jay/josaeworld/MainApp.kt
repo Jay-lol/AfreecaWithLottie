@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import java.io.IOException
 import java.net.SocketException
 
-open class MainApp : Application(){
+open class MainApp : Application() {
     companion object {
         lateinit var disposable: Disposable
     }

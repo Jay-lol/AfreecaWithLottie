@@ -9,10 +9,10 @@ import com.jay.josaeworld.R
 import com.jay.josaeworld.contract.BroadContract
 import com.jay.josaeworld.presenter.BroadPresenter
 
-abstract class BaseBroadActivity
-    : AppCompatActivity(), BroadContract.View {
+abstract class BaseBroadActivity :
+    AppCompatActivity(), BroadContract.View {
 
-    lateinit var presenter : BroadPresenter
+    lateinit var presenter: BroadPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +22,7 @@ abstract class BaseBroadActivity
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         window.statusBarColor = Color.TRANSPARENT
     }
-    private fun initPresenter(){
+    private fun initPresenter() {
         presenter.takeView(this)
     }
     override fun onDestroy() {

@@ -9,20 +9,20 @@ import java.util.*
 interface MainContract {
 
     interface View : BaseView {
-        fun changeMainBJData(newBJDataList : Array<ArrayList<BroadInfo>>?)
+        fun changeMainBJData(newBJDataList: Array<ArrayList<BroadInfo>>?)
         fun stopLoadingAnimation()
-        fun makeRefreshstate(state : Boolean)
-        fun changeIsLoadingState(state : Boolean)
-        fun initSecondSujang(newList : HashMap<String, String>)
-        fun initTeamData(teamInfo : List<String>, time :Long)
-        fun showCustomDialog(code : Int)
+        fun makeRefreshstate(state: Boolean)
+        fun changeIsLoadingState(state: Boolean)
+        fun initSecondSujang(newList: HashMap<String, String>)
+        fun initTeamData(teamInfo: List<String>, time: Long)
+        fun showCustomDialog(code: Int)
     }
 
-    interface Presenter : BasePresenter<View>{
-        fun getRecentBJData(bjLists: Array<ArrayList<BroadInfo>>, bjDataList : Array<ArrayList<BroadInfo>>?)
+    interface Presenter : BasePresenter<View> {
+        fun getRecentBJData(bjLists: Array<ArrayList<BroadInfo>>, bjDataList: Array<ArrayList<BroadInfo>>?)
         fun createBJDataListener(teamSize: Int)
         fun removeBJDataListener()
         fun getSecondSujang()
-        fun getTeamData(context : Context)
+        fun getTeamData(context: Context)
     }
 }

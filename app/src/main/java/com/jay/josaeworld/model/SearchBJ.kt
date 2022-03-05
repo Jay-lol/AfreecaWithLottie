@@ -14,7 +14,7 @@ class SearchBJ {
     private val TAG: String = "로그"
     private val request = RetrofitBuilder.REQUEST
     fun doSearch(teamCode: Int, bid: String): Single<BroadInfo> {
-        return api.getBjInfo(request, bid)   // bj의 고유 id
+        return api.getBjInfo(request, bid) // bj의 고유 id
             .map { getBroadInfo(it, teamCode) }
             .timeout(3, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
@@ -47,7 +47,7 @@ class SearchBJ {
             ?: "방송 중이지 않습니다"
         val allviewers: String = searchResponse.broad?.let {
             UtilFnc.goodString(it.current_sum_viewer.toString())
-        } ?: "0"// 전체 시청자
+        } ?: "0" // 전체 시청자
         val imgurl: String = searchResponse.broad?.let {
             "http://liveimg.afreecatv.com/${it.broad_no}_480x270.jpg?dummy="
         } ?: "http://res.afreecatv.com/images/default_logo_300x300.jpg"

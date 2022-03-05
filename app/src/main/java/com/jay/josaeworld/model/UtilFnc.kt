@@ -10,8 +10,10 @@ object UtilFnc {
     fun goodString(st: String): String {
         return try {
             if (st.length > 3) {
-                (goodString(st.slice(0 until st.length - 3))
-                        + "," + st.slice(st.length - 3 until st.length))
+                (
+                    goodString(st.slice(0 until st.length - 3)) +
+                        "," + st.slice(st.length - 3 until st.length)
+                    )
             } else
                 st
         } catch (e: Exception) {
@@ -20,7 +22,7 @@ object UtilFnc {
         }
     }
 
-    fun goodBallonData(v : HashMap<*,*>) : BallonInfo {
+    fun goodBallonData(v: HashMap<*, *>): BallonInfo {
         return BallonInfo(
             if (v["dayballon"] == null) "0" else v["dayballon"] as String,
             if (v["monthballon"] == null) "0" else v["monthballon"] as String,
@@ -31,7 +33,7 @@ object UtilFnc {
         )
     }
 
-    fun goodBjData(v: HashMap<*, *>, teamCode: String, bid: String, b : BallonInfo?): BroadInfo {
+    fun goodBjData(v: HashMap<*, *>, teamCode: String, bid: String, b: BallonInfo?): BroadInfo {
         return BroadInfo(
             teamCode.toInt(),
             if (v["onOff"] == null) 0 else (v["onOff"] as Long).toInt(),
@@ -45,7 +47,7 @@ object UtilFnc {
             if (v["okCnt"] == null) "0" else v["okCnt"] as String,
             if (v["incFanCnt"] == null) "0" else v["incFanCnt"] as String,
             v["profilePhoto"]?.let { it as String } ?: "http://res.afreecatv.com/images/default_logo_300x300.jpg",
-            b ?: BallonInfo("0","0","0","0분","0","0")
+            b ?: BallonInfo("0", "0", "0", "0분", "0", "0")
         )
     }
 
@@ -95,14 +97,14 @@ object UtilFnc {
 
         val len = st.length
         var start = 0
-        var last = len/3
+        var last = len / 3
         try {
             for (i in 0 until 3) {
                 val t: String
                 if (i != 2) {
                     t = st.slice(start until last)
                     start = last
-                    last += len/3
+                    last += len / 3
                 } else
                     t = st.slice(last until len)
 
@@ -112,7 +114,7 @@ object UtilFnc {
                 }
 
                 if (i == 0)
-                    nickname += a[sum % a.size]+" "
+                    nickname += a[sum % a.size] + " "
                 else if (i == 1)
                     nickname += b[sum % b.size]
                 else
@@ -120,7 +122,7 @@ object UtilFnc {
             }
 
             return nickname
-        }catch (e : Exception){
+        } catch (e: Exception) {
             return "익명"
         }
     }

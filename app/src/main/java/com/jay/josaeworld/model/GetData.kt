@@ -7,7 +7,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.jay.josaeworld.MainApp.Companion.disposable
 import com.jay.josaeworld.model.response.BallonInfo
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.model.response.gsonParse.RealBroad
@@ -138,7 +137,6 @@ object GetData {
                     Log.e(TAG, "GetData ~ addonFailureListener() called $it")
                     completion(false)
                 }
-
         } catch (e: Exception) {
             completion(false)
             Log.e(TAG, "sendUpdateData: $e")
@@ -146,7 +144,7 @@ object GetData {
     }
 
     /**
-    비제이 고유 아이디 가져와서 데이터 요청
+     비제이 고유 아이디 가져와서 데이터 요청
      */
     @SuppressLint("CheckResult")
     fun liveOnData(bjlist: Array<ArrayList<BroadInfo>>, complete: (Boolean, Int, String) -> Unit) {
@@ -164,7 +162,8 @@ object GetData {
         }.toList()
 
         Single.zip(singles) { array ->
-            array.map { it as BroadInfo } }
+            array.map { it as BroadInfo }
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ bjdata ->
@@ -202,7 +201,6 @@ object GetData {
                     Log.e(TAG, "sendReport ~ addonFailureListener() called $it")
                     completion(false)
                 }
-
         } catch (e: Exception) {
             completion(false)
             Log.e(TAG, "sendReport: $e")

@@ -23,7 +23,8 @@ class RecyclerSearchListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchListViewHolder {
         return SearchListViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.recycler_broad2, parent, false), searchMemberClick
+                .inflate(R.layout.recycler_broad2, parent, false),
+            searchMemberClick
         )
     }
 

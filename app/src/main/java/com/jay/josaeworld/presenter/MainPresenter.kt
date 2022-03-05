@@ -51,7 +51,7 @@ class MainPresenter : MainContract.Presenter {
         }
     }
 
-    //newBJDataList : Array<ArrayList<BroadInfo>>?
+    // newBJDataList : Array<ArrayList<BroadInfo>>?
     override fun createBJDataListener(teamSize: Int) {
         GetData.setBjDataListener(teamSize) { success, newDataList ->
             if (success) {

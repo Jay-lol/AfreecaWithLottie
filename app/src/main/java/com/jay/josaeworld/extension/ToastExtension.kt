@@ -30,7 +30,7 @@ internal fun Activity.showToast(code: Int) {
     toast.show()
 }
 
-internal fun Activity.toast(msg : String){
+internal fun Activity.toast(msg: String) {
     val toast = Toast.makeText(
         baseContext, msg, Toast.LENGTH_SHORT
     )

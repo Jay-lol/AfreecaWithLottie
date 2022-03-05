@@ -32,7 +32,7 @@ class BJViewHolder(itemView: View, memberClick: (BroadInfo, Int) -> Unit, cntext
     private val secondSj: LottieAnimationView = itemView.secondsujang
     private val infobutton: LottieAnimationView = itemView.moreInfo
 
-    private val clickMember : (BroadInfo, Int) -> Unit = memberClick
+    private val clickMember: (BroadInfo, Int) -> Unit = memberClick
 
     fun bind(broadInfo: BroadInfo?, glide: RequestManager, secondSujang: String) {
         if (broadInfo?.onOff == 1) {
@@ -42,7 +42,7 @@ class BJViewHolder(itemView: View, memberClick: (BroadInfo, Int) -> Unit, cntext
 
             error.visibility = View.INVISIBLE
             thumbnail.visibility = View.VISIBLE
-            glide.load(broadInfo.imgurl + "${random.nextInt(123456789)}")  // 실시간정보를 위해 난수 입력
+            glide.load(broadInfo.imgurl + "${random.nextInt(123456789)}") // 실시간정보를 위해 난수 입력
                 .override(480, 270)
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
@@ -55,7 +55,6 @@ class BJViewHolder(itemView: View, memberClick: (BroadInfo, Int) -> Unit, cntext
             val marginInDp = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, sizeInDP.toFloat(), context.resources.displayMetrics
             ).toInt()
-
 
             val x = thumbnail.layoutParams as ConstraintLayout.LayoutParams
             x.topMargin = marginInDp

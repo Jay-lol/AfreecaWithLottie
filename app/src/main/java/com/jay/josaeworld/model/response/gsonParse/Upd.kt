@@ -1,6 +1,6 @@
 package com.jay.josaeworld.model.response.gsonParse
 
-data class Upd (
+data class Upd(
     val fan_cnt: Int,
     val today0_ok_cnt: Int,
     val today1_ok_cnt: Int,

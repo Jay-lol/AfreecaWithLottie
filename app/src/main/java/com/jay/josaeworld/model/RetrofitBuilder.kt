@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
 
-    lateinit var BASE_URL : String
-    lateinit var SEARCH_BASE_URL : String
-    lateinit var REQUEST : String
+    lateinit var BASE_URL: String
+    lateinit var SEARCH_BASE_URL: String
+    lateinit var REQUEST: String
 
-    fun setBaseURL(x: String ,y : String, z : String){
+    fun setBaseURL(x: String, y: String, z: String) {
         BASE_URL = x
         SEARCH_BASE_URL = y
         REQUEST = z

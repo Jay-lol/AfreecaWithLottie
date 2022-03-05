@@ -10,7 +10,7 @@ import com.jay.josaeworld.base.BaseMainActivity.Companion.isSplash
 import com.jay.josaeworld.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
-    private lateinit var binding : ActivitySplashBinding
+    private lateinit var binding: ActivitySplashBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)

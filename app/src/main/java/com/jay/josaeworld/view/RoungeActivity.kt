@@ -10,7 +10,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.jay.josaeworld.databinding.ActivityRoungeBinding
 
-
 class RoungeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRoungeBinding
@@ -37,7 +36,7 @@ class RoungeActivity : AppCompatActivity() {
 
         webView.loadUrl("https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)")
 
-        webView.webViewClient = object : WebViewClient(){
+        webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 webView.loadUrl("javascript:(function(){" + "document.querySelector(\"meta[name=viewport]\").setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=1.0, user-scalable=yes,target-densitydpi=medium-dpi');" + "})();")
