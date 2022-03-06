@@ -9,21 +9,22 @@ import com.jay.josaeworld.model.GetData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ActivityRetainedComponent::class)
 object DatabaseModule {
 
     @Provides
-    @Singleton
+    @ActivityRetainedScoped
     fun providesDataRepo(
         getMemberUsecase: GetMemberUsecase,
         searchKeywordUsecase: SearchKeywordUsecase
@@ -32,7 +33,7 @@ object DatabaseModule {
     }
 
     @Provides
-    @Singleton
+    @ActivityRetainedScoped
     fun providesMemberRestrofit(
         @ApplicationContext context: Context,
         okHttpClient: OkHttpClient
@@ -47,7 +48,7 @@ object DatabaseModule {
     }
 
     @Provides
-    @Singleton
+    @ActivityRetainedScoped
     fun providesSearchRestrofit(
         @ApplicationContext context: Context,
         okHttpClient: OkHttpClient
@@ -62,7 +63,7 @@ object DatabaseModule {
     }
 
     @Provides
-    @Singleton
+    @ActivityRetainedScoped
     fun providesOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
@@ -71,4 +72,8 @@ object DatabaseModule {
             .retryOnConnectionFailure(false)
             .build()
     }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun provideRandom(): Random = Random()
 }

@@ -17,12 +17,12 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.jay.josaeworld.R
+import com.jay.josaeworld.UtilFnc
 import com.jay.josaeworld.base.BaseViewBindingActivity
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.databinding.*
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
-import com.jay.josaeworld.model.UtilFnc
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.presenter.MainPresenter
 import dagger.hilt.android.AndroidEntryPoint

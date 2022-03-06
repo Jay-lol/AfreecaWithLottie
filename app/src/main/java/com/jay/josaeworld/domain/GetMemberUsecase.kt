@@ -1,8 +1,8 @@
 package com.jay.josaeworld.domain
 
+import com.jay.josaeworld.UtilFnc.getBroadInfo
 import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.model.ApiCall
-import com.jay.josaeworld.model.UtilFnc.getBroadInfo
 import com.jay.josaeworld.model.response.BallonInfo
 import com.jay.josaeworld.model.response.BroadInfo
 import io.reactivex.Single

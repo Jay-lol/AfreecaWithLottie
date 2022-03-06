@@ -1,4 +1,4 @@
-package com.jay.josaeworld.model
+package com.jay.josaeworld
 
 import android.util.Log
 import com.jay.josaeworld.model.response.AfSearchResponse
@@ -137,7 +137,7 @@ object UtilFnc {
         val title: String = searchResponse.broad?.broad_title?.replace("   ", "")
             ?: "방송 중이지 않습니다"
         val allviewers: String = searchResponse.broad?.let {
-            UtilFnc.goodString(it.current_sum_viewer.toString())
+            goodString(it.current_sum_viewer.toString())
         } ?: "0" // 전체 시청자
         val imgurl: String = searchResponse.broad?.let {
             "http://liveimg.afreecatv.com/${it.broad_no}_480x270.jpg?dummy="
@@ -147,12 +147,12 @@ object UtilFnc {
         val activeNo = searchResponse.station.active_no
         val profile = "http:" + searchResponse.profile
         // 팬 숫자
-        val fanCnt: String = UtilFnc.goodString(searchResponse.station.upd.fan_cnt.toString())
+        val fanCnt: String = goodString(searchResponse.station.upd.fan_cnt.toString())
         // 추천 숫자
         val okCnt: String = if (activeNo == 0)
-            UtilFnc.goodString(searchResponse.station.upd.today0_ok_cnt.toString())
+            goodString(searchResponse.station.upd.today0_ok_cnt.toString())
         else
-            UtilFnc.goodString(searchResponse.station.upd.today1_ok_cnt.toString())
+            goodString(searchResponse.station.upd.today1_ok_cnt.toString())
 
         // 오늘 추가된 즐겨찾기 수
         var incFanCnt: String = if (activeNo == 0)
@@ -161,8 +161,8 @@ object UtilFnc {
             searchResponse.station.upd.today1_fav_cnt.toString()
 
         incFanCnt = if (incFanCnt.toInt() < 0)
-            "-" + UtilFnc.goodString(incFanCnt.slice(1 until incFanCnt.length))
-        else UtilFnc.goodString(incFanCnt)
+            "-" + goodString(incFanCnt.slice(1 until incFanCnt.length))
+        else goodString(incFanCnt)
 
         Log.d(
             TAG + "test",
