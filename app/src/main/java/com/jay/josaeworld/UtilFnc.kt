@@ -115,4 +115,15 @@ object UtilFnc {
             return "익명"
         }
     }
+
+    fun goodBallonData(v: HashMap<*, *>): BallonInfo {
+        return BallonInfo(
+            if (v["dayballon"] == null) "0" else v["dayballon"] as String,
+            if (v["monthballon"] == null) "0" else v["monthballon"] as String,
+            if (v["monthmaxview"] == null) "0" else v["monthmaxview"] as String,
+            if (v["monthtime"] == null) "0분" else v["monthtime"] as String,
+            if (v["monthview"] == null) "0" else v["monthview"] as String,
+            if (v["monthpay"] == null) "0" else v["monthpay"] as String,
+        )
+    }
 }

@@ -157,40 +157,13 @@ class MainPresenter @Inject constructor(
     override fun createBJDataListener(teamSize: Int) {
         // 이미 등록 되어있으면 처리안되게 설정
         if (bjStatusListener != null) return
+
+        var recentBJList: Array<java.util.ArrayList<BroadInfo>>
         bjStatusListener = listenBJUpToDateUseCase(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    try {
-                        ballonData(teamSize)
-                    } catch (e: Exception) {
-                        searchView?.stopLoadingAnimation()
-                        searchView?.showToast("$e")
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    searchView?.stopLoadingAnimation()
-                    searchView?.showToast("$error")
-                }
-            }
-        )
-    }
-
-    private fun ballonData(teamSize: Int) {
-        var recentBJList: Array<java.util.ArrayList<BroadInfo>> = Array(teamSize) { arrayListOf() }
-        getBallonDataUseCase(
-            object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    try {
-                        val ballonMap = HashMap<String, BallonInfo>()
-
-                        for (x in snapshot.children) {
-                            val v = x.value as HashMap<*, *>
-                            ballonMap[x.key as String] = v.goodBallonData()
-                        }
-                        Log.d(TAG, "GetData ~ ballonData() called $ballonMap")
-
-                        // 팀 숫자만큼 배열 할당
+                    recentBJList = Array(teamSize) { arrayListOf() }
+                    ballonData { ballonMap ->
                         try {
                             for ((index, team) in snapshot.children.withIndex()) {
                                 val teamCode = team.key as String
@@ -211,19 +184,44 @@ class MainPresenter @Inject constructor(
                                 if (index == teamSize - 2) recentBJList =
                                     UtilFnc.sortedBJlist(recentBJList)
                             }
+                            // 업데이트
+                            Log.d(TAG, "MainPresenter ~ bjDataListener() 갱신 성공")
+                            searchView?.changeMainBJData(recentBJList)
                         } catch (e: Exception) {
+                            searchView?.stopLoadingAnimation()
                             searchView?.showToast("$e")
                         }
+                    }
+                }
 
-                        // 업데이트
-                        Log.d(TAG, "MainPresenter ~ bjDataListener() 갱신 성공")
-                        searchView?.changeMainBJData(recentBJList)
+                override fun onCancelled(error: DatabaseError) {
+                    searchView?.stopLoadingAnimation()
+                    searchView?.showToast("$error")
+                }
+            }
+        )
+    }
+
+    private fun ballonData(callback: (HashMap<String, BallonInfo>) -> Unit) {
+        getBallonDataUseCase(
+            object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    try {
+                        val ballonMap = HashMap<String, BallonInfo>()
+                        for (x in snapshot.children) {
+                            val v = x.value as HashMap<*, *>
+                            ballonMap[x.key as String] = UtilFnc.goodBallonData(v)
+                        }
+                        Log.d(TAG, "GetData ~ ballonData() called $ballonMap")
+                        callback(ballonMap)
                     } catch (e: Exception) {
+                        searchView?.stopLoadingAnimation()
                         searchView?.showToast("$e")
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
+                    searchView?.stopLoadingAnimation()
                     searchView?.showToast("$error")
                 }
             }
