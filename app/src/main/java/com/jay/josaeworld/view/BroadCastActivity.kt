@@ -18,19 +18,25 @@ import com.jay.josaeworld.adapter.RecyclerBroadListAdapter
 import com.jay.josaeworld.adapter.RecyclerSearchListAdapter
 import com.jay.josaeworld.base.BaseBroadActivity
 import com.jay.josaeworld.databinding.ActivityBroadCastBinding
+import com.jay.josaeworld.databinding.CustomDialog2Binding
+import com.jay.josaeworld.databinding.InfoDialogBinding
 import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.model.GetData
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.model.response.SearchBJInfo
-import kotlinx.android.synthetic.main.custom_dialog2.*
-import kotlinx.android.synthetic.main.info_dialog.*
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class BroadCastActivity : BaseBroadActivity() {
     private lateinit var binding: ActivityBroadCastBinding
     private lateinit var mAdapter: RecyclerBroadListAdapter
     private lateinit var sAdapter: RecyclerSearchListAdapter
     private lateinit var secondSujang: String
     lateinit var mAdView: AdView
+
+    @Inject
+    lateinit var data: GetData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,12 +87,13 @@ class BroadCastActivity : BaseBroadActivity() {
         binding.searchLoading.visibility = View.VISIBLE
         binding.searchLoading.playAnimation()
 
-        GetData.searchJosae(complete = {
+        data.searchJosae(complete = {
             binding.searchLoading.pauseAnimation()
             binding.searchLoading.visibility = View.GONE
 
             it?.REAL_BROAD?.let { SearchList ->
-                sAdapter = RecyclerSearchListAdapter(Glide.with(this), SearchList, searchMemberClick)
+                sAdapter =
+                    RecyclerSearchListAdapter(Glide.with(this), SearchList, searchMemberClick)
 
                 binding.broadRecyclerView.adapter = sAdapter
             }
@@ -97,19 +104,19 @@ class BroadCastActivity : BaseBroadActivity() {
     }
 
     private val memberClick: (BroadInfo, Int) -> Unit = { v, code ->
-        val dlg = Dialog(this)
-
         if (code == 0) {
-            moveToLive(dlg, v.bid, v.bjname, v.viewCnt)
+            moveToLive(v.bid, v.bjname, v.viewCnt)
         } else {
-            dlg.setContentView(R.layout.info_dialog)
-            dlg.infoBjname.text = v.bjname
+            val dlg = Dialog(this)
+            val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
+            dlg.setContentView(dlgBinding.root)
+            dlgBinding.infoBjname.text = v.bjname
 
             v.balloninfo?.let {
-                dlg.monthview.text = v.balloninfo!!.monthview
-                dlg.monthmaxview.text = v.balloninfo!!.monthmaxview
-                dlg.monthtime.text = v.balloninfo!!.monthtime
-                dlg.monthpay.text = v.balloninfo!!.monthpay
+                dlgBinding.monthview.text = v.balloninfo!!.monthview
+                dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
+                dlgBinding.monthtime.text = v.balloninfo!!.monthtime
+                dlgBinding.monthpay.text = v.balloninfo!!.monthpay
             }
             dlg.show()
             dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -117,21 +124,21 @@ class BroadCastActivity : BaseBroadActivity() {
     }
 
     private val searchMemberClick: (SearchBJInfo) -> Unit = { v ->
-        val dlg = Dialog(this)
-        moveToLive(dlg, v.user_id, v.user_nick, v.total_view_cnt)
+        moveToLive(v.user_id, v.user_nick, v.total_view_cnt)
     }
 
-    private fun moveToLive(dlg: Dialog, bid: String, bjname: String, viewCnt: String) {
+    private fun moveToLive(bid: String, bjname: String, viewCnt: String) {
         var intent = Intent(Intent.ACTION_VIEW)
-
+        val dlg = Dialog(this)
+        val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
         dlg.setContentView(R.layout.custom_dialog2)
 
-        dlg.move_question.text = "$viewCnt 명이 시청중입니다!\n$bjname 방송으로 이동할까요?"
+        dlgBinding.moveQuestion.text = "$viewCnt 명이 시청중입니다!\n$bjname 방송으로 이동할까요?"
 
         dlg.show()
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dlg.moveApp.setOnClickListener {
+        dlgBinding.moveApp.setOnClickListener {
             intent.data = Uri.parse("afreeca://player/live?user_id=$bid")
             try {
                 startActivity(intent)
@@ -145,7 +152,7 @@ class BroadCastActivity : BaseBroadActivity() {
             dlg.dismiss()
         }
 
-        dlg.moveWeb.setOnClickListener {
+        dlgBinding.moveWeb.setOnClickListener {
             intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("http://m.afreecatv.com/#/player/$bid")

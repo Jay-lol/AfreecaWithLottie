@@ -1,20 +1,27 @@
 package com.jay.josaeworld.presenter
 
 import android.content.Context
+import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.model.GetData
 import com.jay.josaeworld.model.response.BroadInfo
-import java.util.*
+import javax.inject.Inject
 
-class MainPresenter : MainContract.Presenter {
+class MainPresenter @Inject constructor(
+    private val dataRepository: GetData
+) : MainContract.Presenter {
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private var searchView: MainContract.View? = null
 
-    override fun getRecentBJData(bjLists: Array<ArrayList<BroadInfo>>, bjDataList: Array<ArrayList<BroadInfo>>?) {
-        GetData.liveOnData(bjLists) { clear, errorCnt, name ->
+    override fun getRecentBJData(
+        bjLists: Array<ArrayList<BroadInfo>>,
+        bjDataList: Array<ArrayList<BroadInfo>>?
+    ) {
+        dataRepository.liveOnData(bjLists) { clear, errorCnt, name ->
             searchView?.stopLoadingAnimation()
             searchView?.makeRefreshstate(false)
             if (!clear) searchView?.showError(4)
@@ -53,7 +60,7 @@ class MainPresenter : MainContract.Presenter {
 
     // newBJDataList : Array<ArrayList<BroadInfo>>?
     override fun createBJDataListener(teamSize: Int) {
-        GetData.setBjDataListener(teamSize) { success, newDataList ->
+        dataRepository.setBjDataListener(teamSize) { success, newDataList ->
             if (success) {
                 Log.d(TAG, "MainPresenter ~ bjDataListener() 갱신 성공")
                 searchView?.changeMainBJData(newDataList)
@@ -66,26 +73,30 @@ class MainPresenter : MainContract.Presenter {
     }
 
     override fun removeBJDataListener() {
-        GetData.removeBjDataListener()
+        dataRepository.removeBjDataListener()
     }
 
     override fun getSecondSujang() {
-        GetData.secondSujang { newList ->
+        dataRepository.secondSujang { newList ->
             searchView?.initSecondSujang(newList)
         }
     }
 
     override fun getTeamData(context: Context) {
-        GetData.teamData { newList, time, isForce, minversionCode, currentversionCode ->
+        dataRepository.teamData { newList, time, isForce, minversionCode, currentversionCode ->
             val pi = context.packageManager.getPackageInfo(context.packageName, 0)
-            val vc = pi.versionCode
+            val vc = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                pi.longVersionCode
+            } else {
+                pi.versionCode.toLong()
+            }
             if (isForce && vc < minversionCode) {
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     searchView?.showCustomDialog(3)
                 }, 2000)
             } else {
                 if (vc < currentversionCode) {
-                    Handler().postDelayed({
+                    Handler(Looper.getMainLooper()).postDelayed({
                         searchView?.showCustomDialog(2)
                     }, 2000)
                 }
@@ -100,5 +111,15 @@ class MainPresenter : MainContract.Presenter {
 
     override fun dropView() {
         searchView = null
+    }
+
+    override fun sendReport(listOf: List<String>, function: () -> Unit) {
+        dataRepository.sendReport(listOf) {
+            if (it) {
+                searchView?.showToast("전송 완료\n검토 후 반영하겠습니다")
+                function()
+            } else
+                searchView?.showToast("전송 불가")
+        }
     }
 }

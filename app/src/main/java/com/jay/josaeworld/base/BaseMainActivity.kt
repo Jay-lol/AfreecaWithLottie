@@ -3,26 +3,39 @@ package com.jay.josaeworld.base
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewbinding.ViewBinding
 import com.jay.josaeworld.R
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.model.RetrofitBuilder
 import com.jay.josaeworld.presenter.MainPresenter
+import javax.inject.Inject
 
 /**
  * presenter 주입
  */
-abstract class BaseMainActivity : AppCompatActivity(), MainContract.View {
 
-    private val TAG: String = "로그 ${this.javaClass.simpleName}"
+abstract class BaseMainActivity<T : ViewBinding>(
+    private val bindingFactory: (LayoutInflater) -> T
+) : AppCompatActivity(), MainContract.View {
+
+    private var _binding: T? = null
+    val binding get() = requireNotNull(_binding)
     lateinit var presenter: MainPresenter
+
     var splashException = false
+
+    @Inject
+    lateinit var mainPresenter: MainPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = MainPresenter()
+        _binding = bindingFactory(layoutInflater)
+        setContentView(binding.root)
+        presenter = mainPresenter
         RetrofitBuilder.setBaseURL(
             getString(R.string.BASE_URL),
             getString(R.string.SEARCH_BASE_URL),
@@ -75,6 +88,8 @@ abstract class BaseMainActivity : AppCompatActivity(), MainContract.View {
     }
 
     companion object {
+        private const val TAG = "BaseMainActivity"
+
         var isSplash = false
     }
 }

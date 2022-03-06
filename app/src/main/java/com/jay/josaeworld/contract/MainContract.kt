@@ -4,7 +4,6 @@ import android.content.Context
 import com.jay.josaeworld.base.BasePresenter
 import com.jay.josaeworld.base.BaseView
 import com.jay.josaeworld.model.response.BroadInfo
-import java.util.*
 
 interface MainContract {
 
@@ -24,5 +23,6 @@ interface MainContract {
         fun removeBJDataListener()
         fun getSecondSujang()
         fun getTeamData(context: Context)
+        fun sendReport(listOf: List<String>, function: () -> Unit)
     }
 }

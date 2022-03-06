@@ -54,15 +54,15 @@ object UtilFnc {
     fun sortedBJlist(bjlist: Array<ArrayList<BroadInfo>>): Array<ArrayList<BroadInfo>> {
         return bjlist.sortedWith(
             compareBy({ teamData ->
-                -teamData.sumBy { view ->
+                -teamData.sumOf { view ->
                     view.viewCnt.filter { c -> c.isDigit() }.toInt()
                 }
             }, { teamData ->
-                -teamData.sumBy { i ->
+                -teamData.sumOf { i ->
                     i.onOff
                 }
             }, { teamData ->
-                -teamData.sumBy { view ->
+                -teamData.sumOf { view ->
                     view.okCnt.filter { c -> c.isDigit() }.toInt()
                 }
             })
@@ -110,7 +110,7 @@ object UtilFnc {
 
                 var sum = 0
                 for (j in t) {
-                    sum += j.toInt()
+                    sum += j.code
                 }
 
                 if (i == 0)

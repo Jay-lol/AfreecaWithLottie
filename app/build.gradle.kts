@@ -1,10 +1,10 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("android.extensions")
     kotlin("kapt")
     id("com.google.firebase.crashlytics")
     id("com.google.gms.google-services")
+    id("dagger.hilt.android.plugin")
 }
 apply {
     plugin("kotlin-android")
@@ -84,6 +84,9 @@ dependencies {
     implementation(Libs.RETROFIT_ADAPTER)
 
     implementation(Libs.PLAY_SERVICES_ADS)
+
+    implementation(Libs.HILT)
+    kapt(Libs.HILT_COMPILER)
 }
 repositories {
     mavenCentral()

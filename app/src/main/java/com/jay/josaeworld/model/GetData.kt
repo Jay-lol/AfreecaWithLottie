@@ -13,8 +13,9 @@ import com.jay.josaeworld.model.response.gsonParse.RealBroad
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-object GetData {
+class GetData @Inject constructor() {
     private val TAG: String = "로그"
     private val database = Firebase.database
     private val databaseReference = database.reference
@@ -76,7 +77,7 @@ object GetData {
     }
 
     // 팀명 가져오기
-    fun teamData(complete: (List<String>, Long, Boolean, Int, Int) -> Unit) {
+    fun teamData(callback: (List<String>, Long, Boolean, Int, Int) -> Unit) {
         val myRef = database.getReference("LoadingInfo")
 
         myRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -101,15 +102,15 @@ object GetData {
                             list.add(x.value as String)
                     }
                     Log.d(TAG, "GetData ~ onDataChange() called $list")
-                    complete(list, time, isForce, minversionCode, currentversionCode)
+                    callback(list, time, isForce, minversionCode, currentversionCode)
                 } catch (e: Exception) {
                     Log.e(TAG, "onDataChange: $e")
-                    complete(listOf("시", "조", "새", "!"), 0, false, 0, 0)
+                    callback(listOf("시", "조", "새", "!"), 0, false, 0, 0)
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                complete(listOf("시", "조", "새", "!"), 0, false, 0, 0)
+                callback(listOf("시", "조", "새", "!"), 0, false, 0, 0)
                 Log.d(TAG, "GetData ~ onCancelled() called")
             }
         })
@@ -185,24 +186,25 @@ object GetData {
             })
     }
 
-    fun sendReport(reportlist: List<String>, completion: (Boolean) -> Unit) {
+    fun sendReport(reportlist: List<String>, callback: (Boolean) -> Unit) {
         try {
             val childUpdates = hashMapOf<String, Any>()
             // 건의 사항
 
-            childUpdates["/Report/${System.currentTimeMillis()}"] = reportlist[0] + ": " + reportlist[1]
+            childUpdates["/Report/${System.currentTimeMillis()}"] =
+                reportlist[0] + ": " + reportlist[1]
 
             databaseReference.updateChildren(childUpdates)
                 .addOnSuccessListener {
                     Log.d(TAG, "sendReport ~ addSuccessListener() called")
-                    completion(true)
+                    callback(true)
                 }
                 .addOnFailureListener {
                     Log.e(TAG, "sendReport ~ addonFailureListener() called $it")
-                    completion(false)
+                    callback(false)
                 }
         } catch (e: Exception) {
-            completion(false)
+            callback(false)
             Log.e(TAG, "sendReport: $e")
         }
     }

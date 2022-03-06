@@ -28,7 +28,10 @@ object Libs {
     const val RETROFIT = "com.squareup.retrofit2:retrofit:${Versions.RETROFIT}"
     const val RETROFIT_CONVERTER = "com.squareup.retrofit2:converter-gson:${Versions.RETROFIT}"
     const val RETROFIT_ADAPTER = "com.squareup.retrofit2:adapter-rxjava2:${Versions.RETROFIT}"
-    const val PLAY_SERVICES_ADS = "com.google.android.gms:play-services-ads:${Versions.PLAY_SERVICES_ADS}"
+    const val PLAY_SERVICES_ADS =
+        "com.google.android.gms:play-services-ads:${Versions.PLAY_SERVICES_ADS}"
+    const val HILT = "com.google.dagger:hilt-android:${Versions.HILT}"
+    const val HILT_COMPILER = "com.google.dagger:hilt-android-compiler:${Versions.HILT}"
 }
 
 object TestLibs {
@@ -43,15 +46,17 @@ object Versions {
     const val ANDROID_GRADLE_PLUGIN = "7.1.2"
     const val ANDROIDX_RECYCLERVIEW = "1.2.1"
     const val FIREBASE_CRASHLYTICS = "2.8.1"
-    const val CORE_KTX = "1.4.1"
+    const val CORE_KTX = "1.7.0"
     const val GOOGLE_SERVICES = "4.3.10"
     const val KOTLIN = "1.6.10"
     const val GITHUB_CLANS_FAB = "1.6.4"
     const val RXANDROID3 = "3.0.0"
     const val RXJAVA3 = "3.0.3"
     const val RXBINDING4 = "4.0.0"
-    const val FIREBASE = "26.1.0"
+    const val FIREBASE = "29.1.0"
     const val PLAY_SERVICES_ADS = "20.6.0"
+
+    const val HILT = "2.41"
 
     // androidx
     const val ANDROIDX_CONSTRAINTLAYOUT = "2.1.3"

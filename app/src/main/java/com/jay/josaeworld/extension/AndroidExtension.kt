@@ -1,6 +1,8 @@
 package com.jay.josaeworld.extension
 
 import android.app.Activity
+import android.content.Context
+import android.util.TypedValue
 import android.view.Gravity
 import android.widget.Toast
 
@@ -37,3 +39,7 @@ internal fun Activity.toast(msg: String) {
     toast.setGravity(Gravity.CENTER, 0, 0)
     toast.show()
 }
+
+internal fun Number.pxToDp(context: Context) = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), context.resources.displayMetrics
+).toInt()

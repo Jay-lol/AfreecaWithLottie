@@ -2,16 +2,19 @@ package com.jay.josaeworld
 
 import android.app.Application
 import android.util.Log
+import dagger.hilt.android.HiltAndroidApp
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxjava3.exceptions.UndeliverableException
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import java.io.IOException
 import java.net.SocketException
 
-open class MainApp : Application() {
+@HiltAndroidApp
+class MainApp : Application() {
     companion object {
         lateinit var disposable: Disposable
     }
+
     override fun onCreate() {
         super.onCreate()
 
