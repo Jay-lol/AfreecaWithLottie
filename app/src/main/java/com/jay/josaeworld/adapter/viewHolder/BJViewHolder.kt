@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.RecyclerBroadBinding
+import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.pxToDp
-import com.jay.josaeworld.model.response.BroadInfo
 import java.util.*
 
 class BJViewHolder(

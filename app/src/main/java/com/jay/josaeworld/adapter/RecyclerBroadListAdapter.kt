@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.adapter.viewHolder.BJViewHolder
 import com.jay.josaeworld.databinding.RecyclerBroadBinding
-import com.jay.josaeworld.model.response.BroadInfo
+import com.jay.josaeworld.domain.model.response.BroadInfo
 import java.util.*
 
 class RecyclerBroadListAdapter(

@@ -1,11 +1,14 @@
 package com.jay.josaeworld.di
 
 import android.content.Context
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.jay.josaeworld.R
-import com.jay.josaeworld.domain.GetMemberUsecase
-import com.jay.josaeworld.domain.SearchKeywordUsecase
-import com.jay.josaeworld.model.ApiCall
-import com.jay.josaeworld.model.GetData
+import com.jay.josaeworld.data.repository.DataRepository
+import com.jay.josaeworld.data.repository.impl.DataRepositoryImpl
+import com.jay.josaeworld.data.service.ApiCall
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,15 +25,6 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 object DatabaseModule {
-
-    @Provides
-    @ActivityRetainedScoped
-    fun providesDataRepo(
-        getMemberUsecase: GetMemberUsecase,
-        searchKeywordUsecase: SearchKeywordUsecase
-    ): GetData {
-        return GetData(getMemberUsecase, searchKeywordUsecase)
-    }
 
     @Provides
     @ActivityRetainedScoped
@@ -75,5 +69,19 @@ object DatabaseModule {
 
     @Provides
     @ActivityRetainedScoped
+    fun providesFirebaseDatabase(): FirebaseDatabase {
+        return Firebase.database
+    }
+
+    @Provides
+    @ActivityRetainedScoped
     fun provideRandom(): Random = Random()
+}
+
+@Module
+@InstallIn(ActivityRetainedComponent::class)
+abstract class RepositoryModule {
+    @Binds
+    @ActivityRetainedScoped
+    abstract fun bindsDataRepository(dataRepository: DataRepositoryImpl): DataRepository
 }

@@ -1,7 +1,7 @@
-package com.jay.josaeworld.model
+package com.jay.josaeworld.data.service
 
-import com.jay.josaeworld.model.response.AfSearchResponse
-import com.jay.josaeworld.model.response.gsonParse.RealBroad
+import com.jay.josaeworld.domain.model.response.AfSearchResponse
+import com.jay.josaeworld.domain.model.response.gsonParse.RealBroad
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Header

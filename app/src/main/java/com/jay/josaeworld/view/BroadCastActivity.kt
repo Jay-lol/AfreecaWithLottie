@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
@@ -20,10 +19,11 @@ import com.jay.josaeworld.contract.BroadContract
 import com.jay.josaeworld.databinding.ActivityBroadCastBinding
 import com.jay.josaeworld.databinding.CustomDialog2Binding
 import com.jay.josaeworld.databinding.InfoDialogBinding
+import com.jay.josaeworld.domain.model.response.BroadInfo
+import com.jay.josaeworld.domain.model.response.SearchBJInfo
+import com.jay.josaeworld.domain.model.response.gsonParse.RealBroad
+import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
-import com.jay.josaeworld.model.GetData
-import com.jay.josaeworld.model.response.BroadInfo
-import com.jay.josaeworld.model.response.SearchBJInfo
 import com.jay.josaeworld.presenter.BroadPresenter
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -43,24 +43,22 @@ class BroadCastActivity :
     lateinit var mAdView: AdView
 
     @Inject
-    lateinit var data: GetData
-
-    @Inject
     lateinit var random: Random
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadAd()
 
-        val list = intent.getSerializableExtra("teamINfo") as ArrayList<BroadInfo>?
+        val list = intent.getSerializableExtra("teamInfo") as ArrayList<BroadInfo>?
         secondSujang = intent.getStringExtra("secondSujang") ?: "1"
 
         binding.broadRecyclerView.layoutManager = LinearLayoutManager(baseContext)
 
-        if (!list.isNullOrEmpty())
+        if (!list.isNullOrEmpty()) {
             setBroadView(list)
-        else
+        } else {
             setSearchView()
+        }
 
         binding.teamName.text = intent.getStringExtra("teamName") ?: "시조새 검색 결과"
     }
@@ -95,26 +93,24 @@ class BroadCastActivity :
     private fun setSearchView() {
         binding.searchLoading.visibility = View.VISIBLE
         binding.searchLoading.playAnimation()
+        presenter.searchJosae()
+    }
 
-        data.searchJosae(complete = {
-            binding.searchLoading.pauseAnimation()
-            binding.searchLoading.visibility = View.GONE
+    override fun showSearchResult(searchBJInfo: RealBroad?) {
+        binding.searchLoading.pauseAnimation()
+        binding.searchLoading.visibility = View.GONE
 
-            it?.REAL_BROAD?.let { SearchList ->
-                sAdapter =
-                    RecyclerSearchListAdapter(
-                        Glide.with(this),
-                        SearchList,
-                        searchMemberClick,
-                        random
-                    )
+        searchBJInfo?.REAL_BROAD?.let { searchList ->
+            sAdapter =
+                RecyclerSearchListAdapter(
+                    Glide.with(this),
+                    searchList,
+                    searchMemberClick,
+                    random
+                )
 
-                binding.broadRecyclerView.adapter = sAdapter
-            }
-
-            if (it == null)
-                Toast.makeText(this, "검색 실패!", Toast.LENGTH_SHORT).show()
-        })
+            binding.broadRecyclerView.adapter = sAdapter
+        }
     }
 
     private val memberClick: (BroadInfo, Int) -> Unit = { v, code ->
@@ -177,10 +173,11 @@ class BroadCastActivity :
     }
 
     override fun showError(code: Int) {
+        showErrorToast(code)
     }
 
     override fun showToast(msg: String) {
-        this.toast(msg)
+        toast(msg)
     }
 
     private fun loadAd() {

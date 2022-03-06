@@ -1,9 +1,8 @@
 package com.jay.josaeworld.contract
 
-import android.content.Context
 import com.jay.josaeworld.base.BasePresenter
 import com.jay.josaeworld.base.BaseView
-import com.jay.josaeworld.model.response.BroadInfo
+import com.jay.josaeworld.domain.model.response.BroadInfo
 
 interface MainContract {
 
@@ -26,7 +25,7 @@ interface MainContract {
         fun createBJDataListener(teamSize: Int)
         fun removeBJDataListener()
         fun getSecondSujang()
-        fun getTeamData(context: Context)
-        fun sendReport(listOf: List<String>, function: () -> Unit)
+        fun getTeamData()
+        fun sendReport(reportList: List<String>, function: () -> Unit)
     }
 }

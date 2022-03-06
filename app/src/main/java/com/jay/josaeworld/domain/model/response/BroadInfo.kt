@@ -1,4 +1,4 @@
-package com.jay.josaeworld.model.response
+package com.jay.josaeworld.domain.model.response
 
 import java.io.Serializable
 

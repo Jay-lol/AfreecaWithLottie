@@ -1,4 +1,4 @@
-package com.jay.josaeworld.model.response.gsonParse
+package com.jay.josaeworld.domain.model.response.gsonParse
 
 data class Station(
     val active_no: Int,

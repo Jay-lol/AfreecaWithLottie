@@ -1,9 +1,8 @@
 package com.jay.josaeworld
 
 import android.util.Log
-import com.jay.josaeworld.model.response.AfSearchResponse
-import com.jay.josaeworld.model.response.BallonInfo
-import com.jay.josaeworld.model.response.BroadInfo
+import com.jay.josaeworld.domain.model.response.BallonInfo
+import com.jay.josaeworld.domain.model.response.BroadInfo
 
 object UtilFnc {
     private val TAG: String = "로그"
@@ -21,17 +20,6 @@ object UtilFnc {
             Log.e(TAG, "goodString: $e")
             st
         }
-    }
-
-    fun goodBallonData(v: HashMap<*, *>): BallonInfo {
-        return BallonInfo(
-            if (v["dayballon"] == null) "0" else v["dayballon"] as String,
-            if (v["monthballon"] == null) "0" else v["monthballon"] as String,
-            if (v["monthmaxview"] == null) "0" else v["monthmaxview"] as String,
-            if (v["monthtime"] == null) "0분" else v["monthtime"] as String,
-            if (v["monthview"] == null) "0" else v["monthview"] as String,
-            if (v["monthpay"] == null) "0" else v["monthpay"] as String,
-        )
     }
 
     fun goodBjData(v: HashMap<*, *>, teamCode: String, bid: String, b: BallonInfo?): BroadInfo {
@@ -126,62 +114,5 @@ object UtilFnc {
         } catch (e: Exception) {
             return "익명"
         }
-    }
-
-    fun getBroadInfo(searchResponse: AfSearchResponse, teamCode: Int): BroadInfo {
-        val CLIENT_ID: String = searchResponse.station!!.user_id
-        Log.d(TAG, "$CLIENT_ID $searchResponse onResponse() called")
-
-        val onOff: Int = searchResponse.broad?.let { 1 } ?: 0
-        val bjname: String = searchResponse.station.user_nick
-        val title: String = searchResponse.broad?.broad_title?.replace("   ", "")
-            ?: "방송 중이지 않습니다"
-        val allviewers: String = searchResponse.broad?.let {
-            goodString(it.current_sum_viewer.toString())
-        } ?: "0" // 전체 시청자
-        val imgurl: String = searchResponse.broad?.let {
-            "http://liveimg.afreecatv.com/${it.broad_no}_480x270.jpg?dummy="
-        } ?: "http://res.afreecatv.com/images/default_logo_300x300.jpg"
-
-        // 0아니면 1 today0, today1
-        val activeNo = searchResponse.station.active_no
-        val profile = "http:" + searchResponse.profile
-        // 팬 숫자
-        val fanCnt: String = goodString(searchResponse.station.upd.fan_cnt.toString())
-        // 추천 숫자
-        val okCnt: String = if (activeNo == 0)
-            goodString(searchResponse.station.upd.today0_ok_cnt.toString())
-        else
-            goodString(searchResponse.station.upd.today1_ok_cnt.toString())
-
-        // 오늘 추가된 즐겨찾기 수
-        var incFanCnt: String = if (activeNo == 0)
-            searchResponse.station.upd.today0_fav_cnt.toString()
-        else
-            searchResponse.station.upd.today1_fav_cnt.toString()
-
-        incFanCnt = if (incFanCnt.toInt() < 0)
-            "-" + goodString(incFanCnt.slice(1 until incFanCnt.length))
-        else goodString(incFanCnt)
-
-        Log.d(
-            TAG + "test",
-            "GetJson() $bjname $title $allviewers $imgurl $fanCnt $okCnt $incFanCnt"
-        )
-
-        return BroadInfo(
-            teamCode,
-            onOff,
-            CLIENT_ID,
-            title,
-            bjname,
-            imgurl,
-            allviewers,
-            fanCnt,
-            okCnt,
-            incFanCnt,
-            profile,
-            null
-        )
     }
 }

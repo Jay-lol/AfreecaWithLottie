@@ -21,9 +21,9 @@ import com.jay.josaeworld.UtilFnc
 import com.jay.josaeworld.base.BaseViewBindingActivity
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.databinding.*
+import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
-import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.presenter.MainPresenter
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -65,7 +65,7 @@ class MainActivity :
      */
     private fun initWithFirebaseServerData() {
         presenter.getSecondSujang()
-        presenter.getTeamData(baseContext)
+        presenter.getTeamData()
     }
 
     override fun initSecondSujang(newList: HashMap<String, String>) {
@@ -652,7 +652,7 @@ class MainActivity :
         try {
             if (!isLoading && !teamList.isNullOrEmpty()) {
                 intent.putExtra("teamName", teamName)
-                intent.putExtra("teamINfo", teamList)
+                intent.putExtra("teamInfo", teamList)
                 intent.putExtra(
                     "secondSujang",
                     secondSujang

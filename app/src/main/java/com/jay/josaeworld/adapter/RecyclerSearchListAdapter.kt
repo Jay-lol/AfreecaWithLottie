@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.adapter.viewHolder.SearchListViewHolder
 import com.jay.josaeworld.databinding.RecyclerBroad2Binding
-import com.jay.josaeworld.model.response.SearchBJInfo
+import com.jay.josaeworld.domain.model.response.SearchBJInfo
 import java.util.*
 
 class RecyclerSearchListAdapter(
