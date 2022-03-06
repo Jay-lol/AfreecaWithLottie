@@ -37,8 +37,8 @@ object TestLibs {
 }
 
 object Versions {
-    const val versionName = "2.1.6"
-    const val versionCode = 38
+    const val versionName = "2.2.0"
+    const val versionCode = 39
 
     const val ANDROID_GRADLE_PLUGIN = "7.1.2"
     const val ANDROIDX_RECYCLERVIEW = "1.2.1"

@@ -9,6 +9,7 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 /app/google-services.json
+/app/release
 .DS_Store
 /build
 /buildSrc/build
