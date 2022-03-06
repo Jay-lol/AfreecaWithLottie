@@ -11,16 +11,13 @@ import com.jay.josaeworld.databinding.RecyclerBroadBinding
 import com.jay.josaeworld.extension.pxToDp
 import com.jay.josaeworld.model.response.BroadInfo
 import java.util.*
-import javax.inject.Inject
 
 class BJViewHolder(
     private val binding: RecyclerBroadBinding,
     private val clickMember: (BroadInfo, Int) -> Unit,
+    private val random: Random,
     private val context: Context
 ) : RecyclerView.ViewHolder(binding.root) {
-
-    @Inject
-    lateinit var random: Random
 
     fun bind(broadInfo: BroadInfo?, glide: RequestManager, secondSujang: String) {
         if (broadInfo?.onOff == 1) {

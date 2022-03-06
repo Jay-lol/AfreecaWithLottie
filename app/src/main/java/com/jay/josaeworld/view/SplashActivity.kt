@@ -7,7 +7,7 @@ import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.jay.josaeworld.base.BaseMainActivity.Companion.isSplash
+import com.jay.josaeworld.base.BaseViewBindingActivity.Companion.isSplash
 import com.jay.josaeworld.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 

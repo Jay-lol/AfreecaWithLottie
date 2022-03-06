@@ -17,8 +17,12 @@ interface MainContract {
         fun showCustomDialog(code: Int)
     }
 
-    interface Presenter : BasePresenter<View> {
-        fun getRecentBJData(bjLists: Array<ArrayList<BroadInfo>>, bjDataList: Array<ArrayList<BroadInfo>>?)
+    interface Presenter : BasePresenter {
+        fun getRecentBJData(
+            bjLists: Array<ArrayList<BroadInfo>>,
+            bjDataList: Array<ArrayList<BroadInfo>>?
+        )
+
         fun createBJDataListener(teamSize: Int)
         fun removeBJDataListener()
         fun getSecondSujang()

@@ -7,11 +7,13 @@ import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.adapter.viewHolder.SearchListViewHolder
 import com.jay.josaeworld.databinding.RecyclerBroad2Binding
 import com.jay.josaeworld.model.response.SearchBJInfo
+import java.util.*
 
 class RecyclerSearchListAdapter(
     private val glide: RequestManager,
     private val bList: List<SearchBJInfo>?,
-    private val searchMemberClick: (SearchBJInfo) -> Unit
+    private val searchMemberClick: (SearchBJInfo) -> Unit,
+    private val random: Random
 ) : RecyclerView.Adapter<SearchListViewHolder>() {
 
     // 목록의 아이템수
@@ -27,7 +29,8 @@ class RecyclerSearchListAdapter(
                 parent,
                 false
             ),
-            searchMemberClick
+            searchMemberClick,
+            random
         )
     }
 

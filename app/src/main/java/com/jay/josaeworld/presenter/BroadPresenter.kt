@@ -1,12 +1,12 @@
 package com.jay.josaeworld.presenter
 
 import com.jay.josaeworld.contract.BroadContract
+import javax.inject.Inject
 
-class BroadPresenter : BroadContract.Presenter {
-
-    override fun takeView(view: BroadContract.View) {
-    }
-
+class BroadPresenter @Inject constructor(
+    private var searchView: BroadContract.View?,
+) : BroadContract.Presenter {
     override fun dropView() {
+        searchView = null
     }
 }

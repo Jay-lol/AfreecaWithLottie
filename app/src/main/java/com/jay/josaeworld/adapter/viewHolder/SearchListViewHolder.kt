@@ -7,15 +7,12 @@ import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.databinding.RecyclerBroad2Binding
 import com.jay.josaeworld.model.response.SearchBJInfo
 import java.util.*
-import javax.inject.Inject
 
 class SearchListViewHolder(
     private val binding: RecyclerBroad2Binding,
-    private val memberClick: (SearchBJInfo) -> Unit
+    private val memberClick: (SearchBJInfo) -> Unit,
+    private val random: Random
 ) : RecyclerView.ViewHolder(binding.root) {
-
-    @Inject
-    lateinit var random: Random
 
     fun bind(searchBJInfo: SearchBJInfo, glide: RequestManager) {
 

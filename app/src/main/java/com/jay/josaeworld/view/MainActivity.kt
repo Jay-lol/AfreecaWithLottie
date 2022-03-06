@@ -17,18 +17,22 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.jay.josaeworld.R
-import com.jay.josaeworld.base.BaseMainActivity
+import com.jay.josaeworld.base.BaseViewBindingActivity
+import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.databinding.*
+import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.model.UtilFnc
 import com.jay.josaeworld.model.response.BroadInfo
+import com.jay.josaeworld.presenter.MainPresenter
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity :
-    BaseMainActivity<ActivityMainBinding>({ ActivityMainBinding.inflate(it) }),
+    BaseViewBindingActivity<ActivityMainBinding, MainPresenter>({ ActivityMainBinding.inflate(it) }),
+    MainContract.View,
     View.OnClickListener {
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private lateinit var teamInfo: List<String>
@@ -37,6 +41,7 @@ class MainActivity :
     private var allViewers = 0
     private var allBallon = 0
     private var isFirst: Int = 0 // 0 아무것도안함, 1 최초로딩 상태만 변경 ,2 이미 데이터가 로딩된상태
+
     @Inject
     lateinit var random: Random
     lateinit var mAdView: AdView
@@ -164,7 +169,7 @@ class MainActivity :
     /**
      * #1 파이어베이스 BJStatus 리스너 설정
      */
-    override fun setDataListener() {
+    private fun setDataListener() {
         presenter.createBJDataListener(teamInfo.size + 1)
     }
 
@@ -182,7 +187,7 @@ class MainActivity :
         }
     }
 
-    override fun removeDataListener() {
+    private fun removeDataListener() {
         isRecentData = false
         presenter.removeBJDataListener()
     }
@@ -327,7 +332,6 @@ class MainActivity :
 
             Glide.with(baseContext).load(v.imgurl + "${random.nextInt(123456789)}")
                 .override(480, 270)
-                .placeholder(R.drawable.placeholder)
                 .fitCenter()
                 .into(binding.sujangThumbnail)
 
@@ -532,11 +536,11 @@ class MainActivity :
     }
 
     override fun showError(code: Int) {
-        this@MainActivity.showError(code)
+        showErrorToast(code)
     }
 
     override fun showToast(msg: String) {
-        this@MainActivity.toast(msg)
+        toast(msg)
     }
 
     override fun onClick(view: View?) {
@@ -666,5 +670,30 @@ class MainActivity :
             toast.setGravity(Gravity.CENTER, 0, 0)
             toast.show()
         }
+    }
+
+    // 라이프사이클에 맞춰 리스너 설정
+    override fun onStart() {
+        if (splashException) setDataListener()
+        super.onStart()
+    }
+
+    override fun onResume() {
+        if (splashException) setDataListener()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        if (!isSplash) {
+            removeDataListener()
+        }
+        super.onPause()
+    }
+
+    override fun onStop() {
+        if (!isSplash) {
+            removeDataListener()
+        }
+        super.onStop()
     }
 }

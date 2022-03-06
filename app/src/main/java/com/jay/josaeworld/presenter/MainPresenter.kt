@@ -11,11 +11,11 @@ import com.jay.josaeworld.model.response.BroadInfo
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(
+    private var searchView: MainContract.View?,
     private val dataRepository: GetData
 ) : MainContract.Presenter {
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
-    private var searchView: MainContract.View? = null
 
     override fun getRecentBJData(
         bjLists: Array<ArrayList<BroadInfo>>,
@@ -105,14 +105,6 @@ class MainPresenter @Inject constructor(
         }
     }
 
-    override fun takeView(view: MainContract.View) {
-        searchView = view
-    }
-
-    override fun dropView() {
-        searchView = null
-    }
-
     override fun sendReport(listOf: List<String>, function: () -> Unit) {
         dataRepository.sendReport(listOf) {
             if (it) {
@@ -121,5 +113,9 @@ class MainPresenter @Inject constructor(
             } else
                 searchView?.showToast("전송 불가")
         }
+    }
+
+    override fun dropView() {
+        searchView = null
     }
 }

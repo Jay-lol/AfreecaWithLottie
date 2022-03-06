@@ -13,10 +13,10 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
-import com.jay.josaeworld.R
 import com.jay.josaeworld.adapter.RecyclerBroadListAdapter
 import com.jay.josaeworld.adapter.RecyclerSearchListAdapter
-import com.jay.josaeworld.base.BaseBroadActivity
+import com.jay.josaeworld.base.BaseViewBindingActivity
+import com.jay.josaeworld.contract.BroadContract
 import com.jay.josaeworld.databinding.ActivityBroadCastBinding
 import com.jay.josaeworld.databinding.CustomDialog2Binding
 import com.jay.josaeworld.databinding.InfoDialogBinding
@@ -24,12 +24,19 @@ import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.model.GetData
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.model.response.SearchBJInfo
+import com.jay.josaeworld.presenter.BroadPresenter
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BroadCastActivity : BaseBroadActivity() {
-    private lateinit var binding: ActivityBroadCastBinding
+class BroadCastActivity :
+    BaseViewBindingActivity<ActivityBroadCastBinding, BroadPresenter>({
+        ActivityBroadCastBinding.inflate(
+            it
+        )
+    }),
+    BroadContract.View {
     private lateinit var mAdapter: RecyclerBroadListAdapter
     private lateinit var sAdapter: RecyclerSearchListAdapter
     private lateinit var secondSujang: String
@@ -38,11 +45,11 @@ class BroadCastActivity : BaseBroadActivity() {
     @Inject
     lateinit var data: GetData
 
+    @Inject
+    lateinit var random: Random
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityBroadCastBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
         loadAd()
 
         val list = intent.getSerializableExtra("teamINfo") as ArrayList<BroadInfo>?
@@ -74,7 +81,9 @@ class BroadCastActivity : BaseBroadActivity() {
                     { -it.fanCnt.filter { c -> c.isDigit() }.toInt() }
                 ) // 즐찾 순
             ),
-            secondSujang, memberClick
+            secondSujang,
+            memberClick,
+            random
         )
 
         binding.broadRecyclerView.adapter = mAdapter
@@ -93,7 +102,12 @@ class BroadCastActivity : BaseBroadActivity() {
 
             it?.REAL_BROAD?.let { SearchList ->
                 sAdapter =
-                    RecyclerSearchListAdapter(Glide.with(this), SearchList, searchMemberClick)
+                    RecyclerSearchListAdapter(
+                        Glide.with(this),
+                        SearchList,
+                        searchMemberClick,
+                        random
+                    )
 
                 binding.broadRecyclerView.adapter = sAdapter
             }
@@ -131,7 +145,7 @@ class BroadCastActivity : BaseBroadActivity() {
         var intent = Intent(Intent.ACTION_VIEW)
         val dlg = Dialog(this)
         val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
-        dlg.setContentView(R.layout.custom_dialog2)
+        dlg.setContentView(dlgBinding.root)
 
         dlgBinding.moveQuestion.text = "$viewCnt 명이 시청중입니다!\n$bjname 방송으로 이동할까요?"
 

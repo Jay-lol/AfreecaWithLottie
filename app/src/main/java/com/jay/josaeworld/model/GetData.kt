@@ -7,6 +7,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.jay.josaeworld.domain.GetMemberUsecase
+import com.jay.josaeworld.domain.SearchKeywordUsecase
 import com.jay.josaeworld.model.response.BallonInfo
 import com.jay.josaeworld.model.response.BroadInfo
 import com.jay.josaeworld.model.response.gsonParse.RealBroad
@@ -15,7 +17,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class GetData @Inject constructor() {
+class GetData @Inject constructor(
+    private val memberUsecase: GetMemberUsecase,
+    private val keywordUsecase: SearchKeywordUsecase
+) {
     private val TAG: String = "로그"
     private val database = Firebase.database
     private val databaseReference = database.reference
@@ -157,9 +162,8 @@ class GetData @Inject constructor() {
             for (member in team) bidList.add(Pair(index, member.bid))
         }
 
-        val searchBJ = SearchBJ()
         val singles = (bidList).map { targetBJ ->
-            searchBJ.doSearch(targetBJ.first, targetBJ.second)
+            memberUsecase.doSearch(targetBJ.first, targetBJ.second)
         }.toList()
 
         Single.zip(singles) { array ->
@@ -211,7 +215,7 @@ class GetData @Inject constructor() {
 
     @SuppressLint("CheckResult")
     fun searchJosae(complete: (RealBroad?) -> Unit) {
-        SearchBJ().searchJosae()
+        keywordUsecase.searchJosae()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it != null) {

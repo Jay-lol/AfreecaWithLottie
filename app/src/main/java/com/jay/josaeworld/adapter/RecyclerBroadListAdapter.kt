@@ -7,12 +7,14 @@ import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.adapter.viewHolder.BJViewHolder
 import com.jay.josaeworld.databinding.RecyclerBroadBinding
 import com.jay.josaeworld.model.response.BroadInfo
+import java.util.*
 
 class RecyclerBroadListAdapter(
     private val glide: RequestManager,
     private val bList: List<BroadInfo>?,
     private val secondSujang: String,
-    private val memberClick: (BroadInfo, Int) -> Unit
+    private val memberClick: (BroadInfo, Int) -> Unit,
+    private val random: Random
 ) : RecyclerView.Adapter<BJViewHolder>() {
 
     // 목록의 아이템수
@@ -27,6 +29,7 @@ class RecyclerBroadListAdapter(
                 LayoutInflater.from(parent.context), parent, false
             ),
             memberClick,
+            random,
             parent.context
         )
     }

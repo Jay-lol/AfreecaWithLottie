@@ -13,5 +13,5 @@ object UtilModule {
 
     @Provides
     @ActivityRetainedScoped
-    fun provideRandom() = Random()
+    fun provideRandom(): Random = Random()
 }

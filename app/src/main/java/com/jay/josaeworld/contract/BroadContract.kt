@@ -5,5 +5,5 @@ import com.jay.josaeworld.base.BaseView
 
 interface BroadContract {
     interface View : BaseView
-    interface Presenter : BasePresenter<View>
+    interface Presenter : BasePresenter
 }
