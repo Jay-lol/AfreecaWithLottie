@@ -9,9 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -108,7 +106,10 @@ class MainActivity :
     private fun fabButtonListener() {
         binding.fabChat.setOnClickListener {
             if (true) {
-                Toast.makeText(baseContext, "서버 비용 문제로 준비중입니다\n빠른 시일내에 업데이트 하겠습니다", Toast.LENGTH_SHORT).show()
+                showToast(
+                    "서버 비용 문제로 준비중입니다\n" +
+                        "빠른 시일내에 업데이트 하겠습니다"
+                )
             } else if (!isLoading) {
                 val intent = Intent(this, ChatActivity::class.java)
                 val androidId =
@@ -147,7 +148,7 @@ class MainActivity :
                     if (bj != "" && content != "") {
                         presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
                     } else {
-                        Toast.makeText(baseContext, "BJ명과 건의사항을 확인해주세요", Toast.LENGTH_SHORT).show()
+                        showToast("BJ명과 건의사항을 확인해주세요")
                     }
                 }
 
@@ -521,7 +522,7 @@ class MainActivity :
             startActivity(intent)
             result = true
         } catch (e: Exception) {
-            Toast.makeText(baseContext, "플레이스토어 연결 불가", Toast.LENGTH_SHORT).show()
+            showToast("플레이스토어 연결 불가")
             Log.e(TAG, "gotoMarket: $e")
             result = false
         }
@@ -549,13 +550,11 @@ class MainActivity :
         showErrorToast(code)
     }
 
-    override fun showToast(msg: String) {
-        toast(msg)
+    override fun showToast(msg: String, isCenter: Boolean) {
+        toast(msg, isCenter)
     }
 
     override fun onClick(view: View?) {
-        var toast: Toast
-
         when (view) {
             binding.teamFirst -> {
                 moveTeamList(
@@ -598,11 +597,7 @@ class MainActivity :
                             this.showError(3)
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
-                        toast = Toast.makeText(
-                            baseContext, "밑으로 내려서 다시 로딩해 주세요", Toast.LENGTH_LONG
-                        )
-                        toast.setGravity(Gravity.CENTER, 0, 0)
-                        toast.show()
+                        showToast("밑으로 내려서 다시 로딩해 주세요", true)
                     }
                 }
             }
@@ -630,11 +625,7 @@ class MainActivity :
                             this.showError(3)
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
-                        toast = Toast.makeText(
-                            baseContext, "밑으로 내려서 다시 로딩해 주세요", Toast.LENGTH_LONG
-                        )
-                        toast.setGravity(Gravity.CENTER, 0, 0)
-                        toast.show()
+                        showToast("밑으로 내려서 다시 로딩해 주세요", true)
                     }
                 }
             }
@@ -657,7 +648,6 @@ class MainActivity :
      * 새로운 액티비티에서 해당 팀 보여주기
      */
     private fun moveTeamList(teamName: String, teamList: ArrayList<BroadInfo>?, secondSujang: String) {
-        val toast: Toast
         val intent = Intent(this, BroadCastActivity::class.java)
         try {
             if (!isLoading && !teamList.isNullOrEmpty()) {
@@ -671,14 +661,10 @@ class MainActivity :
                 // 새로운 액티비티ani, 기존 액티비티ani
                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             } else
-                this.showError(3)
+                showError(3)
         } catch (e: Exception) {
             Log.d(TAG, "MainActivity ~ $e() called")
-            toast = Toast.makeText(
-                baseContext, "밑으로 내려서 다시 로딩해 주세요", Toast.LENGTH_LONG
-            )
-            toast.setGravity(Gravity.CENTER, 0, 0)
-            toast.show()
+            showToast("밑으로 내려서 다시 로딩해 주세요", true)
         }
     }
 

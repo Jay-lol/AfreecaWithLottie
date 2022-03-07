@@ -28,11 +28,13 @@ internal fun Activity.showErrorToast(code: Int) {
     toast(msg)
 }
 
-internal fun Activity.toast(msg: String) {
+internal fun Activity.toast(msg: String, isCenter: Boolean = false) {
     val toast = Toast.makeText(
         applicationContext, msg, Toast.LENGTH_SHORT
     )
-    toast.setGravity(Gravity.CENTER, 0, 0)
+    if (isCenter) {
+        toast.setGravity(Gravity.CENTER, 0, 0)
+    }
     toast.show()
 }
 

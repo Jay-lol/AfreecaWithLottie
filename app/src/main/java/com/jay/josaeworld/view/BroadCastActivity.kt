@@ -187,8 +187,8 @@ class BroadCastActivity :
         showErrorToast(code)
     }
 
-    override fun showToast(msg: String) {
-        toast(msg)
+    override fun showToast(msg: String, isCenter: Boolean) {
+        toast(msg, isCenter)
     }
 
     private fun createAdmob() {
