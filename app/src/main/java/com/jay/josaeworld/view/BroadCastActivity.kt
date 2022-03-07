@@ -37,6 +37,7 @@ class BroadCastActivity :
         )
     }),
     BroadContract.View {
+
     private lateinit var mAdapter: RecyclerBroadListAdapter
     private lateinit var sAdapter: RecyclerSearchListAdapter
     private lateinit var secondSujang: String

@@ -97,7 +97,7 @@ class MainPresenter @Inject constructor(
                                     }
                                 } catch (e: Exception) {
                                     searchView?.showError(1)
-                                    Log.e(TAG, "finishSendBjStatus: a")
+                                    Log.e(TAG, "finishSendBjStatus: $e")
                                 }
 
                                 if (errorCnt == 1)
