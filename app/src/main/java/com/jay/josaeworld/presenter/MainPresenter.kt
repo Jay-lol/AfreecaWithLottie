@@ -1,6 +1,5 @@
 package com.jay.josaeworld.presenter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Handler
@@ -16,6 +15,7 @@ import com.jay.josaeworld.domain.model.response.BroadInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -32,12 +32,12 @@ class MainPresenter @Inject constructor(
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
 
+    private var disposable: Disposable? = null
     private var bjStatusListener: ValueEventListener? = null
 
     /**
      비제이들 고유 아이디 가져와서 데이터 요청
      */
-    @SuppressLint("CheckResult")
     override fun getRecentBJData(
         bjLists: Array<ArrayList<BroadInfo>>,
         bjDataList: Array<ArrayList<BroadInfo>>?
@@ -58,9 +58,11 @@ class MainPresenter @Inject constructor(
             )
         }.toList()
 
-        Single
+        disposable = Single
             .zip(singles) { array ->
-                array.map { it as BroadInfo }
+                array.map {
+                    it as BroadInfo
+                }
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -348,5 +350,6 @@ class MainPresenter @Inject constructor(
 
     override fun dropView() {
         searchView = null
+        disposable?.dispose()
     }
 }

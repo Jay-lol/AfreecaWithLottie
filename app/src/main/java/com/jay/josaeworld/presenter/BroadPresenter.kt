@@ -1,26 +1,23 @@
 package com.jay.josaeworld.presenter
 
-import android.annotation.SuppressLint
 import com.jay.josaeworld.contract.BroadContract
 import com.jay.josaeworld.domain.SearchKeywordUseCase
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class BroadPresenter @Inject constructor(
-    private val keywordUseCase: SearchKeywordUseCase,
-    private var searchView: BroadContract.View?
+    private var searchView: BroadContract.View?,
+    private val keywordUseCase: SearchKeywordUseCase
 ) : BroadContract.Presenter {
 
-    @SuppressLint("CheckResult")
+    private var disposable: Disposable? = null
+
     override fun searchJosae() {
-        keywordUseCase()
+        disposable = keywordUseCase()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                it?.let {
-                    searchView?.showSearchResult(it)
-                    return@subscribe
-                }
-                searchView?.showToast("검색 실패! $it")
+                searchView?.showSearchResult(it)
             }, {
                 searchView?.showToast("검색 실패! $it")
             })
@@ -28,5 +25,6 @@ class BroadPresenter @Inject constructor(
 
     override fun dropView() {
         searchView = null
+        disposable?.dispose()
     }
 }
