@@ -21,9 +21,10 @@ class BJViewHolder(
 
     fun bind(broadInfo: BroadInfo?, glide: RequestManager, secondSujang: String) {
         if (broadInfo?.onOff == 1) {
-            val x = binding.thumbnail.layoutParams as ConstraintLayout.LayoutParams
-            x.topMargin = 0
-            x.bottomMargin = 0
+            (binding.thumbnail.layoutParams as ConstraintLayout.LayoutParams).apply {
+                topMargin = 0
+                bottomMargin = 0
+            }
 
             binding.errorThumbnail.visibility = View.INVISIBLE
             binding.thumbnail.run {
