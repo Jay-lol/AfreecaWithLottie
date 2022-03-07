@@ -145,7 +145,7 @@ class MainActivity :
                 dlgBinding.reportSubmit.setOnClickListener {
                     val bj = dlgBinding.reportBj.text.trim().toString()
                     val content = dlgBinding.suggest.text.trim().toString()
-                    if (bj != "" && content != "") {
+                    if (bj.isNotEmpty() && content.isNotEmpty()) {
                         presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
                     } else {
                         showToast("BJ명과 건의사항을 확인해주세요")
