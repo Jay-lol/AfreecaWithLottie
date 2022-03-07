@@ -9,7 +9,6 @@ import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.jay.josaeworld.UtilFnc
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.domain.*
 import com.jay.josaeworld.domain.model.response.BallonInfo
@@ -173,16 +172,16 @@ class MainPresenter @Inject constructor(
                                         if (ballonMap.containsKey(member.key as String)) ballonMap[member.key as String]
                                         else null
                                     recentBJList[index].add(
-                                        UtilFnc.goodBjData(
-                                            v,
+                                        v.goodBjData(
                                             teamCode,
                                             member.key as String,
                                             b
                                         )
                                     )
                                 }
-                                if (index == teamSize - 2) recentBJList =
-                                    UtilFnc.sortedBJlist(recentBJList)
+                                if (index == teamSize - 2) {
+                                    recentBJList = recentBJList.sortedBJList()
+                                }
                             }
                             // 업데이트
                             Log.d(TAG, "MainPresenter ~ bjDataListener() 갱신 성공")
@@ -210,7 +209,7 @@ class MainPresenter @Inject constructor(
                         val ballonMap = HashMap<String, BallonInfo>()
                         for (x in snapshot.children) {
                             val v = x.value as HashMap<*, *>
-                            ballonMap[x.key as String] = UtilFnc.goodBallonData(v)
+                            ballonMap[x.key as String] = v.goodBallonData()
                         }
                         Log.d(TAG, "GetData ~ ballonData() called $ballonMap")
                         callback(ballonMap)

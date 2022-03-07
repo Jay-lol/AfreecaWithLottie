@@ -17,10 +17,11 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.jay.josaeworld.R
-import com.jay.josaeworld.UtilFnc
 import com.jay.josaeworld.base.BaseViewBindingActivity
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.databinding.*
+import com.jay.josaeworld.domain.goodString
+import com.jay.josaeworld.domain.makeCuteNickName
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
@@ -101,8 +102,9 @@ class MainActivity :
                 Toast.makeText(baseContext, "서버 비용 문제로 준비중입니다\n빠른 시일내에 업데이트 하겠습니다", Toast.LENGTH_SHORT).show()
             } else if (!isLoading) {
                 val intent = Intent(this, ChatActivity::class.java)
-                val androidId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
-                val nickname = UtilFnc.makeCuteNickName(androidId) + androidId.slice(0..1)
+                val androidId =
+                    Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+                val nickname = androidId.makeCuteNickName() + androidId.slice(0..1)
                 intent.putExtra("userId", nickname)
                 intent.putExtra("uid", androidId)
                 startActivity(intent)
@@ -424,7 +426,7 @@ class MainActivity :
             try {
                 animator.addUpdateListener { animation ->
                     val v = animation.animatedValue.toString()
-                    binding.nAllViewer.text = UtilFnc.goodString(v)
+                    binding.nAllViewer.text = v.goodString()
                 }
                 animator.start()
             } catch (e: Exception) {
@@ -434,7 +436,7 @@ class MainActivity :
             try {
                 animator.addUpdateListener { animation ->
                     val v = animation.animatedValue.toString()
-                    binding.nAllBallon.text = UtilFnc.goodString(v)
+                    binding.nAllBallon.text = v.goodString()
                 }
                 animator.start()
             } catch (e: Exception) {
