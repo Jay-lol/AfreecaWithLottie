@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.jay.josaeworld.contract.MainContract
+import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.*
 import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
@@ -27,7 +28,9 @@ class MainPresenter @Inject constructor(
     private val getInitTeamDataUseCase: GetInitTeamDataUseCase,
     private val getSecondSujangUseCase: GetSecondSujangUseCase,
     private val getBallonDataUseCase: GetBallonDataUseCase,
-    private val listenBJUpToDateUseCase: ListenBJUpToDateUseCase
+    private val listenBJUpToDateUseCase: ListenBJUpToDateUseCase,
+    @UrlModule.DEFAULT_LOGO_IMG private val defaultLogoImgUrl: String,
+    @UrlModule.LIVE_IMG_URL private val liveImgUrl: String
 ) : MainContract.Presenter {
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
@@ -53,7 +56,9 @@ class MainPresenter @Inject constructor(
             memberUseCase(
                 GetMemberUseCase.Params(
                     targetBJ.first,
-                    targetBJ.second
+                    targetBJ.second,
+                    defaultLogoImgUrl,
+                    liveImgUrl
                 )
             )
         }.toList()
@@ -177,7 +182,8 @@ class MainPresenter @Inject constructor(
                                         v.goodBjData(
                                             teamCode,
                                             member.key as String,
-                                            b
+                                            b,
+                                            defaultLogoImgUrl
                                         )
                                     )
                                 }

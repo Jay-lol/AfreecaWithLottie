@@ -19,6 +19,7 @@ import com.jay.josaeworld.contract.BroadContract
 import com.jay.josaeworld.databinding.ActivityBroadCastBinding
 import com.jay.josaeworld.databinding.CustomDialog2Binding
 import com.jay.josaeworld.databinding.InfoDialogBinding
+import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.domain.model.response.SearchBJInfo
 import com.jay.josaeworld.domain.model.response.gsonParse.RealBroad
@@ -45,6 +46,12 @@ class BroadCastActivity :
 
     @Inject
     lateinit var adRequest: AdRequest
+
+    @UrlModule.GO_LIVE_URL_APP
+    lateinit var goLiveUrlApp: String
+
+    @UrlModule.GO_LIVE_URL_WEB
+    lateinit var goLiveUrlWeb: String
 
     @Inject
     lateinit var random: Random
@@ -153,7 +160,7 @@ class BroadCastActivity :
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dlgBinding.moveApp.setOnClickListener {
-            intent.data = Uri.parse("afreeca://player/live?user_id=$bid")
+            intent.data = Uri.parse(goLiveUrlApp + bid)
             try {
                 startActivity(intent)
             } catch (e: Exception) {
@@ -169,7 +176,7 @@ class BroadCastActivity :
         dlgBinding.moveWeb.setOnClickListener {
             intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("http://m.afreecatv.com/#/player/$bid")
+                Uri.parse(goLiveUrlWeb + bid)
             )
             startActivity(intent)
             dlg.dismiss()

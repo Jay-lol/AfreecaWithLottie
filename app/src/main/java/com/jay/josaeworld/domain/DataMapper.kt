@@ -24,8 +24,8 @@ fun Single<AfSearchResponse?>.toBroadInfo(params: GetMemberUseCase.Params): Sing
         val allviewers =
             searchResponse.broad?.current_sum_viewer?.toString()?.goodString() ?: "0" // 전체 시청자
         val imgurl: String = searchResponse.broad?.let {
-            "http://liveimg.afreecatv.com/${it.broad_no}_480x270.jpg?dummy="
-        } ?: "http://res.afreecatv.com/images/default_logo_300x300.jpg"
+            "${params.liveImgUrl}${it.broad_no}_480x270.jpg?dummy="
+        } ?: params.defaultLogoImgUrl
 
         // 0아니면 1 today0, today1
         val activeNo = searchResponse.station.active_no
@@ -85,20 +85,25 @@ fun HashMap<*, *>.goodBallonData(): BallonInfo {
     )
 }
 
-fun HashMap<*, *>.goodBjData(teamCode: String, bid: String, b: BallonInfo?): BroadInfo {
+fun HashMap<*, *>.goodBjData(
+    teamCode: String,
+    bid: String,
+    b: BallonInfo?,
+    defaultLogoImgUrl: String
+): BroadInfo {
     return BroadInfo(
         teamCode.toInt(),
         (get("onOff") as? Long)?.toInt() ?: 0,
         bid,
         get("title") as? String ?: "정보 갱신을 해주세요",
         get("bjname") as? String ?: "새로운 멤버",
-        get("imgUrl") as? String ?: "http://res.afreecatv.com/images/default_logo_300x300.jpg",
+        get("imgUrl") as? String ?: defaultLogoImgUrl,
         get("viewCnt") as? String ?: "0",
         get("fanCnt") as? String ?: "0",
         get("okCnt") as? String ?: "0",
         get("incFanCnt") as? String ?: "0",
         (get("profilePhoto") as? String)
-            ?: "http://res.afreecatv.com/images/default_logo_300x300.jpg",
+            ?: defaultLogoImgUrl,
         b ?: BallonInfo()
     )
 }

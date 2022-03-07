@@ -25,6 +25,22 @@ object UrlModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class REQUEST_HEADER
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class GO_LIVE_URL_APP
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class GO_LIVE_URL_WEB
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class DEFAULT_LOGO_IMG
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class LIVE_IMG_URL
+
     @Provides
     @BASE_URL
     fun prodvidesBaseUrl(@ApplicationContext context: Context) =
@@ -39,4 +55,24 @@ object UrlModule {
     @REQUEST_HEADER
     fun prodvidesRequestHeader(@ApplicationContext context: Context) =
         context.getString(R.string.REQUEST)
+
+    @Provides
+    @GO_LIVE_URL_APP
+    fun providesGoLiveUrlApp(@ApplicationContext context: Context) =
+        context.getString(R.string.GO_LIVE_URL_APP)
+
+    @Provides
+    @GO_LIVE_URL_WEB
+    fun providesGoLiveUrlWeb(@ApplicationContext context: Context) =
+        context.getString(R.string.GO_LIVE_URL_WEB)
+
+    @Provides
+    @DEFAULT_LOGO_IMG
+    fun providesDefaultLogoImg(@ApplicationContext context: Context) =
+        context.getString(R.string.DEFAULT_LOGO_IMG)
+
+    @Provides
+    @LIVE_IMG_URL
+    fun providesLiveImgUrl(@ApplicationContext context: Context) =
+        context.getString(R.string.LIVE_IMG_URL)
 }

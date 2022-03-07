@@ -20,6 +20,7 @@ import com.jay.josaeworld.R
 import com.jay.josaeworld.base.BaseViewBindingActivity
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.databinding.*
+import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.goodString
 import com.jay.josaeworld.domain.makeCuteNickName
 import com.jay.josaeworld.domain.model.response.BroadInfo
@@ -45,6 +46,12 @@ class MainActivity :
 
     @Inject
     lateinit var adRequest: AdRequest
+
+    @UrlModule.GO_LIVE_URL_APP
+    lateinit var goLiveUrlApp: String
+
+    @UrlModule.GO_LIVE_URL_WEB
+    lateinit var goLiveUrlWeb: String
 
     @Inject
     lateinit var random: Random
@@ -395,7 +402,7 @@ class MainActivity :
                 }
                 dlg.dismiss()
             } else {
-                intent.data = Uri.parse("afreeca://player/live?user_id=$bid")
+                intent.data = Uri.parse(goLiveUrlApp + bid)
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {
@@ -413,7 +420,7 @@ class MainActivity :
             if (code == 1) {
                 intent = Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("http://m.afreecatv.com/#/player/$bid")
+                    Uri.parse(goLiveUrlWeb + bid)
                 )
                 startActivity(intent)
             }
@@ -527,7 +534,6 @@ class MainActivity :
     }
 
     override fun makeRefreshstate(state: Boolean) {
-//        disposable.dispose()
         binding.refreshLayout.isRefreshing = state
     }
 

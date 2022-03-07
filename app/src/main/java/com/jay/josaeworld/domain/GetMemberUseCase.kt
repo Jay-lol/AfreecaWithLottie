@@ -8,7 +8,12 @@ import javax.inject.Inject
 class GetMemberUseCase @Inject constructor(
     private val repository: DataRepository
 ) {
-    data class Params(val teamCode: Int, val bid: String)
+    data class Params(
+        val teamCode: Int,
+        val bid: String,
+        val defaultLogoImgUrl: String,
+        val liveImgUrl: String
+    )
 
     operator fun invoke(params: Params): Single<BroadInfo> =
         repository.getBjInfo(params.teamCode, params.bid)
