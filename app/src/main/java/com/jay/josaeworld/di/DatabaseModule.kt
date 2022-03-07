@@ -1,10 +1,8 @@
 package com.jay.josaeworld.di
 
-import android.content.Context
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.jay.josaeworld.R
 import com.jay.josaeworld.data.repository.DataRepository
 import com.jay.josaeworld.data.repository.impl.DataRepositoryImpl
 import com.jay.josaeworld.data.service.ApiCall
@@ -13,7 +11,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -29,11 +26,11 @@ object DatabaseModule {
     @Provides
     @ActivityRetainedScoped
     fun providesMemberRestrofit(
-        @ApplicationContext context: Context,
+        @UrlModule.BASE_URL baseUrl: String,
         okHttpClient: OkHttpClient
     ): ApiCall.Member {
         return Retrofit.Builder()
-            .baseUrl(context.getString(R.string.BASE_URL))
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
@@ -44,11 +41,11 @@ object DatabaseModule {
     @Provides
     @ActivityRetainedScoped
     fun providesSearchRestrofit(
-        @ApplicationContext context: Context,
-        okHttpClient: OkHttpClient
+        @UrlModule.SEARCH_BASE_URL searchBaseUrl: String,
+        okHttpClient: OkHttpClient,
     ): ApiCall.Search {
         return Retrofit.Builder()
-            .baseUrl(context.getString(R.string.SEARCH_BASE_URL))
+            .baseUrl(searchBaseUrl)
             .client(okHttpClient)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
