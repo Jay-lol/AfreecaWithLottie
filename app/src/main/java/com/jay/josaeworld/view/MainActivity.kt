@@ -44,6 +44,9 @@ class MainActivity :
     private var isFirst: Int = 0 // 0 아무것도안함, 1 최초로딩 상태만 변경 ,2 이미 데이터가 로딩된상태
 
     @Inject
+    lateinit var adRequest: AdRequest
+
+    @Inject
     lateinit var random: Random
     lateinit var mAdView: AdView
     private var isRecentData = false
@@ -92,7 +95,6 @@ class MainActivity :
     private fun createAdmob() {
         MobileAds.initialize(this) {}
         mAdView = binding.adView
-        val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
     }
 

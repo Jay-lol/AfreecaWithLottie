@@ -1,5 +1,6 @@
 package com.jay.josaeworld.di
 
+import com.google.android.gms.ads.AdRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -69,6 +70,10 @@ object DatabaseModule {
     fun providesFirebaseDatabase(): FirebaseDatabase {
         return Firebase.database
     }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun providesAdRequest(): AdRequest = AdRequest.Builder().build()
 
     @Provides
     @ActivityRetainedScoped

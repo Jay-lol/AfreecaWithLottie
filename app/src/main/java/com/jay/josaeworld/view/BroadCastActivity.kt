@@ -44,11 +44,14 @@ class BroadCastActivity :
     lateinit var mAdView: AdView
 
     @Inject
+    lateinit var adRequest: AdRequest
+
+    @Inject
     lateinit var random: Random
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadAd()
+        createAdmob()
 
         val list = intent.getSerializableExtra("teamInfo") as ArrayList<BroadInfo>?
         secondSujang = intent.getStringExtra("secondSujang") ?: "1"
@@ -181,10 +184,9 @@ class BroadCastActivity :
         toast(msg)
     }
 
-    private fun loadAd() {
+    private fun createAdmob() {
         MobileAds.initialize(this) {}
         mAdView = binding.adView
-        val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
     }
 }
