@@ -1,10 +1,12 @@
 package com.jay.josaeworld.extension
 
 import android.app.Activity
+import android.content.Context
+import android.util.TypedValue
 import android.view.Gravity
 import android.widget.Toast
 
-internal fun Activity.showToast(code: Int) {
+internal fun Activity.showErrorToast(code: Int) {
     var msg: String = "Error"
     when (code) {
         1 -> {
@@ -23,17 +25,19 @@ internal fun Activity.showToast(code: Int) {
             msg = "최신정보를 받아오는 중\n잠시 후 다시 로딩해주세요"
         }
     }
+    toast(msg)
+}
+
+internal fun Activity.toast(msg: String, isCenter: Boolean = false) {
     val toast = Toast.makeText(
-        baseContext, msg, Toast.LENGTH_SHORT
+        applicationContext, msg, Toast.LENGTH_SHORT
     )
-    toast.setGravity(Gravity.CENTER, 0, 0)
+    if (isCenter) {
+        toast.setGravity(Gravity.CENTER, 0, 0)
+    }
     toast.show()
 }
 
-internal fun Activity.toast(msg: String) {
-    val toast = Toast.makeText(
-        baseContext, msg, Toast.LENGTH_SHORT
-    )
-    toast.setGravity(Gravity.CENTER, 0, 0)
-    toast.show()
-}
+internal fun Number.pxToDp(context: Context) = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), context.resources.displayMetrics
+).toInt()

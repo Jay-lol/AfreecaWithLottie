@@ -1,10 +1,8 @@
 package com.jay.josaeworld.contract
 
-import android.content.Context
 import com.jay.josaeworld.base.BasePresenter
 import com.jay.josaeworld.base.BaseView
-import com.jay.josaeworld.model.response.BroadInfo
-import java.util.*
+import com.jay.josaeworld.domain.model.response.BroadInfo
 
 interface MainContract {
 
@@ -18,11 +16,16 @@ interface MainContract {
         fun showCustomDialog(code: Int)
     }
 
-    interface Presenter : BasePresenter<View> {
-        fun getRecentBJData(bjLists: Array<ArrayList<BroadInfo>>, bjDataList: Array<ArrayList<BroadInfo>>?)
+    interface Presenter : BasePresenter {
+        fun getRecentBJData(
+            bjLists: Array<ArrayList<BroadInfo>>,
+            bjDataList: Array<ArrayList<BroadInfo>>?
+        )
+
         fun createBJDataListener(teamSize: Int)
         fun removeBJDataListener()
         fun getSecondSujang()
-        fun getTeamData(context: Context)
+        fun getTeamData()
+        fun sendReport(reportList: List<String>, function: () -> Unit)
     }
 }

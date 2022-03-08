@@ -1,4 +1,4 @@
-package com.jay.josaeworld.model.response.gsonParse
+package com.jay.josaeworld.domain.model.response.gsonParse
 
 data class Upd(
     val fan_cnt: Int,

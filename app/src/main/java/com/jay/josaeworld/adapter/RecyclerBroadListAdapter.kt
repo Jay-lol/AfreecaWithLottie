@@ -4,15 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.jay.josaeworld.R
 import com.jay.josaeworld.adapter.viewHolder.BJViewHolder
-import com.jay.josaeworld.model.response.BroadInfo
+import com.jay.josaeworld.databinding.RecyclerBroadBinding
+import com.jay.josaeworld.domain.model.response.BroadInfo
+import java.util.*
 
 class RecyclerBroadListAdapter(
     private val glide: RequestManager,
     private val bList: List<BroadInfo>?,
     private val secondSujang: String,
-    private val memberClick: (BroadInfo, Int) -> Unit
+    private val memberClick: (BroadInfo, Int) -> Unit,
+    private val random: Random
 ) : RecyclerView.Adapter<BJViewHolder>() {
 
     // 목록의 아이템수
@@ -23,9 +25,12 @@ class RecyclerBroadListAdapter(
     // 객체생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BJViewHolder {
         return BJViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.recycler_broad, parent, false),
-            memberClick, parent.context
+            RecyclerBroadBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            ),
+            memberClick,
+            random,
+            parent.context
         )
     }
 

@@ -1,8 +1,8 @@
-package com.jay.josaeworld.model.response
+package com.jay.josaeworld.domain.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.jay.josaeworld.model.response.gsonParse.Broad
-import com.jay.josaeworld.model.response.gsonParse.Station
+import com.jay.josaeworld.domain.model.response.gsonParse.Broad
+import com.jay.josaeworld.domain.model.response.gsonParse.Station
 
 data class AfSearchResponse(
     @SerializedName("profile_image")

@@ -9,48 +9,59 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.jay.josaeworld.R
-import com.jay.josaeworld.base.BaseMainActivity
-import com.jay.josaeworld.databinding.ActivityMainBinding
+import com.jay.josaeworld.base.BaseViewBindingActivity
+import com.jay.josaeworld.contract.MainContract
+import com.jay.josaeworld.databinding.*
+import com.jay.josaeworld.di.UrlModule
+import com.jay.josaeworld.domain.goodString
+import com.jay.josaeworld.domain.makeCuteNickName
+import com.jay.josaeworld.domain.model.response.BroadInfo
+import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
-import com.jay.josaeworld.model.GetData
-import com.jay.josaeworld.model.UtilFnc
-import com.jay.josaeworld.model.response.BroadInfo
-import kotlinx.android.synthetic.main.custom_dialog.*
-import kotlinx.android.synthetic.main.custom_dialog2.*
-import kotlinx.android.synthetic.main.info_dialog.*
-import kotlinx.android.synthetic.main.memberchangereport_dialog.*
+import com.jay.josaeworld.presenter.MainPresenter
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 
-class MainActivity : BaseMainActivity(), View.OnClickListener {
+@AndroidEntryPoint
+class MainActivity :
+    BaseViewBindingActivity<ActivityMainBinding, MainPresenter>({ ActivityMainBinding.inflate(it) }),
+    MainContract.View,
+    View.OnClickListener {
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
-    private lateinit var binding: ActivityMainBinding
     private lateinit var teamInfo: List<String>
     private var mainBJDataList: Array<ArrayList<BroadInfo>>? = null
     private var isLoading = false
     private var allViewers = 0
     private var allBallon = 0
     private var isFirst: Int = 0 // 0 아무것도안함, 1 최초로딩 상태만 변경 ,2 이미 데이터가 로딩된상태
-    private var random = Random()
+
+    @Inject
+    lateinit var adRequest: AdRequest
+
+    @UrlModule.GO_LIVE_URL_APP
+    lateinit var goLiveUrlApp: String
+
+    @UrlModule.GO_LIVE_URL_WEB
+    lateinit var goLiveUrlWeb: String
+
+    @Inject
+    lateinit var random: Random
     lateinit var mAdView: AdView
     private var isRecentData = false
     private var secondSujangList: HashMap<String, String> = hashMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
         val intent = Intent(this, SplashActivity::class.java)
         isSplash = true
         startActivity(intent)
-        setContentView(view)
         initWithFirebaseServerData()
         buttonListener()
         refreshListener()
@@ -63,7 +74,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
      */
     private fun initWithFirebaseServerData() {
         presenter.getSecondSujang()
-        presenter.getTeamData(baseContext)
+        presenter.getTeamData()
     }
 
     override fun initSecondSujang(newList: HashMap<String, String>) {
@@ -89,18 +100,21 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
     private fun createAdmob() {
         MobileAds.initialize(this) {}
         mAdView = binding.adView
-        val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
     }
 
     private fun fabButtonListener() {
         binding.fabChat.setOnClickListener {
             if (true) {
-                Toast.makeText(baseContext, "서버 비용 문제로 준비중입니다\n빠른 시일내에 업데이트 하겠습니다", Toast.LENGTH_SHORT).show()
+                showToast(
+                    "서버 비용 문제로 준비중입니다\n" +
+                        "빠른 시일내에 업데이트 하겠습니다"
+                )
             } else if (!isLoading) {
                 val intent = Intent(this, ChatActivity::class.java)
-                val androidId = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
-                val nickname = UtilFnc.makeCuteNickName(androidId) + androidId.slice(0..1)
+                val androidId =
+                    Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+                val nickname = androidId.makeCuteNickName() + androidId.slice(0..1)
                 intent.putExtra("userId", nickname)
                 intent.putExtra("uid", androidId)
                 startActivity(intent)
@@ -121,30 +135,24 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
         binding.fabReport.setOnClickListener {
             if (!isLoading) {
                 val dlg = Dialog(this, R.style.DialogStyle)
-
+                val dlgBinding = MemberchangereportDialogBinding.inflate(layoutInflater)
                 // 커스텀 다이얼로그의 레이아웃을 설정한다.
-                dlg.setContentView(R.layout.memberchangereport_dialog)
+                dlg.setContentView(dlgBinding.root)
                 dlg.show()
 
                 dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-                dlg.reportSubmit.setOnClickListener {
-                    val bj = dlg.reportBj.text.trim().toString()
-                    val content = dlg.suggest.text.trim().toString()
-                    if (bj != "" && content != "") {
-                        GetData.sendReport(listOf(bj, content), completion = {
-                            if (it) {
-                                Toast.makeText(baseContext, "전송 완료\n검토 후 반영하겠습니다", Toast.LENGTH_LONG).show()
-                                dlg.dismiss()
-                            } else
-                                Toast.makeText(baseContext, "전송 불가", Toast.LENGTH_SHORT).show()
-                        })
+                dlgBinding.reportSubmit.setOnClickListener {
+                    val bj = dlgBinding.reportBj.text.trim().toString()
+                    val content = dlgBinding.suggest.text.trim().toString()
+                    if (bj.isNotEmpty() && content.isNotEmpty()) {
+                        presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
                     } else {
-                        Toast.makeText(baseContext, "BJ명과 건의사항을 확인해주세요", Toast.LENGTH_SHORT).show()
+                        showToast("BJ명과 건의사항을 확인해주세요")
                     }
                 }
 
-                dlg.reportClose.setOnClickListener {
+                dlgBinding.reportClose.setOnClickListener {
                     dlg.dismiss()
                 }
             }
@@ -173,7 +181,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
     /**
      * #1 파이어베이스 BJStatus 리스너 설정
      */
-    override fun setDataListener() {
+    private fun setDataListener() {
         presenter.createBJDataListener(teamInfo.size + 1)
     }
 
@@ -191,7 +199,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
         }
     }
 
-    override fun removeDataListener() {
+    private fun removeDataListener() {
         isRecentData = false
         presenter.removeBJDataListener()
     }
@@ -336,7 +344,6 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
 
             Glide.with(baseContext).load(v.imgurl + "${random.nextInt(123456789)}")
                 .override(480, 270)
-                .placeholder(R.drawable.placeholder)
                 .fitCenter()
                 .into(binding.sujangThumbnail)
 
@@ -369,19 +376,20 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
     private fun popDialog(bid: String, question: String, code: Int) {
         var intent = Intent(Intent.ACTION_VIEW)
         val dlg = Dialog(this)
+        val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
 
-        dlg.setContentView(R.layout.custom_dialog2)
+        dlg.setContentView(dlgBinding.root)
 
-        dlg.move_question.text = question
+        dlgBinding.moveQuestion.text = question
         if (code == 0) {
-            dlg.moveApp.text = "이동"
-            dlg.moveWeb.text = "아니요"
-            dlg.moveWeb.setTextColor(Color.parseColor("#99FFFFFF"))
+            dlgBinding.moveApp.text = "이동"
+            dlgBinding.moveWeb.text = "아니요"
+            dlgBinding.moveWeb.setTextColor(Color.parseColor("#99FFFFFF"))
         }
         dlg.show()
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dlg.moveApp.setOnClickListener {
+        dlgBinding.moveApp.setOnClickListener {
             if (code == 0) {
                 intent.data = Uri.parse("afreeca://")
                 try {
@@ -395,7 +403,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                 }
                 dlg.dismiss()
             } else {
-                intent.data = Uri.parse("afreeca://player/live?user_id=$bid")
+                intent.data = Uri.parse(goLiveUrlApp + bid)
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {
@@ -409,11 +417,11 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
             }
         }
 
-        dlg.moveWeb.setOnClickListener {
+        dlgBinding.moveWeb.setOnClickListener {
             if (code == 1) {
                 intent = Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("http://m.afreecatv.com/#/player/$bid")
+                    Uri.parse(goLiveUrlWeb + bid)
                 )
                 startActivity(intent)
             }
@@ -428,7 +436,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
             try {
                 animator.addUpdateListener { animation ->
                     val v = animation.animatedValue.toString()
-                    binding.nAllViewer.text = UtilFnc.goodString(v)
+                    binding.nAllViewer.text = v.goodString()
                 }
                 animator.start()
             } catch (e: Exception) {
@@ -438,7 +446,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
             try {
                 animator.addUpdateListener { animation ->
                     val v = animation.animatedValue.toString()
-                    binding.nAllBallon.text = UtilFnc.goodString(v)
+                    binding.nAllBallon.text = v.goodString()
                 }
                 animator.start()
             } catch (e: Exception) {
@@ -449,55 +457,56 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
 
     override fun showCustomDialog(code: Int) {
         val dlg = Dialog(this)
+        val dlgBinding = CustomDialogBinding.inflate(layoutInflater)
         // 커스텀 다이얼로그의 레이아웃을 설정한다.
-        dlg.setContentView(R.layout.custom_dialog)
+        dlg.setContentView(dlgBinding.root)
 
         when (code) {
             1 -> {
                 Log.d(TAG, "1 ~ showCustomDialog() called")
                 dlg.show()
                 dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dlg.warning.isSelected = true
+                dlgBinding.warning.isSelected = true
                 // 커스텀 다이얼로그의 각 위젯들을 정의한다.
-                dlg.closeOkButton.setOnClickListener {
+                dlgBinding.closeOkButton.setOnClickListener {
                     super.onBackPressed()
                     dlg.dismiss()
                 }
 
-                dlg.closeNotOk.setOnClickListener {
+                dlgBinding.closeNotOk.setOnClickListener {
                     dlg.dismiss()
                 }
             }
             2 -> {
-                dlg.question.text = "새로운 버전이 출시되었습니다\n지금 업데이트 하시겠습니까?"
-                dlg.warning.text = ""
-                dlg.closeOkButton.text = "업데이트"
-                dlg.closeNotOk.text = "나중에"
+                dlgBinding.question.text = "새로운 버전이 출시되었습니다\n지금 업데이트 하시겠습니까?"
+                dlgBinding.warning.text = ""
+                dlgBinding.closeOkButton.text = "업데이트"
+                dlgBinding.closeNotOk.text = "나중에"
                 Log.d(TAG, "2 ~ showCustomDialog() called")
                 dlg.show()
                 dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 // 커스텀 다이얼로그의 각 위젯들을 정의한다.
-                dlg.closeOkButton.setOnClickListener {
+                dlgBinding.closeOkButton.setOnClickListener {
                     if (gotoMarket())
                         dlg.dismiss()
                 }
 
-                dlg.closeNotOk.setOnClickListener {
+                dlgBinding.closeNotOk.setOnClickListener {
                     dlg.dismiss()
                 }
             }
             3 -> {
                 Log.d(TAG, "3 ~ showCustomDialog() called")
-                dlg.question.text = "업데이트를 필수로 진행해야 합니다!"
-                dlg.warning.text = ""
-                dlg.closeOkButton.text = "업데이트"
-                dlg.closeNotOk.text = ""
+                dlgBinding.question.text = "업데이트를 필수로 진행해야 합니다!"
+                dlgBinding.warning.text = ""
+                dlgBinding.closeOkButton.text = "업데이트"
+                dlgBinding.closeNotOk.text = ""
                 dlg.show()
                 dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 dlg.setCancelable(false)
                 dlg.setCanceledOnTouchOutside(false)
                 // 커스텀 다이얼로그의 각 위젯들을 정의한다.
-                dlg.closeOkButton.setOnClickListener {
+                dlgBinding.closeOkButton.setOnClickListener {
                     if (gotoMarket())
                         finish()
                 }
@@ -513,7 +522,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
             startActivity(intent)
             result = true
         } catch (e: Exception) {
-            Toast.makeText(baseContext, "플레이스토어 연결 불가", Toast.LENGTH_SHORT).show()
+            showToast("플레이스토어 연결 불가")
             Log.e(TAG, "gotoMarket: $e")
             result = false
         }
@@ -526,7 +535,6 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
     }
 
     override fun makeRefreshstate(state: Boolean) {
-//        disposable.dispose()
         binding.refreshLayout.isRefreshing = state
     }
 
@@ -539,16 +547,14 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
     }
 
     override fun showError(code: Int) {
-        this@MainActivity.showError(code)
+        showErrorToast(code)
     }
 
-    override fun showToast(msg: String) {
-        this@MainActivity.toast(msg)
+    override fun showToast(msg: String, isCenter: Boolean) {
+        toast(msg, isCenter)
     }
 
     override fun onClick(view: View?) {
-        var toast: Toast
-
         when (view) {
             binding.teamFirst -> {
                 moveTeamList(
@@ -591,11 +597,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                             this.showError(3)
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
-                        toast = Toast.makeText(
-                            baseContext, "밑으로 내려서 다시 로딩해 주세요", Toast.LENGTH_LONG
-                        )
-                        toast.setGravity(Gravity.CENTER, 0, 0)
-                        toast.show()
+                        showToast("밑으로 내려서 다시 로딩해 주세요", true)
                     }
                 }
             }
@@ -606,16 +608,16 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                         val v = mainBJDataList!![n].first()
 
                         if (!isLoading) {
-                            var intent = Intent(Intent.ACTION_VIEW)
                             val dlg = Dialog(this)
-                            dlg.setContentView(R.layout.info_dialog)
-                            dlg.infoBjname.text = v.bjname
+                            val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
+                            dlg.setContentView(dlgBinding.root)
+                            dlgBinding.infoBjname.text = v.bjname
 
                             v.balloninfo?.let {
-                                dlg.monthview.text = v.balloninfo!!.monthview
-                                dlg.monthmaxview.text = v.balloninfo!!.monthmaxview
-                                dlg.monthtime.text = v.balloninfo!!.monthtime
-                                dlg.monthpay.text = v.balloninfo!!.monthpay
+                                dlgBinding.monthview.text = v.balloninfo!!.monthview
+                                dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
+                                dlgBinding.monthtime.text = v.balloninfo!!.monthtime
+                                dlgBinding.monthpay.text = v.balloninfo!!.monthpay
                             }
                             dlg.show()
                             dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -623,11 +625,7 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                             this.showError(3)
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
-                        toast = Toast.makeText(
-                            baseContext, "밑으로 내려서 다시 로딩해 주세요", Toast.LENGTH_LONG
-                        )
-                        toast.setGravity(Gravity.CENTER, 0, 0)
-                        toast.show()
+                        showToast("밑으로 내려서 다시 로딩해 주세요", true)
                     }
                 }
             }
@@ -650,12 +648,11 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
      * 새로운 액티비티에서 해당 팀 보여주기
      */
     private fun moveTeamList(teamName: String, teamList: ArrayList<BroadInfo>?, secondSujang: String) {
-        val toast: Toast
         val intent = Intent(this, BroadCastActivity::class.java)
         try {
             if (!isLoading && !teamList.isNullOrEmpty()) {
                 intent.putExtra("teamName", teamName)
-                intent.putExtra("teamINfo", teamList)
+                intent.putExtra("teamInfo", teamList)
                 intent.putExtra(
                     "secondSujang",
                     secondSujang
@@ -664,14 +661,35 @@ class MainActivity : BaseMainActivity(), View.OnClickListener {
                 // 새로운 액티비티ani, 기존 액티비티ani
                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             } else
-                this.showError(3)
+                showError(3)
         } catch (e: Exception) {
             Log.d(TAG, "MainActivity ~ $e() called")
-            toast = Toast.makeText(
-                baseContext, "밑으로 내려서 다시 로딩해 주세요", Toast.LENGTH_LONG
-            )
-            toast.setGravity(Gravity.CENTER, 0, 0)
-            toast.show()
+            showToast("밑으로 내려서 다시 로딩해 주세요", true)
         }
+    }
+
+    // 라이프사이클에 맞춰 리스너 설정
+    override fun onStart() {
+        if (splashException) setDataListener()
+        super.onStart()
+    }
+
+    override fun onResume() {
+        if (splashException) setDataListener()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        if (!isSplash) {
+            removeDataListener()
+        }
+        super.onPause()
+    }
+
+    override fun onStop() {
+        if (!isSplash) {
+            removeDataListener()
+        }
+        super.onStop()
     }
 }
