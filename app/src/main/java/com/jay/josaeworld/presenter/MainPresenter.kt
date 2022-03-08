@@ -266,13 +266,11 @@ class MainPresenter @Inject constructor(
                         val value = snapshot.children
                         val list = arrayListOf<String>()
                         var time = 0L
-                        var isForce = false
                         var minversionCode = 123456789
                         var currentversionCode = 123456789
                         for (x in value) {
                             when (x.key) {
                                 "LastUpDateTime" -> time = x.value as Long
-                                "isForce" -> isForce = x.value as Boolean
                                 "minversionCode" -> minversionCode = (x.value as Long).toInt()
                                 "currentversionCode" ->
                                     currentversionCode =
@@ -281,7 +279,7 @@ class MainPresenter @Inject constructor(
                             }
                         }
                         Log.d(TAG, "GetData ~ onDataChange() called $list")
-                        initTeamData(list, time, isForce, minversionCode, currentversionCode)
+                        initTeamData(list, time, minversionCode, currentversionCode)
                     } catch (e: Exception) {
                         searchView?.showToast("$e")
                     }
@@ -297,7 +295,6 @@ class MainPresenter @Inject constructor(
     private fun initTeamData(
         newList: List<String>,
         time: Long,
-        isForce: Boolean,
         minversionCode: Int,
         currentversionCode: Int
     ) {
@@ -307,17 +304,16 @@ class MainPresenter @Inject constructor(
         } else {
             pi.versionCode.toLong()
         }
-        if (isForce && vc < minversionCode) {
+        if (vc < minversionCode) {
             Handler(Looper.getMainLooper()).postDelayed({
                 searchView?.showCustomDialog(3)
             }, 2000)
-        } else {
-            if (vc < currentversionCode) {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    searchView?.showCustomDialog(2)
-                }, 2000)
-            }
+        } else if (vc < currentversionCode) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                searchView?.showCustomDialog(2)
+            }, 2000)
         }
+
         searchView?.initTeamData(newList, time)
     }
 

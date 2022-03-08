@@ -472,7 +472,7 @@ class MainActivity :
                 dlgBinding.warning.isSelected = true
                 // 커스텀 다이얼로그의 각 위젯들을 정의한다.
                 dlgBinding.closeOkButton.setOnClickListener {
-                    super.onBackPressed()
+                    finish()
                     dlg.dismiss()
                 }
 
