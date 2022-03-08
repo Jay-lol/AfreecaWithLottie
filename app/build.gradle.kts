@@ -23,8 +23,20 @@ android {
 
     buildTypes {
         getByName("release") {
+            manifestPlaceholders["appLabel"] = "조새크루"
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
+        }
+
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["appLabel"] = "조새크루 Debug"
+            isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

@@ -10,6 +10,8 @@
 /.idea/assetWizardSettings.xml
 /app/google-services.json
 /app/release
+/app/src/debug
+/app/src/release
 .DS_Store
 /build
 /buildSrc/build
