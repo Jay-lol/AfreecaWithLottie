@@ -16,3 +16,4 @@ MVP Pattern
 * Lottie
 * FirebaseDB
 * Cloud Functions
+* Hilt
