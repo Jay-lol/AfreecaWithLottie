@@ -47,9 +47,11 @@ class BroadCastActivity :
     @Inject
     lateinit var adRequest: AdRequest
 
+    @Inject
     @UrlModule.GO_LIVE_URL_APP
     lateinit var goLiveUrlApp: String
 
+    @Inject
     @UrlModule.GO_LIVE_URL_WEB
     lateinit var goLiveUrlWeb: String
 

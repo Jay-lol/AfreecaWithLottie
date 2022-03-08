@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.jay.josaeworld.BuildConfig
 import com.jay.josaeworld.R
 import com.jay.josaeworld.base.BaseViewBindingActivity
 import com.jay.josaeworld.contract.MainContract
@@ -45,9 +46,11 @@ class MainActivity :
     @Inject
     lateinit var adRequest: AdRequest
 
+    @Inject
     @UrlModule.GO_LIVE_URL_APP
     lateinit var goLiveUrlApp: String
 
+    @Inject
     @UrlModule.GO_LIVE_URL_WEB
     lateinit var goLiveUrlWeb: String
 
@@ -61,6 +64,9 @@ class MainActivity :
         super.onCreate(savedInstanceState)
         val intent = Intent(this, SplashActivity::class.java)
         isSplash = true
+        if (BuildConfig.DEBUG) {
+            showToast("디버그 모드")
+        }
         startActivity(intent)
         initWithFirebaseServerData()
         buttonListener()
@@ -256,7 +262,8 @@ class MainActivity :
                 // 수장 처리는 따로
                 if (team[0].bid == "superbsw123") {
                     nAllviewers += makeSujangView(team[0])
-                    nAllballon += team[0].balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toInt() ?: 0
+                    nAllballon += team[0].balloninfo?.monthballon?.filter { c -> c.isDigit() }
+                        ?.toInt() ?: 0
                     break
                 }
 
@@ -265,12 +272,8 @@ class MainActivity :
                 var viewCnt = 0
 
                 val teamNum = bjlist[index][0].teamCode
-                try {
-                    teamName[index].text = teamInfo[teamNum]
-                } catch (e: Exception) {
-                    val l = listOf("시", "조", "새", "!")
-                    teamName[index].text = l[teamNum]
-                }
+
+                teamName[index].text = teamInfo[teamNum]
 
                 if (teamName[index].text == "X") {
                     teamCardViewList[index].visibility = View.GONE
@@ -523,7 +526,6 @@ class MainActivity :
             result = true
         } catch (e: Exception) {
             showToast("플레이스토어 연결 불가")
-            Log.e(TAG, "gotoMarket: $e")
             result = false
         }
         return result
