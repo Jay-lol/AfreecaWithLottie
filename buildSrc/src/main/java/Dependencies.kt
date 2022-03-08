@@ -68,7 +68,7 @@ object Versions {
     const val RETROFIT = "2.9.0"
     const val RXANDROID = "2.1.1"
     const val GLIDE = "4.13.0"
-    const val LOTTIE = "5.0.1"
+    const val LOTTIE = "5.0.3"
     const val SWRFLAYOUT = "1.1.0"
     const val CARDVIEW = "1.0.0"
     const val JUNIT = "4.13.2"
