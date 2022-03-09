@@ -38,10 +38,10 @@ class MainActivity :
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private lateinit var teamInfo: List<String>
     private var mainBJDataList: Array<ArrayList<BroadInfo>>? = null
-    private var isLoading = false
+    private var isCrawlingForFirebase = false
     private var allViewers = 0
     private var allBallon = 0
-    private var isFirst: Int = 0 // 0 아무것도안함, 1 최초로딩 상태만 변경 ,2 이미 데이터가 로딩된상태
+    private var isDataUpdateNeeded = false
 
     @Inject
     lateinit var adRequest: AdRequest
@@ -62,13 +62,16 @@ class MainActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val intent = Intent(this, SplashActivity::class.java)
-        isSplash = true
         if (BuildConfig.DEBUG) {
             showToast("디버그 모드")
         }
-        startActivity(intent)
-        initWithFirebaseServerData()
+        intent.extras?.run {
+            if (getInt("code") == 2) {
+                showCustomDialog(2)
+            }
+            initTeamData(getStringArrayList("newList") as List<String>, getLong("time"))
+        }
+        getSecondSujangFromFirebase()
         buttonListener()
         refreshListener()
         fabButtonListener()
@@ -76,31 +79,24 @@ class MainActivity :
     }
 
     /**
-     * 파이어베이스 정보로 팀데이터 정보 초기화
+     * 파이어베이스 정보로 second 정보 초기화
      */
-    private fun initWithFirebaseServerData() {
+    private fun getSecondSujangFromFirebase() {
         presenter.getSecondSujang()
-        presenter.getTeamData()
     }
 
     override fun initSecondSujang(newList: HashMap<String, String>) {
         secondSujangList = newList
     }
 
-    override fun initTeamData(teamInfo: List<String>, time: Long) {
+    private fun initTeamData(teamInfo: List<String>, time: Long) {
         this.teamInfo = teamInfo
         val now = System.currentTimeMillis()
         // 30초 보다 크면 백그라운드에서 업데이트 함수 돌려놈
-        if (now - time > 30000 && isFirst == 0) {
-            isFirst = 1
+        if (now - time > 30000) {
+            isDataUpdateNeeded = true
         }
         setDataListener() // 팀 데이터 오면 리스너 등록
-        splashException = true
-        if (!isLoading) {
-            binding.teamOne.text = this.teamInfo[0]
-            binding.teamTwo.text = this.teamInfo[1]
-            binding.teamThree.text = this.teamInfo[2]
-        }
     }
 
     private fun createAdmob() {
@@ -116,7 +112,7 @@ class MainActivity :
                     "서버 비용 문제로 준비중입니다\n" +
                         "빠른 시일내에 업데이트 하겠습니다"
                 )
-            } else if (!isLoading) {
+            } else {
                 val intent = Intent(this, ChatActivity::class.java)
                 val androidId =
                     Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
@@ -127,57 +123,53 @@ class MainActivity :
             }
         }
         binding.fabRounge.setOnClickListener {
-            if (!isLoading) {
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(
-                            "https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)"
-                        )
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(
+                        "https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)"
                     )
                 )
-            }
+            )
         }
         binding.fabReport.setOnClickListener {
-            if (!isLoading) {
-                val dlg = Dialog(this, R.style.DialogStyle)
-                val dlgBinding = MemberchangereportDialogBinding.inflate(layoutInflater)
-                // 커스텀 다이얼로그의 레이아웃을 설정한다.
-                dlg.setContentView(dlgBinding.root)
-                dlg.show()
+            val dlg = Dialog(this, R.style.DialogStyle)
+            val dlgBinding = MemberchangereportDialogBinding.inflate(layoutInflater)
+            // 커스텀 다이얼로그의 레이아웃을 설정한다.
+            dlg.setContentView(dlgBinding.root)
+            dlg.show()
 
-                dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-                dlgBinding.reportSubmit.setOnClickListener {
-                    val bj = dlgBinding.reportBj.text.trim().toString()
-                    val content = dlgBinding.suggest.text.trim().toString()
-                    if (bj.isNotEmpty() && content.isNotEmpty()) {
-                        presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
-                    } else {
-                        showToast("BJ명과 건의사항을 확인해주세요")
-                    }
+            dlgBinding.reportSubmit.setOnClickListener {
+                val bj = dlgBinding.reportBj.text.trim().toString()
+                val content = dlgBinding.suggest.text.trim().toString()
+                if (bj.isNotEmpty() && content.isNotEmpty()) {
+                    presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
+                } else {
+                    showToast("BJ명과 건의사항을 확인해주세요")
                 }
+            }
 
-                dlgBinding.reportClose.setOnClickListener {
-                    dlg.dismiss()
-                }
+            dlgBinding.reportClose.setOnClickListener {
+                dlg.dismiss()
             }
         }
     }
 
     private fun refreshAct() {
-        if (mainBJDataList != null && !isLoading) {
+        if (mainBJDataList != null && !isCrawlingForFirebase) {
             Log.d(TAG, "MainActivity ~ refreshListener() called")
-            isLoading = true
+            isCrawlingForFirebase = true
             getNewBjData(mainBJDataList!!)
         }
     }
 
     private fun refreshListener() {
         binding.refreshLayout.setOnRefreshListener {
-            if (mainBJDataList != null && isRecentData)
+            if (isRecentData) {
                 refreshAct()
-            else {
+            } else {
                 binding.refreshLayout.isRefreshing = false
                 this.showError(5)
             }
@@ -199,9 +191,9 @@ class MainActivity :
         mainBJDataList = newBJDataList
         isRecentData = true
         upDateUi(mainBJDataList!!)
-        if (isFirst == 1) {
+        if (isDataUpdateNeeded) {
             refreshAct()
-            isFirst = 2
+            isDataUpdateNeeded = false
         }
     }
 
@@ -234,7 +226,7 @@ class MainActivity :
 
     private fun upDateUi(bjlist: Array<ArrayList<BroadInfo>>) {
 
-        if (!isLoading) {
+        if (!isCrawlingForFirebase) {
             stopLoadingAnimation()
         }
 
@@ -498,22 +490,6 @@ class MainActivity :
                     dlg.dismiss()
                 }
             }
-            3 -> {
-                Log.d(TAG, "3 ~ showCustomDialog() called")
-                dlgBinding.question.text = "업데이트를 필수로 진행해야 합니다!"
-                dlgBinding.warning.text = ""
-                dlgBinding.closeOkButton.text = "업데이트"
-                dlgBinding.closeNotOk.text = ""
-                dlg.show()
-                dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dlg.setCancelable(false)
-                dlg.setCanceledOnTouchOutside(false)
-                // 커스텀 다이얼로그의 각 위젯들을 정의한다.
-                dlgBinding.closeOkButton.setOnClickListener {
-                    if (gotoMarket())
-                        finish()
-                }
-            }
         }
     }
 
@@ -540,8 +516,8 @@ class MainActivity :
         binding.refreshLayout.isRefreshing = state
     }
 
-    override fun changeIsLoadingState(state: Boolean) {
-        isLoading = state
+    override fun changeIsCrawlingForFirebaseState(state: Boolean) {
+        isCrawlingForFirebase = state
     }
 
     override fun onBackPressed() {
@@ -589,14 +565,13 @@ class MainActivity :
                         val n = mainBJDataList!!.size - 1
                         val v = mainBJDataList!![n].first()
 
-                        if (mainBJDataList!![n][0].onOff == 1 && !isLoading) {
+                        if (mainBJDataList!![n][0].onOff == 1) {
                             val question = "${v.viewCnt} 명이 시청중입니다!\n이동할까요?"
                             popDialog(v.bid, question, 1)
-                        } else if (mainBJDataList!![n][0].onOff == 0 && !isLoading) {
+                        } else {
                             val question = "시조새는 방송중이 아닙니다\n아프리카로 이동하시겠습니까?"
                             popDialog(v.bid, question, 0)
-                        } else if (isLoading)
-                            this.showError(3)
+                        }
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
                         showToast("밑으로 내려서 다시 로딩해 주세요", true)
@@ -608,23 +583,19 @@ class MainActivity :
                     try {
                         val n = mainBJDataList!!.size - 1
                         val v = mainBJDataList!![n].first()
+                        val dlg = Dialog(this)
+                        val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
+                        dlg.setContentView(dlgBinding.root)
+                        dlgBinding.infoBjname.text = v.bjname
 
-                        if (!isLoading) {
-                            val dlg = Dialog(this)
-                            val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
-                            dlg.setContentView(dlgBinding.root)
-                            dlgBinding.infoBjname.text = v.bjname
-
-                            v.balloninfo?.let {
-                                dlgBinding.monthview.text = v.balloninfo!!.monthview
-                                dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
-                                dlgBinding.monthtime.text = v.balloninfo!!.monthtime
-                                dlgBinding.monthpay.text = v.balloninfo!!.monthpay
-                            }
-                            dlg.show()
-                            dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                        } else
-                            this.showError(3)
+                        v.balloninfo?.let {
+                            dlgBinding.monthview.text = v.balloninfo!!.monthview
+                            dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
+                            dlgBinding.monthtime.text = v.balloninfo!!.monthtime
+                            dlgBinding.monthpay.text = v.balloninfo!!.monthpay
+                        }
+                        dlg.show()
+                        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
                         showToast("밑으로 내려서 다시 로딩해 주세요", true)
@@ -634,14 +605,11 @@ class MainActivity :
 
             binding.searchSijosae -> {
                 val intent = Intent(this, BroadCastActivity::class.java)
-                if (!isLoading)
-                    mainBJDataList?.let {
-                        intent.putExtra("teamName", "시조새 검색 결과")
-                        startActivity(intent)
-                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                    }
-                else
-                    this.showError(3)
+                mainBJDataList?.let {
+                    intent.putExtra("teamName", "시조새 검색 결과")
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                }
             }
         }
     }
@@ -652,7 +620,7 @@ class MainActivity :
     private fun moveTeamList(teamName: String, teamList: ArrayList<BroadInfo>?, secondSujang: String) {
         val intent = Intent(this, BroadCastActivity::class.java)
         try {
-            if (!isLoading && !teamList.isNullOrEmpty()) {
+            if (!teamList.isNullOrEmpty()) {
                 intent.putExtra("teamName", teamName)
                 intent.putExtra("teamInfo", teamList)
                 intent.putExtra(
@@ -672,26 +640,12 @@ class MainActivity :
 
     // 라이프사이클에 맞춰 리스너 설정
     override fun onStart() {
-        if (splashException) setDataListener()
+        setDataListener()
         super.onStart()
     }
 
-    override fun onResume() {
-        if (splashException) setDataListener()
-        super.onResume()
-    }
-
-    override fun onPause() {
-        if (!isSplash) {
-            removeDataListener()
-        }
-        super.onPause()
-    }
-
     override fun onStop() {
-        if (!isSplash) {
-            removeDataListener()
-        }
+        removeDataListener()
         super.onStop()
     }
 }

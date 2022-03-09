@@ -11,21 +11,21 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.scopes.ActivityRetainedScoped
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityRetainedComponent::class)
+@InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Provides
-    @ActivityRetainedScoped
+    @Singleton
     fun providesMemberRestrofit(
         @UrlModule.BASE_URL baseUrl: String,
         okHttpClient: OkHttpClient
@@ -40,7 +40,7 @@ object DatabaseModule {
     }
 
     @Provides
-    @ActivityRetainedScoped
+    @Singleton
     fun providesSearchRestrofit(
         @UrlModule.SEARCH_BASE_URL searchBaseUrl: String,
         okHttpClient: OkHttpClient,
@@ -55,7 +55,7 @@ object DatabaseModule {
     }
 
     @Provides
-    @ActivityRetainedScoped
+    @Singleton
     fun providesOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
@@ -66,24 +66,23 @@ object DatabaseModule {
     }
 
     @Provides
-    @ActivityRetainedScoped
+    @Singleton
     fun providesFirebaseDatabase(): FirebaseDatabase {
         return Firebase.database
     }
 
     @Provides
-    @ActivityRetainedScoped
     fun providesAdRequest(): AdRequest = AdRequest.Builder().build()
 
     @Provides
-    @ActivityRetainedScoped
+    @Singleton
     fun provideRandom(): Random = Random()
 }
 
 @Module
-@InstallIn(ActivityRetainedComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
     @Binds
-    @ActivityRetainedScoped
+    @Singleton
     abstract fun bindsDataRepository(dataRepository: DataRepositoryImpl): DataRepository
 }

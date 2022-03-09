@@ -23,8 +23,6 @@ abstract class BaseViewBindingActivity<B : ViewBinding, P : BasePresenter>(
     @Inject
     lateinit var presenter: P
 
-    var splashException = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = bindingFactory(layoutInflater)
@@ -38,9 +36,5 @@ abstract class BaseViewBindingActivity<B : ViewBinding, P : BasePresenter>(
     override fun onDestroy() {
         presenter.dropView()
         super.onDestroy()
-    }
-
-    companion object {
-        var isSplash = false
     }
 }

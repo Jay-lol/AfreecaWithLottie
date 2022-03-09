@@ -15,7 +15,7 @@ class UpdateRepoDataUseCase @Inject constructor(
     operator fun invoke(params: Params) {
         repository.updateRepoData(params.updateData)
             .addOnSuccessListener {
-                params.onSuccessListener
+                params.onSuccessListener()
             }
             .addOnFailureListener {
                 params.onFailureListener(it)

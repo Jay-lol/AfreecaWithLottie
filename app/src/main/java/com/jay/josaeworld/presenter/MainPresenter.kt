@@ -1,9 +1,6 @@
 package com.jay.josaeworld.presenter
 
 import android.content.Context
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -13,6 +10,7 @@ import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.*
 import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
+import com.jay.josaeworld.extension.addToDisposable
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,7 +23,6 @@ class MainPresenter @Inject constructor(
     private var searchView: MainContract.View?,
     private val memberUseCase: GetMemberUseCase,
     private val updateRepoDataUseCase: UpdateRepoDataUseCase,
-    private val getInitTeamDataUseCase: GetInitTeamDataUseCase,
     private val getSecondSujangUseCase: GetSecondSujangUseCase,
     private val getBallonDataUseCase: GetBallonDataUseCase,
     private val listenBJUpToDateUseCase: ListenBJUpToDateUseCase,
@@ -35,7 +32,7 @@ class MainPresenter @Inject constructor(
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
 
-    private var disposable: Disposable? = null
+    private var disposables = arrayListOf<Disposable?>()
     private var bjStatusListener: ValueEventListener? = null
 
     /**
@@ -63,7 +60,7 @@ class MainPresenter @Inject constructor(
             )
         }.toList()
 
-        disposable = Single
+        Single
             .zip(singles) { array ->
                 array.map {
                     it as BroadInfo
@@ -80,6 +77,7 @@ class MainPresenter @Inject constructor(
                 if (errorCnt == bjdata.size) {
                     // 전부 에러일 경우
                     searchView?.showError(4)
+                    searchView?.changeIsCrawlingForFirebaseState(false)
                 } else {
                     // 일부 비제이 정보만 누락된 경우
                     sendUpdateData(bjdata.filter { bj -> bj.teamCode != 403 }) { result: Boolean ->
@@ -111,17 +109,17 @@ class MainPresenter @Inject constructor(
                                     searchView?.showToast("      ${n}명 중 응답 에러로\n $bjname 외 ${errorCnt - 1}명의 정보 누락")
                             }
                         }
+                        searchView?.changeIsCrawlingForFirebaseState(false)
                     }
                 }
-                searchView?.changeIsLoadingState(false)
             }, {
                 searchView?.run {
                     stopLoadingAnimation()
                     makeRefreshstate(false)
                     showError(4)
-                    changeIsLoadingState(false)
+                    changeIsCrawlingForFirebaseState(false)
                 }
-            })
+            }).addToDisposable(disposables)
     }
 
     // 데이터를 업데이트하는 함수
@@ -141,7 +139,6 @@ class MainPresenter @Inject constructor(
                 UpdateRepoDataUseCase.Params(
                     childUpdates,
                     onSuccessListener = {
-                        Log.d(TAG, "GetData ~ addSuccessListener() called")
                         callback(true)
                     },
                     onFailureListener = {
@@ -257,66 +254,6 @@ class MainPresenter @Inject constructor(
         )
     }
 
-    // 팀명 가져오기
-    override fun getTeamData() {
-        getInitTeamDataUseCase(
-            object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    try {
-                        val value = snapshot.children
-                        val list = arrayListOf<String>()
-                        var time = 0L
-                        var minversionCode = 123456789
-                        var currentversionCode = 123456789
-                        for (x in value) {
-                            when (x.key) {
-                                "LastUpDateTime" -> time = x.value as Long
-                                "minversionCode" -> minversionCode = (x.value as Long).toInt()
-                                "currentversionCode" ->
-                                    currentversionCode =
-                                        (x.value as Long).toInt()
-                                else -> list.add(x.value as String)
-                            }
-                        }
-                        Log.d(TAG, "GetData ~ onDataChange() called $list")
-                        initTeamData(list, time, minversionCode, currentversionCode)
-                    } catch (e: Exception) {
-                        searchView?.showToast("$e")
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    searchView?.showToast("$error")
-                }
-            }
-        )
-    }
-
-    private fun initTeamData(
-        newList: List<String>,
-        time: Long,
-        minversionCode: Int,
-        currentversionCode: Int
-    ) {
-        val pi = context.packageManager.getPackageInfo(context.packageName, 0)
-        val vc = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            pi.longVersionCode
-        } else {
-            pi.versionCode.toLong()
-        }
-        if (vc < minversionCode) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                searchView?.showCustomDialog(3)
-            }, 2000)
-        } else if (vc < currentversionCode) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                searchView?.showCustomDialog(2)
-            }, 2000)
-        }
-
-        searchView?.initTeamData(newList, time)
-    }
-
     // 건의 사항
     override fun sendReport(reportList: List<String>, function: () -> Unit) {
         try {
@@ -352,6 +289,6 @@ class MainPresenter @Inject constructor(
 
     override fun dropView() {
         searchView = null
-        disposable?.dispose()
+        disposables.clear()
     }
 }

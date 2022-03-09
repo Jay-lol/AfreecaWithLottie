@@ -1,41 +1,76 @@
 package com.jay.josaeworld.view
 
+import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
-import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
-import com.jay.josaeworld.base.BaseViewBindingActivity.Companion.isSplash
+import com.jay.josaeworld.base.BaseViewBindingActivity
+import com.jay.josaeworld.contract.SplashContract
 import com.jay.josaeworld.databinding.ActivitySplashBinding
+import com.jay.josaeworld.databinding.CustomDialogBinding
+import com.jay.josaeworld.extension.showErrorToast
+import com.jay.josaeworld.extension.toast
+import com.jay.josaeworld.presenter.SplashPresenter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SplashActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySplashBinding
+class SplashActivity :
+    BaseViewBindingActivity<ActivitySplashBinding, SplashPresenter>({
+        ActivitySplashBinding.inflate(
+            it
+        )
+    }),
+    SplashContract.View {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySplashBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        window.statusBarColor = Color.TRANSPARENT
+        presenter.getInitTeamData()
+    }
 
-        Handler(Looper.getMainLooper()).postDelayed({
+    override fun startMainActivity(newList: List<String>, time: Long, code: Int) {
+        if (code == 3) {
+            val dlg = Dialog(this)
+            val dlgBinding = CustomDialogBinding.inflate(layoutInflater)
+            // 커스텀 다이얼로그의 레이아웃을 설정한다.
+            dlg.setContentView(dlgBinding.root)
+
+            dlgBinding.question.text = "업데이트를 필수로 진행해야 합니다!"
+            dlgBinding.warning.text = ""
+            dlgBinding.closeOkButton.text = "업데이트"
+            dlgBinding.closeNotOk.text = ""
+            dlg.show()
+            dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dlg.setCancelable(false)
+            dlg.setCanceledOnTouchOutside(false)
+            dlgBinding.closeOkButton.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data =
+                    Uri.parse("https://play.google.com/store/apps/details?id=com.jay.josaeworld")
+                try {
+                    startActivity(intent)
+                    finish()
+                } catch (e: Exception) {
+                    showToast("플레이스토어 연결 불가")
+                }
+            }
+        } else {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("newList", newList as ArrayList)
+            intent.putExtra("time", time)
+            intent.putExtra("code", code)
+            startActivity(intent)
             finish()
-        }, 1500)
+        }
     }
 
-    override fun onPause() {
-        isSplash = false
-        super.onPause()
+    override fun showError(code: Int) {
+        showErrorToast(code)
     }
 
-    override fun onStop() {
-        isSplash = false
-        super.onStop()
+    override fun showToast(msg: String, isCenter: Boolean) {
+        toast(msg, isCenter)
     }
 
     override fun onBackPressed() {}

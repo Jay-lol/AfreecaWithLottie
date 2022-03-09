@@ -5,9 +5,10 @@ import android.content.Context
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.Toast
+import io.reactivex.disposables.Disposable
 
 internal fun Activity.showErrorToast(code: Int) {
-    var msg: String = "Error"
+    var msg = "Error"
     when (code) {
         1 -> {
             msg = "        아프리카 서버 오류\n3초 후 밑으로 내려서 다시 로딩해 주세요"
@@ -41,3 +42,7 @@ internal fun Activity.toast(msg: String, isCenter: Boolean = false) {
 internal fun Number.pxToDp(context: Context) = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), context.resources.displayMetrics
 ).toInt()
+
+internal fun Disposable.addToDisposable(list: ArrayList<Disposable?>) {
+    list.add(this)
+}
