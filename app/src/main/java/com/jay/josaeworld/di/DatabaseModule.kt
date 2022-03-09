@@ -1,5 +1,7 @@
 package com.jay.josaeworld.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.google.android.gms.ads.AdRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
@@ -11,6 +13,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -77,6 +80,11 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideRandom(): Random = Random()
+
+    @Provides
+    @Singleton
+    fun providesSharedPreference(@ApplicationContext context: Context): SharedPreferences =
+        context.getSharedPreferences("build_app", 0)
 }
 
 @Module

@@ -3,6 +3,7 @@ package com.jay.josaeworld.view
 import android.animation.ValueAnimator
 import android.app.Dialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -44,6 +45,9 @@ class MainActivity :
     private var isDataUpdateNeeded = false
 
     @Inject
+    lateinit var sharedPref: SharedPreferences
+
+    @Inject
     lateinit var adRequest: AdRequest
 
     @Inject
@@ -71,11 +75,18 @@ class MainActivity :
             }
             initTeamData(getStringArrayList("newList") as List<String>, getLong("time"))
         }
+        showCoachMark()
         getSecondSujangFromFirebase()
         buttonListener()
         refreshListener()
         fabButtonListener()
         createAdmob()
+    }
+
+    private fun showCoachMark() {
+        if (sharedPref.getInt(KEY_CLICK_COACH_MARK_CNT, 0) <= 1) {
+            binding.coachClick.visibility = View.VISIBLE
+        }
     }
 
     /**
@@ -596,6 +607,14 @@ class MainActivity :
                         }
                         dlg.show()
                         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                        val clickCnt = sharedPref.getInt(KEY_CLICK_COACH_MARK_CNT, 0)
+                        if (clickCnt <= 1) {
+                            with(sharedPref.edit()) {
+                                putInt(KEY_CLICK_COACH_MARK_CNT, clickCnt + 1)
+                                apply()
+                            }
+                            binding.coachClick.visibility = View.GONE
+                        }
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
                         showToast("밑으로 내려서 다시 로딩해 주세요", true)
@@ -647,5 +666,9 @@ class MainActivity :
     override fun onStop() {
         removeDataListener()
         super.onStop()
+    }
+
+    companion object {
+        const val KEY_CLICK_COACH_MARK_CNT = "click_coach_mark_cnt"
     }
 }
