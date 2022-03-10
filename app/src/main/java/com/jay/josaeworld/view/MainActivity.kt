@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.app.Dialog
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -20,6 +19,7 @@ import com.jay.josaeworld.BuildConfig
 import com.jay.josaeworld.R
 import com.jay.josaeworld.base.BaseViewBindingActivity
 import com.jay.josaeworld.contract.MainContract
+import com.jay.josaeworld.data.UserPreferencesRepository
 import com.jay.josaeworld.databinding.*
 import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.goodString
@@ -28,7 +28,14 @@ import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.presenter.MainPresenter
+import com.jay.josaeworld.view.SplashActivity.Companion.KEY_LAST_UPDATE_TIME
+import com.jay.josaeworld.view.SplashActivity.Companion.KEY_NEW_LIST
+import com.jay.josaeworld.view.SplashActivity.Companion.KEY_UPDATE_CODE
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -46,7 +53,7 @@ class MainActivity :
     private var isDataUpdateNeeded = false
 
     @Inject
-    lateinit var sharedPref: SharedPreferences
+    lateinit var dataStore: UserPreferencesRepository
 
     @Inject
     lateinit var adRequest: AdRequest
@@ -71,10 +78,13 @@ class MainActivity :
             showToast("디버그 모드")
         }
         intent.extras?.run {
-            if (getInt("code") == 2) {
+            if (getInt(KEY_UPDATE_CODE) == 2) {
                 showCustomDialog(2)
             }
-            initTeamData(getStringArrayList("newList") as List<String>, getLong("time"))
+            initTeamData(
+                getStringArrayList(KEY_NEW_LIST) as List<String>,
+                getLong(KEY_LAST_UPDATE_TIME)
+            )
         }
         showCoachMark()
         getSecondSujangFromFirebase()
@@ -85,7 +95,7 @@ class MainActivity :
     }
 
     private fun showCoachMark() {
-        if (sharedPref.getInt(KEY_CLICK_COACH_MARK_CNT, 0) <= 1) {
+        if (dataStore.coachMarkCount <= 1) {
             binding.coachClick.visibility = View.VISIBLE
         }
     }
@@ -610,13 +620,10 @@ class MainActivity :
                         }
                         dlg.show()
                         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                        val clickCnt = sharedPref.getInt(KEY_CLICK_COACH_MARK_CNT, 0)
-                        if (clickCnt <= 1) {
-                            with(sharedPref.edit()) {
-                                putInt(KEY_CLICK_COACH_MARK_CNT, clickCnt + 1)
-                                apply()
-                            }
+                        CoroutineScope(Dispatchers.Main).launch {
+                            dataStore.incrementCoachMarkCount()
                             binding.coachClick.visibility = View.GONE
+                            cancel()
                         }
                     } catch (e: Exception) {
                         Log.e(TAG, "buttonListener: $e")
@@ -669,9 +676,5 @@ class MainActivity :
     override fun onStop() {
         removeDataListener()
         super.onStop()
-    }
-
-    companion object {
-        const val KEY_CLICK_COACH_MARK_CNT = "click_coach_mark_cnt"
     }
 }

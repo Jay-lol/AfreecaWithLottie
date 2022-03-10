@@ -56,11 +56,13 @@ class SplashActivity :
                 }
             }
         } else {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("newList", newList as ArrayList)
-            intent.putExtra("time", time)
-            intent.putExtra("code", code)
-            startActivity(intent)
+            startActivity(
+                Intent(this, MainActivity::class.java).apply {
+                    putExtra(KEY_NEW_LIST, newList as ArrayList)
+                    putExtra(KEY_LAST_UPDATE_TIME, time)
+                    putExtra(KEY_UPDATE_CODE, code)
+                }
+            )
             finish()
         }
     }
@@ -74,4 +76,10 @@ class SplashActivity :
     }
 
     override fun onBackPressed() {}
+
+    companion object {
+        const val KEY_NEW_LIST = "key_new_list"
+        const val KEY_LAST_UPDATE_TIME = "key_last_update_time"
+        const val KEY_UPDATE_CODE = "key_update_code"
+    }
 }

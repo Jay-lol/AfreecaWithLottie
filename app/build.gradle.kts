@@ -99,6 +99,9 @@ dependencies {
 
     implementation(Libs.HILT)
     kapt(Libs.HILT_COMPILER)
+
+    implementation(Libs.DATA_STORE)
+    implementation(Libs.COROUTINES)
 }
 repositories {
     mavenCentral()

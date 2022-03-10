@@ -1,7 +1,12 @@
 package com.jay.josaeworld.di
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.ads.AdRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
@@ -83,8 +88,14 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesSharedPreference(@ApplicationContext context: Context): SharedPreferences =
-        context.getSharedPreferences("build_app", 0)
+    fun providesPreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            produceFile = { context.preferencesDataStoreFile("user_preferences") }
+        )
+    }
 }
 
 @Module

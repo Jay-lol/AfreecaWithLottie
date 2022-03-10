@@ -32,6 +32,8 @@ object Libs {
         "com.google.android.gms:play-services-ads:${Versions.PLAY_SERVICES_ADS}"
     const val HILT = "com.google.dagger:hilt-android:${Versions.HILT}"
     const val HILT_COMPILER = "com.google.dagger:hilt-android-compiler:${Versions.HILT}"
+    const val DATA_STORE = "androidx.datastore:datastore-preferences:${Versions.DATA_STORE}"
+    const val COROUTINES = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINES}"
 }
 
 object TestLibs {
@@ -62,6 +64,8 @@ object Versions {
     const val ANDROIDX_CONSTRAINTLAYOUT = "2.1.3"
     const val ANDROIDX_APPCOMPAT = "1.4.1"
     const val ANDROIDX_JUNIT = "1.1.3"
+    const val DATA_STORE = "1.0.0"
+    const val COROUTINES = "1.6.0"
 
     // library
     const val OKHTTP = "4.9.3"
