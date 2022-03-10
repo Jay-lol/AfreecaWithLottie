@@ -3,6 +3,7 @@ package com.jay.josaeworld.view
 import android.animation.ValueAnimator
 import android.app.Dialog
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -398,6 +399,7 @@ class MainActivity :
         dlgBinding.moveApp.setOnClickListener {
             if (code == 0) {
                 intent.data = Uri.parse("afreeca://")
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {
@@ -410,6 +412,7 @@ class MainActivity :
                 dlg.dismiss()
             } else {
                 intent.data = Uri.parse(goLiveUrlApp + bid)
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {

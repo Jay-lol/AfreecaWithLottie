@@ -2,6 +2,7 @@ package com.jay.josaeworld.view
 
 import android.app.Dialog
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -163,6 +164,7 @@ class BroadCastActivity :
 
         dlgBinding.moveApp.setOnClickListener {
             intent.data = Uri.parse(goLiveUrlApp + bid)
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
             try {
                 startActivity(intent)
             } catch (e: Exception) {
