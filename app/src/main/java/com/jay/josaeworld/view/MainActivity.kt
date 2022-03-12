@@ -128,7 +128,7 @@ class MainActivity :
     }
 
     private fun fabButtonListener() {
-        binding.fabChat.setOnClickListener {
+        binding.buttonFloatingMenu.fabChat.setOnClickListener {
             if (true) {
                 showToast(
                     "서버 비용 문제로 준비중입니다\n" +
@@ -144,7 +144,7 @@ class MainActivity :
                 startActivity(intent)
             }
         }
-        binding.fabRounge.setOnClickListener {
+        binding.buttonFloatingMenu.fabRounge.setOnClickListener {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -154,7 +154,7 @@ class MainActivity :
                 )
             )
         }
-        binding.fabReport.setOnClickListener {
+        binding.buttonFloatingMenu.fabReport.setOnClickListener {
             val dlg = Dialog(this, R.style.DialogStyle)
             val dlgBinding = MemberchangereportDialogBinding.inflate(layoutInflater)
             // 커스텀 다이얼로그의 레이아웃을 설정한다.

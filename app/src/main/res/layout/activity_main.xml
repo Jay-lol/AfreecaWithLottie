@@ -814,61 +814,13 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <com.github.clans.fab.FloatingActionMenu
-                android:id="@+id/fab_menu"
+            <include
+                android:id="@+id/button_floating_menu"
+                layout="@layout/button_floating_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:elevation="40dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="8dp"
-                fab:fab_colorRipple="#99FFFFFF"
-                fab:fab_shadowColor="#66000000"
-                fab:fab_showShadow="true"
-                fab:layout_constraintBottom_toTopOf="@id/adView"
-                fab:layout_constraintEnd_toEndOf="parent"
-                fab:menu_backgroundColor="#00FFFFFF"
-                fab:menu_colorNormal="#00FFFF"
-                fab:menu_colorPressed="#36DADA"
-                fab:menu_labels_colorNormal="#333333"
-                fab:menu_labels_colorPressed="#444444"
-                fab:menu_labels_colorRipple="#66FFFFFF"
-                fab:menu_labels_ellipsize="end"
-                fab:menu_labels_maxLines="-1"
-                fab:menu_labels_position="left"
-                fab:menu_labels_showShadow="true"
-                fab:menu_labels_singleLine="true"
-                fab:menu_openDirection="up">
-                <!--                    fab:menu_fab_label="Choose an action"-->
-                <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/fabChat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_edit"
-                    fab:fab_colorNormal="#36DADA"
-                    fab:fab_label="크루에게 한마디"
-                    fab:fab_size="mini" />
-
-                <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/fabRounge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_myplaces"
-                    fab:fab_colorNormal="#36DADA"
-                    fab:fab_label="조새크루 역사관"
-                    fab:fab_size="mini" />
-
-                <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/fabReport"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_preferences"
-                    fab:fab_colorNormal="#36DADA"
-                    fab:fab_label="멤버 수정 건의하기"
-                    fab:fab_size="mini" />
-
-            </com.github.clans.fab.FloatingActionMenu>
+                app:layout_constraintBottom_toTopOf="@id/adView"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/loadingbar"
