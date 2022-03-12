@@ -285,6 +285,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingStart="10dp"
+                        android:paddingEnd="0dp"
                         android:text="일일 풍력 : "
                         android:textColor="#e4d5d5d5"
                         android:textSize="9sp" />
@@ -317,6 +318,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:paddingStart="10dp"
+                    android:paddingEnd="0dp"
                     android:text="월간 풍력 : "
                     android:textColor="#e4d5d5d5"
                     android:textSize="9sp" />
