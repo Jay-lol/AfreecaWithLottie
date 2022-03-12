@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -44,6 +45,7 @@ class MainActivity :
     BaseViewBindingActivity<ActivityMainBinding, MainPresenter>({ ActivityMainBinding.inflate(it) }),
     MainContract.View,
     View.OnClickListener {
+
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private lateinit var teamInfo: List<String>
     private var mainBJDataList: Array<ArrayList<BroadInfo>>? = null
@@ -71,6 +73,8 @@ class MainActivity :
     lateinit var mAdView: AdView
     private var isRecentData = false
     private var secondSujangList: HashMap<String, String> = hashMapOf()
+
+    private var fragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -237,10 +241,6 @@ class MainActivity :
 
     private fun buttonListener() {
         Log.d(TAG, "MainActivity ~ buttonListener() called")
-        binding.teamFirst.setOnClickListener(this)
-        binding.teamSecond.setOnClickListener(this)
-        binding.teamThird.setOnClickListener(this)
-        binding.teamFourth.setOnClickListener(this)
         binding.sujang.setOnClickListener(this)
         binding.moreInfo.setOnClickListener(this)
         binding.searchSijosae.setOnClickListener(this)
@@ -256,22 +256,6 @@ class MainActivity :
             var nAllviewers = 0
             var nAllballon = 0
 
-            val nextOff = listOf(
-                binding.teamOnelotti, binding.teamTwolotti, binding.teamThreelotti, binding.teamFourlotti
-            )
-            val nextOn = listOf(
-                binding.teamOnelottiOn, binding.teamTwolottiOn, binding.teamThreelottiOn, binding.teamFourlottiOn
-            )
-            val nextViewCnt = listOf(
-                binding.viewCntTeam1, binding.viewCntTeam2, binding.viewCntTeam3, binding.viewCntTeam4
-            )
-
-            val teamName = listOf(
-                binding.teamOne, binding.teamTwo, binding.teamThree, binding.teamFour
-            )
-
-            val teamCardViewList = listOf(binding.teamFirst, binding.teamSecond, binding.teamThird, binding.teamFourth)
-
             for ((index, team) in bjlist.withIndex()) {
                 // 수장 처리는 따로
                 if (team[0].bid == "superbsw123") {
@@ -282,58 +266,17 @@ class MainActivity :
                 }
 
                 // 팀 처리
-                var onOff = false
                 var viewCnt = 0
-
-                val teamNum = bjlist[index][0].teamCode
-
-                teamName[index].text = teamInfo[teamNum]
-
-                if (teamName[index].text == "X") {
-                    teamCardViewList[index].visibility = View.GONE
-                } else {
-                    teamCardViewList[index].visibility = View.VISIBLE
-                }
 
                 for (member in team) {
                     if (member.onOff == 1) {
-                        onOff = true
                         viewCnt += member.viewCnt.filter { it.isDigit() }.toInt()
                     }
                     nAllballon += member.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toInt() ?: 0
                 }
 
                 nAllviewers += viewCnt
-
-                if (onOff) {
-                    val viewer = viewCnt.toString()
-                    nextViewCnt[index].text = if (viewer.length > 3)
-                        viewer.slice(0 until viewer.length - 3) + "," + viewer.slice(viewer.length - 3 until viewer.length)
-                    else
-                        viewer
-
-                    nextOff[index].visibility = View.GONE
-                    nextOff[index].pauseAnimation()
-                    nextOn[index].visibility = View.VISIBLE
-                    nextOn[index].playAnimation()
-                } else {
-                    nextViewCnt[index].text = "0"
-                    nextOn[index].visibility = View.GONE
-                    nextOn[index].pauseAnimation()
-                    nextOff[index].visibility = View.VISIBLE
-                    nextOff[index].playAnimation()
-                }
             }
-
-            mainBJDataList = Array(bjlist.size) { arrayListOf() }
-
-            val tNSize = teamName.size
-
-            repeat(tNSize) {
-                mainBJDataList!![it] = bjlist[it]
-            }
-
-            mainBJDataList!![tNSize] = bjlist[tNSize]
 
             if (allViewers != nAllviewers) {
                 startCountAnimation(nAllviewers, 0)
@@ -343,6 +286,17 @@ class MainActivity :
             if (allBallon != nAllballon) {
                 startCountAnimation(nAllballon, 1)
                 allBallon = nAllballon
+            }
+
+            if (fragment == null) {
+                TeamListFragment(teamInfo, bjlist, secondSujangList).run {
+                    fragment = this
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fcv_team_list, this)
+                        .commit()
+                }
+            } else {
+                (fragment as? TeamListFragment)?.updateTeamListFragmentUi(mainBJDataList)
             }
         } catch (e: Exception) {
             Log.e(TAG, "upDateUi: $e")
@@ -558,31 +512,6 @@ class MainActivity :
 
     override fun onClick(view: View?) {
         when (view) {
-            binding.teamFirst -> {
-                moveTeamList(
-                    binding.teamOne.text as String, mainBJDataList?.get(0),
-                    secondSujangList[binding.teamOne.text as String] ?: "1"
-                )
-            }
-            binding.teamSecond -> {
-                moveTeamList(
-                    binding.teamTwo.text as String, mainBJDataList?.get(1),
-                    secondSujangList[binding.teamTwo.text as String] ?: "2"
-                )
-            }
-            binding.teamThird -> {
-                moveTeamList(
-                    binding.teamThree.text as String, mainBJDataList?.get(2),
-                    secondSujangList[binding.teamThree.text as String] ?: "3"
-                )
-            }
-            binding.teamFourth -> {
-                moveTeamList(
-                    binding.teamFour.text as String, mainBJDataList?.get(3),
-                    secondSujangList[binding.teamFour.text as String] ?: "3"
-                )
-            }
-
             binding.sujang -> {
                 mainBJDataList?.let {
                     try {
@@ -633,37 +562,13 @@ class MainActivity :
             }
 
             binding.searchSijosae -> {
-                val intent = Intent(this, BroadCastActivity::class.java)
                 mainBJDataList?.let {
+                    val intent = Intent(this, BroadCastActivity::class.java)
                     intent.putExtra("teamName", "시조새 검색 결과")
                     startActivity(intent)
                     overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
                 }
             }
-        }
-    }
-
-    /**
-     * 새로운 액티비티에서 해당 팀 보여주기
-     */
-    private fun moveTeamList(teamName: String, teamList: ArrayList<BroadInfo>?, secondSujang: String) {
-        val intent = Intent(this, BroadCastActivity::class.java)
-        try {
-            if (!teamList.isNullOrEmpty()) {
-                intent.putExtra("teamName", teamName)
-                intent.putExtra("teamInfo", teamList)
-                intent.putExtra(
-                    "secondSujang",
-                    secondSujang
-                )
-                startActivity(intent)
-                // 새로운 액티비티ani, 기존 액티비티ani
-                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-            } else
-                showError(3)
-        } catch (e: Exception) {
-            Log.d(TAG, "MainActivity ~ $e() called")
-            showToast("밑으로 내려서 다시 로딩해 주세요", true)
         }
     }
 

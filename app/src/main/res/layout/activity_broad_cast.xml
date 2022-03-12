@@ -24,8 +24,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fitsSystemWindows="true"
-        android:fontFamily="@font/maplestory_bold"
         android:textColor="#ffffff"
         android:textSize="20sp"
         android:transitionName="changeAct"

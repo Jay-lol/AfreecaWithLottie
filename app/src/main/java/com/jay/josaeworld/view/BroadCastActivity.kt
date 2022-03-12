@@ -73,8 +73,7 @@ class BroadCastActivity :
         } else {
             setSearchView()
         }
-
-        binding.teamName.text = intent.getStringExtra("teamName") ?: "시조새 검색 결과"
+        binding.teamName.text = intent.getStringExtra("teamName")
     }
 
     /**
