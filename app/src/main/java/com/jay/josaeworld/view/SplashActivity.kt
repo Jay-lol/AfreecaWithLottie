@@ -32,29 +32,31 @@ class SplashActivity :
     override fun startMainActivity(newList: List<String>, time: Long, code: Int) {
         if (code == 3) {
             val dlg = Dialog(this)
-            val dlgBinding = CustomDialogBinding.inflate(layoutInflater)
-            // 커스텀 다이얼로그의 레이아웃을 설정한다.
-            dlg.setContentView(dlgBinding.root)
 
-            dlgBinding.question.text = "업데이트를 필수로 진행해야 합니다!"
-            dlgBinding.warning.text = ""
-            dlgBinding.closeOkButton.text = "업데이트"
-            dlgBinding.closeNotOk.text = ""
-            dlg.show()
+            val dlgBinding = CustomDialogBinding.inflate(layoutInflater)
+            dlgBinding.run {
+                question.text = "업데이트를 필수로 진행해야 합니다!"
+                warning.text = ""
+                closeOkButton.text = "업데이트"
+                closeNotOk.text = ""
+                closeOkButton.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data =
+                        Uri.parse("https://play.google.com/store/apps/details?id=com.jay.josaeworld")
+                    try {
+                        startActivity(intent)
+                        finish()
+                    } catch (e: Exception) {
+                        showToast("플레이스토어 연결 불가")
+                    }
+                }
+            }
+
+            dlg.setContentView(dlgBinding.root)
             dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dlg.setCancelable(false)
             dlg.setCanceledOnTouchOutside(false)
-            dlgBinding.closeOkButton.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data =
-                    Uri.parse("https://play.google.com/store/apps/details?id=com.jay.josaeworld")
-                try {
-                    startActivity(intent)
-                    finish()
-                } catch (e: Exception) {
-                    showToast("플레이스토어 연결 불가")
-                }
-            }
+            dlg.show()
         } else {
             startActivity(
                 Intent(this, MainActivity::class.java).apply {

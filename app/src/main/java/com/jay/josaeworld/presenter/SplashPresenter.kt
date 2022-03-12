@@ -16,6 +16,7 @@ class SplashPresenter @Inject constructor(
     private var searchView: SplashContract.View?,
     private val getInitTeamDataUseCase: GetInitTeamDataUseCase
 ) : SplashContract.Presenter {
+
     override fun getInitTeamData() {
         getInitTeamDataUseCase(
             object : ValueEventListener {

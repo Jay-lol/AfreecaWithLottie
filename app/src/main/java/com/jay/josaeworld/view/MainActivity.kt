@@ -517,7 +517,7 @@ class MainActivity :
         }
     }
 
-    fun gotoMarket(): Boolean {
+    private fun gotoMarket(): Boolean {
         val intent = Intent(Intent.ACTION_VIEW)
         var result: Boolean
         intent.data = Uri.parse("https://play.google.com/store/apps/details?id=com.jay.josaeworld")

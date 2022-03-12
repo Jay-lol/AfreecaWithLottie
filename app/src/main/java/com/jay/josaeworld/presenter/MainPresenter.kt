@@ -1,6 +1,5 @@
 package com.jay.josaeworld.presenter
 
-import android.content.Context
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -11,7 +10,6 @@ import com.jay.josaeworld.domain.*
 import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.addToDisposable
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -19,7 +17,6 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(
-    @ApplicationContext private val context: Context,
     private var searchView: MainContract.View?,
     private val memberUseCase: GetMemberUseCase,
     private val updateRepoDataUseCase: UpdateRepoDataUseCase,
@@ -32,7 +29,7 @@ class MainPresenter @Inject constructor(
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
 
-    private var disposables = arrayListOf<Disposable?>()
+    private val disposables = arrayListOf<Disposable?>()
     private var bjStatusListener: ValueEventListener? = null
 
     /**
