@@ -32,7 +32,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
-            android:id="@+id/sujang_view"
+            android:id="@+id/boss_view"
             layout="@layout/view_bj_data"
             android:layout_width="match_parent"
             android:layout_height="0dp"

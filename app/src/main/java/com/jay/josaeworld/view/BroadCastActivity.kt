@@ -42,7 +42,7 @@ class BroadCastActivity :
 
     private lateinit var mAdapter: RecyclerBroadListAdapter
     private lateinit var sAdapter: RecyclerSearchListAdapter
-    private lateinit var secondSujang: String
+    private lateinit var underBoss: String
     lateinit var mAdView: AdView
 
     @Inject
@@ -64,7 +64,7 @@ class BroadCastActivity :
         createAdmob()
 
         val list = intent.getSerializableExtra("teamInfo") as ArrayList<BroadInfo>?
-        secondSujang = intent.getStringExtra("secondSujang") ?: "1"
+        underBoss = intent.getStringExtra("secondSujang") ?: "1"
 
         binding.broadRecyclerView.layoutManager = LinearLayoutManager(baseContext)
 
@@ -86,13 +86,13 @@ class BroadCastActivity :
                 compareBy(
                     { -it.viewCnt.filter { c -> c.isDigit() }.toInt() }, // 시청자순
                     { -it.onOff }, // 방송켜져있는지, 비번방 처리
-                    { it.bid != secondSujang },
+                    { it.bid != underBoss },
                     { it.balloninfo?.dayballon?.filter { c -> c.isDigit() }?.toInt()?.times(-1) },
                     { it.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toInt()?.times(-1) },
                     { -it.fanCnt.filter { c -> c.isDigit() }.toInt() }
                 ) // 즐찾 순
             ),
-            secondSujang,
+            underBoss,
             memberClick,
             random
         )

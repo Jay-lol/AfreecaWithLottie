@@ -12,7 +12,7 @@ import java.util.*
 class RecyclerBroadListAdapter(
     private val glide: RequestManager,
     private val bList: List<BroadInfo>?,
-    private val secondSujang: String,
+    private val underBoss: String,
     private val memberClick: (BroadInfo, Int) -> Unit,
     private val random: Random
 ) : RecyclerView.Adapter<BJViewHolder>() {
@@ -37,7 +37,7 @@ class RecyclerBroadListAdapter(
     // 객체 바인딩
     override fun onBindViewHolder(holder: BJViewHolder, position: Int) {
         this.bList?.let {
-            holder.bind(it[position], glide, secondSujang)
+            holder.bind(it[position], glide, underBoss)
         }
     }
 }

@@ -15,7 +15,7 @@ import com.jay.josaeworld.domain.model.response.BroadInfo
 class TeamListFragment(
     private val teamNameInfo: List<String>,
     private var teamList: Array<ArrayList<BroadInfo>>?,
-    private var secondSujangList: HashMap<String, String>
+    private var underBossList: HashMap<String, String>
 ) : Fragment() {
 
     private val TAG = "로그 ${this.javaClass.simpleName}"
@@ -41,26 +41,26 @@ class TeamListFragment(
         binding.firstTeam.root.setOnClickListener {
             moveTeamList(
                 binding.firstTeam.teamName.text as String, teamList?.get(0),
-                secondSujangList[binding.firstTeam.teamName.text as String] ?: "1"
+                underBossList[binding.firstTeam.teamName.text as String] ?: "1"
             )
         }
 
         binding.secondTeam.root.setOnClickListener {
             moveTeamList(
                 binding.secondTeam.teamName.text as String, teamList?.get(1),
-                secondSujangList[binding.secondTeam.teamName.text as String] ?: "2"
+                underBossList[binding.secondTeam.teamName.text as String] ?: "2"
             )
         }
         binding.thirdTeam.root.setOnClickListener {
             moveTeamList(
                 binding.thirdTeam.teamName.text as String, teamList?.get(2),
-                secondSujangList[binding.thirdTeam.teamName.text as String] ?: "3"
+                underBossList[binding.thirdTeam.teamName.text as String] ?: "3"
             )
         }
         binding.fourthTeam.root.setOnClickListener {
             moveTeamList(
                 binding.fourthTeam.teamName.text as String, teamList?.get(3),
-                secondSujangList[binding.fourthTeam.teamName.text as String] ?: "3"
+                underBossList[binding.fourthTeam.teamName.text as String] ?: "3"
             )
         }
     }
@@ -71,7 +71,7 @@ class TeamListFragment(
     private fun moveTeamList(
         teamName: String,
         teamList: ArrayList<BroadInfo>?,
-        secondSujang: String
+        underBoss: String
     ) {
         val intent = Intent(requireContext(), BroadCastActivity::class.java)
         try {
@@ -80,7 +80,7 @@ class TeamListFragment(
                 intent.putExtra("teamInfo", teamList)
                 intent.putExtra(
                     "secondSujang",
-                    secondSujang
+                    underBoss
                 )
 
                 startActivity(intent)

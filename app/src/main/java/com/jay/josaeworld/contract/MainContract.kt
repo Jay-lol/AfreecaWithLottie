@@ -11,7 +11,7 @@ interface MainContract {
         fun stopLoadingAnimation()
         fun makeRefreshstate(state: Boolean)
         fun changeIsCrawlingForFirebaseState(state: Boolean)
-        fun initSecondSujang(newList: HashMap<String, String>)
+        fun initUnderBoss(newList: HashMap<String, String>)
         fun showCustomDialog(code: Int)
     }
 
@@ -23,7 +23,7 @@ interface MainContract {
 
         fun createBJDataListener(teamSize: Int)
         fun removeBJDataListener()
-        fun getSecondSujang()
+        fun getUnderBoss()
         fun sendReport(reportList: List<String>, function: () -> Unit)
     }
 }

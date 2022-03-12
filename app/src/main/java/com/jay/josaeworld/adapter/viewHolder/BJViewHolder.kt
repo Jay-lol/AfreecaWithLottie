@@ -20,7 +20,7 @@ class BJViewHolder(
     private val context: Context
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(broadInfo: BroadInfo?, glide: RequestManager, secondSujang: String) {
+    fun bind(broadInfo: BroadInfo?, glide: RequestManager, underBoss: String) {
         if (broadInfo?.onOff == 1) {
             (binding.thumbnail.layoutParams as ConstraintLayout.LayoutParams).apply {
                 topMargin = 0
@@ -56,7 +56,7 @@ class BJViewHolder(
         }
 
         binding.highlightCardViewLottie.run {
-            if (broadInfo?.bid == secondSujang) {
+            if (broadInfo?.bid == underBoss) {
                 visibility = View.VISIBLE
                 playAnimation()
             } else {

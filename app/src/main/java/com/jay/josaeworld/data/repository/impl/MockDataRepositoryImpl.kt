@@ -24,7 +24,7 @@ class MockDataRepositoryImpl : DataRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getSecondSujang(valueEventListener: ValueEventListener) {
+    override fun getUnderBoss(valueEventListener: ValueEventListener) {
         TODO("Not yet implemented")
     }
 

@@ -20,7 +20,7 @@ class MainPresenter @Inject constructor(
     private var searchView: MainContract.View?,
     private val memberUseCase: GetMemberUseCase,
     private val updateRepoDataUseCase: UpdateRepoDataUseCase,
-    private val getSecondSujangUseCase: GetSecondSujangUseCase,
+    private val getUnderBossUseCase: GetUnderBossUseCase,
     private val getBallonDataUseCase: GetBallonDataUseCase,
     private val listenBJUpToDateUseCase: ListenBJUpToDateUseCase,
     @UrlModule.DEFAULT_LOGO_IMG private val defaultLogoImgUrl: String,
@@ -229,8 +229,8 @@ class MainPresenter @Inject constructor(
         )
     }
 
-    override fun getSecondSujang() {
-        getSecondSujangUseCase(
+    override fun getUnderBoss() {
+        getUnderBossUseCase(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     try {
@@ -238,14 +238,14 @@ class MainPresenter @Inject constructor(
                         for (x in snapshot.children) {
                             secondMap[x.key as String] = x.value as String
                         }
-                        searchView?.initSecondSujang(secondMap)
+                        searchView?.initUnderBoss(secondMap)
                     } catch (e: Exception) {
-                        searchView?.initSecondSujang(hashMapOf())
+                        searchView?.initUnderBoss(hashMapOf())
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    searchView?.initSecondSujang(hashMapOf())
+                    searchView?.initUnderBoss(hashMapOf())
                 }
             }
         )

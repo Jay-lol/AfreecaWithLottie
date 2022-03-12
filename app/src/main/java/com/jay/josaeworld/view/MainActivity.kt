@@ -71,7 +71,7 @@ class MainActivity :
     lateinit var random: Random
     lateinit var mAdView: AdView
     private var isRecentData = false
-    private var secondSujangList: HashMap<String, String> = hashMapOf()
+    private var underBossList: HashMap<String, String> = hashMapOf()
 
     private var fragment: Fragment? = null
 
@@ -90,7 +90,7 @@ class MainActivity :
             )
         }
         showCoachMark()
-        getSecondSujangFromFirebase()
+        getUnderBossFromFirebase()
         refreshListener()
         initButtonListener()
         createAdmob()
@@ -99,12 +99,12 @@ class MainActivity :
     /**
      * 파이어베이스 정보로 second 정보 초기화
      */
-    private fun getSecondSujangFromFirebase() {
-        presenter.getSecondSujang()
+    private fun getUnderBossFromFirebase() {
+        presenter.getUnderBoss()
     }
 
-    override fun initSecondSujang(newList: HashMap<String, String>) {
-        secondSujangList = newList
+    override fun initUnderBoss(newList: HashMap<String, String>) {
+        underBossList = newList
     }
 
     private fun initTeamData(teamInfo: List<String>, time: Long) {
@@ -186,7 +186,7 @@ class MainActivity :
             for (team in bjlist) {
                 // 수장 처리는 따로
                 if (team[0].bid == "superbsw123") {
-                    nAllviewers += makeSujangView(team[0])
+                    nAllviewers += makeBossView(team[0])
                     nAllballon += team[0].balloninfo?.monthballon?.filter { c -> c.isDigit() }
                         ?.toInt() ?: 0
                     break
@@ -216,7 +216,7 @@ class MainActivity :
             }
 
             if (fragment == null) {
-                TeamListFragment(teamInfo, bjlist, secondSujangList).run {
+                TeamListFragment(teamInfo, bjlist, underBossList).run {
                     fragment = this
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fcv_team_list, this)
@@ -231,11 +231,11 @@ class MainActivity :
         }
     }
 
-    private fun makeSujangView(broadInfo: BroadInfo): Int {
+    private fun makeBossView(broadInfo: BroadInfo): Int {
         val v = broadInfo
         var viewCount = 0
         if (v.onOff == 1) {
-            binding.sujangView.run {
+            binding.bossView.run {
                 braodRestLottieV2.pauseAnimation()
                 braodRestLottieV2.visibility = View.INVISIBLE
                 viewCnt.text = v.viewCnt
@@ -256,7 +256,7 @@ class MainActivity :
                 }
             }
         } else {
-            binding.sujangView.run {
+            binding.bossView.run {
                 viewCnt.text = ""
                 thumbnail.visibility = View.INVISIBLE
                 braodRestLottieV2.visibility = View.VISIBLE
@@ -267,7 +267,7 @@ class MainActivity :
         }
 
         Log.d(TAG, "MainActivity ~ upDateUi() called $v")
-        binding.sujangView.run {
+        binding.bossView.run {
             if (v.incFanCnt.filter { c -> (c.isDigit() || c == '-') }.toInt() < 0) {
                 incFanCnt.setTextColor(Color.parseColor("#FF4A4A"))
             } else {
@@ -453,7 +453,7 @@ class MainActivity :
     }
 
     private fun initButtonListener() {
-        binding.sujangView.root.setOnClickListener {
+        binding.bossView.root.setOnClickListener {
             mainBJDataList?.let {
                 try {
                     val n = mainBJDataList!!.size - 1
@@ -472,7 +472,7 @@ class MainActivity :
                 }
             }
         }
-        binding.sujangView.moreInfo.setOnClickListener {
+        binding.bossView.moreInfo.setOnClickListener {
             mainBJDataList?.let {
                 try {
                     val n = mainBJDataList!!.size - 1
@@ -492,7 +492,7 @@ class MainActivity :
                     dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                     CoroutineScope(Dispatchers.Main).launch {
                         dataStore.incrementCoachMarkCount()
-                        binding.sujangView.coachClick.visibility = View.GONE
+                        binding.bossView.coachClick.visibility = View.GONE
                         cancel()
                     }
                 } catch (e: Exception) {
@@ -564,7 +564,7 @@ class MainActivity :
 
     private fun showCoachMark() {
         if (dataStore.coachMarkCount <= 1) {
-            binding.sujangView.coachClick.visibility = View.VISIBLE
+            binding.bossView.coachClick.visibility = View.VISIBLE
         }
     }
 

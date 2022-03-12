@@ -37,7 +37,7 @@ class DataRepositoryImpl @Inject constructor(
         database.getReference("LoadingInfo").addListenerForSingleValueEvent(valueEventListener)
     }
 
-    override fun getSecondSujang(valueEventListener: ValueEventListener) {
+    override fun getUnderBoss(valueEventListener: ValueEventListener) {
         database.getReference("SecondSujang").addListenerForSingleValueEvent(valueEventListener)
     }
 

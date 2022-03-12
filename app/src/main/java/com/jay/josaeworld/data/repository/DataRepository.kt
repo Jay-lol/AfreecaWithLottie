@@ -11,7 +11,7 @@ interface DataRepository {
     fun searchJosae(): Single<RealBroad?>
     fun updateRepoData(updateData: HashMap<String, Any>): Task<Void>
     fun getInitTeamData(valueEventListener: ValueEventListener)
-    fun getSecondSujang(valueEventListener: ValueEventListener)
+    fun getUnderBoss(valueEventListener: ValueEventListener)
     fun getBallonData(valueEventListener: ValueEventListener)
     fun listenBJUpToDate(valueEventListener: ValueEventListener): ValueEventListener
     fun removeListener(valueEventListener: ValueEventListener)
