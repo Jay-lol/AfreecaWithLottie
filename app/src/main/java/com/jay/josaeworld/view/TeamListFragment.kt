@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.FragmentTeamListBinding
+import com.jay.josaeworld.domain.goodString
 import com.jay.josaeworld.domain.model.response.BroadInfo
 
 class TeamListFragment(
@@ -37,29 +38,29 @@ class TeamListFragment(
     }
 
     private fun teamClickListener() {
-        binding.teamFirst.setOnClickListener {
+        binding.firstTeam.root.setOnClickListener {
             moveTeamList(
-                binding.teamOne.text as String, teamList?.get(0),
-                secondSujangList[binding.teamOne.text as String] ?: "1"
+                binding.firstTeam.teamName.text as String, teamList?.get(0),
+                secondSujangList[binding.firstTeam.teamName.text as String] ?: "1"
             )
         }
 
-        binding.teamSecond.setOnClickListener {
+        binding.secondTeam.root.setOnClickListener {
             moveTeamList(
-                binding.teamTwo.text as String, teamList?.get(1),
-                secondSujangList[binding.teamTwo.text as String] ?: "2"
+                binding.secondTeam.teamName.text as String, teamList?.get(1),
+                secondSujangList[binding.secondTeam.teamName.text as String] ?: "2"
             )
         }
-        binding.teamThird.setOnClickListener {
+        binding.thirdTeam.root.setOnClickListener {
             moveTeamList(
-                binding.teamThree.text as String, teamList?.get(2),
-                secondSujangList[binding.teamThree.text as String] ?: "3"
+                binding.thirdTeam.teamName.text as String, teamList?.get(2),
+                secondSujangList[binding.thirdTeam.teamName.text as String] ?: "3"
             )
         }
-        binding.teamFourth.setOnClickListener {
+        binding.fourthTeam.root.setOnClickListener {
             moveTeamList(
-                binding.teamFour.text as String, teamList?.get(3),
-                secondSujangList[binding.teamFour.text as String] ?: "3"
+                binding.fourthTeam.teamName.text as String, teamList?.get(3),
+                secondSujangList[binding.fourthTeam.teamName.text as String] ?: "3"
             )
         }
     }
@@ -98,47 +99,30 @@ class TeamListFragment(
 
     fun updateTeamListFragmentUi(mainBJDataList: Array<ArrayList<BroadInfo>>?) {
         mainBJDataList ?: return
-        val nextOff = listOf(
-            binding.teamOnelotti,
-            binding.teamTwolotti,
-            binding.teamThreelotti,
-            binding.teamFourlotti
-        )
-        val nextOn = listOf(
-            binding.teamOnelottiOn,
-            binding.teamTwolottiOn,
-            binding.teamThreelottiOn,
-            binding.teamFourlottiOn
-        )
-        val nextViewCnt = listOf(
-            binding.viewCntTeam1, binding.viewCntTeam2, binding.viewCntTeam3, binding.viewCntTeam4
+        val teamBJDataList = mainBJDataList.clone().dropLast(1)
+
+        val viewTeamDataList = listOf(
+            binding.firstTeam,
+            binding.secondTeam,
+            binding.thirdTeam,
+            binding.fourthTeam
         )
 
-        val teamName = listOf(
-            binding.teamOne, binding.teamTwo, binding.teamThree, binding.teamFour
-        )
+        for ((index, team) in teamBJDataList.withIndex()) {
 
-        val teamCardViewList =
-            listOf(binding.teamFirst, binding.teamSecond, binding.teamThird, binding.teamFourth)
+            val teamView = viewTeamDataList[index]
 
-        for ((index, team) in mainBJDataList.withIndex()) {
-            // team 정보아니면 skip
-            if (team[0].bid == "superbsw123") {
-                break
-            }
-
-            // 팀 처리
             var onOff = false
             var viewCnt = 0
 
-            val teamNum = mainBJDataList[index][0].teamCode
+            val teamNum = teamBJDataList[index][0].teamCode
 
-            teamName[index].text = teamNameInfo[teamNum]
+            teamView.teamName.text = teamNameInfo[teamNum]
 
-            if (teamName[index].text == "X") {
-                teamCardViewList[index].visibility = View.GONE
+            if (teamView.teamName.text == "X") {
+                teamView.root.visibility = View.GONE
             } else {
-                teamCardViewList[index].visibility = View.VISIBLE
+                teamView.root.visibility = View.VISIBLE
             }
 
             for (member in team) {
@@ -149,22 +133,17 @@ class TeamListFragment(
             }
 
             if (onOff) {
-                val viewer = viewCnt.toString()
-                nextViewCnt[index].text = if (viewer.length > 3)
-                    viewer.slice(0 until viewer.length - 3) + "," + viewer.slice(viewer.length - 3 until viewer.length)
-                else
-                    viewer
-
-                nextOff[index].visibility = View.GONE
-                nextOff[index].pauseAnimation()
-                nextOn[index].visibility = View.VISIBLE
-                nextOn[index].playAnimation()
+                teamView.teamViewCnt.text = viewCnt.toString().goodString()
+                teamView.teamBroadOnLottie.visibility = View.VISIBLE
+                teamView.teamBroadOnLottie.playAnimation()
+                teamView.teamBroadOffLottie.visibility = View.GONE
+                teamView.teamBroadOffLottie.pauseAnimation()
             } else {
-                nextViewCnt[index].text = "0"
-                nextOn[index].visibility = View.GONE
-                nextOn[index].pauseAnimation()
-                nextOff[index].visibility = View.VISIBLE
-                nextOff[index].playAnimation()
+                teamView.teamViewCnt.text = "0"
+                teamView.teamBroadOnLottie.visibility = View.GONE
+                teamView.teamBroadOnLottie.pauseAnimation()
+                teamView.teamBroadOffLottie.visibility = View.VISIBLE
+                teamView.teamBroadOffLottie.playAnimation()
             }
         }
     }
