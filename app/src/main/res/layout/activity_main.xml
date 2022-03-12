@@ -121,7 +121,7 @@
             app:cardCornerRadius="20dp"
             app:layout_constrainedHeight="true"
             app:layout_constrainedWidth="true"
-            app:layout_constraintBottom_toTopOf="@+id/viewmid"
+            app:layout_constraintBottom_toTopOf="@+id/gl_horizontal_center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_max="250dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -171,7 +171,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="4dp"
                     android:background="@android:color/transparent"
-                    android:elevation="20dp"
+                    android:elevation="2dp"
                     fab:layout_constraintEnd_toEndOf="parent"
                     fab:layout_constraintTop_toTopOf="parent"
                     fab:lottie_autoPlay="true"
@@ -411,19 +411,14 @@
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </androidx.cardview.widget.CardView>
 
-        <View
-            android:id="@+id/viewmid"
-            android:layout_width="match_parent"
-            android:layout_height="0.01dp"
-            fab:layout_constraintBottom_toBottomOf="parent"
-            fab:layout_constraintEnd_toEndOf="parent"
-            fab:layout_constraintStart_toStartOf="parent"
-            fab:layout_constraintTop_toTopOf="parent"
-            fab:layout_constraintVertical_bias="0.5" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_horizontal_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
 
         <TextView
             android:id="@+id/search_sijosae"
@@ -436,7 +431,7 @@
             android:paddingHorizontal="6dp"
             android:text="시조새로 검색"
             android:textColor="#CCFFFFFF"
-            fab:layout_constraintBottom_toTopOf="@+id/adView"
+            fab:layout_constraintBottom_toTopOf="@+id/gl_bottom_ad"
             fab:layout_constraintEnd_toEndOf="parent"
             fab:layout_constraintStart_toStartOf="parent" />
 
@@ -448,10 +443,10 @@
             android:layout_marginEnd="10dp"
             android:orientation="vertical"
             android:weightSum="2"
-            fab:layout_constraintBottom_toTopOf="@id/adView"
+            fab:layout_constraintBottom_toTopOf="@id/gl_bottom_ad"
             fab:layout_constraintEnd_toEndOf="parent"
             fab:layout_constraintStart_toStartOf="parent"
-            fab:layout_constraintTop_toBottomOf="@+id/viewmid">
+            fab:layout_constraintTop_toBottomOf="@+id/gl_horizontal_center">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -810,7 +805,7 @@
             layout="@layout/button_floating_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/adView"
+            app:layout_constraintBottom_toTopOf="@id/gl_bottom_ad"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <com.airbnb.lottie.LottieAnimationView
@@ -819,7 +814,7 @@
             android:layout_height="match_parent"
             android:background="#4D000000"
             android:clickable="true"
-            android:elevation="50dp"
+            android:elevation="5dp"
             android:focusable="true"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -829,6 +824,13 @@
             app:lottie_autoPlay="false"
             app:lottie_fileName="8438-mr-cookie-drink2.json"
             app:lottie_loop="true" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_bottom_ad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="50dp" />
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
