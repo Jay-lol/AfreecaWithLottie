@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -78,8 +78,8 @@
             android:text="이번 달 크루 풍력 : "
             android:textColor="#BCBCBC"
             android:textSize="16sp"
-            fab:layout_constraintEnd_toStartOf="@id/middle"
-            fab:layout_constraintTop_toBottomOf="@id/midleft" />
+            app:layout_constraintEnd_toStartOf="@id/middle"
+            app:layout_constraintTop_toBottomOf="@id/midleft" />
 
         <TextView
             android:id="@+id/nAllBallon"
@@ -101,8 +101,8 @@
             android:text="*출처: 풍투데이 "
             android:textColor="#B2FFFFFF"
             android:textSize="12sp"
-            fab:layout_constraintEnd_toStartOf="@id/middle"
-            fab:layout_constraintTop_toBottomOf="@id/nAllBallon" />
+            app:layout_constraintEnd_toStartOf="@id/middle"
+            app:layout_constraintTop_toBottomOf="@id/nAllBallon" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -172,11 +172,11 @@
                     android:layout_marginEnd="4dp"
                     android:background="@android:color/transparent"
                     android:elevation="2dp"
-                    fab:layout_constraintEnd_toEndOf="parent"
-                    fab:layout_constraintTop_toTopOf="parent"
-                    fab:lottie_autoPlay="true"
-                    fab:lottie_fileName="12246-info.json"
-                    fab:lottie_loop="true" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="12246-info.json"
+                    app:lottie_loop="true" />
 
                 <ImageView
                     android:id="@+id/sujang_thumbnail"
@@ -431,9 +431,10 @@
             android:paddingHorizontal="6dp"
             android:text="시조새로 검색"
             android:textColor="#CCFFFFFF"
-            fab:layout_constraintBottom_toTopOf="@+id/gl_bottom_ad"
-            fab:layout_constraintEnd_toEndOf="parent"
-            fab:layout_constraintStart_toStartOf="parent" />
+            android:transitionName="changeAct"
+            app:layout_constraintBottom_toTopOf="@+id/gl_bottom_ad"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
             android:id="@+id/linearLayout2"
@@ -816,14 +817,15 @@
             android:clickable="true"
             android:elevation="5dp"
             android:focusable="true"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:lottie_autoPlay="false"
             app:lottie_fileName="8438-mr-cookie-drink2.json"
-            app:lottie_loop="true" />
+            app:lottie_loop="true"
+            tools:visibility="invisible" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_bottom_ad"
