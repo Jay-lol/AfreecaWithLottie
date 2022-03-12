@@ -43,8 +43,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity :
     BaseViewBindingActivity<ActivityMainBinding, MainPresenter>({ ActivityMainBinding.inflate(it) }),
-    MainContract.View,
-    View.OnClickListener {
+    MainContract.View {
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private lateinit var teamInfo: List<String>
@@ -92,16 +91,9 @@ class MainActivity :
         }
         showCoachMark()
         getSecondSujangFromFirebase()
-        buttonListener()
         refreshListener()
-        fabButtonListener()
+        initButtonListener()
         createAdmob()
-    }
-
-    private fun showCoachMark() {
-        if (dataStore.coachMarkCount <= 1) {
-            binding.coachClick.visibility = View.VISIBLE
-        }
     }
 
     /**
@@ -123,64 +115,6 @@ class MainActivity :
             isDataUpdateNeeded = true
         }
         setDataListener() // 팀 데이터 오면 리스너 등록
-    }
-
-    private fun createAdmob() {
-        MobileAds.initialize(this) {}
-        mAdView = binding.adView
-        mAdView.loadAd(adRequest)
-    }
-
-    private fun fabButtonListener() {
-        binding.buttonFloatingMenu.fabChat.setOnClickListener {
-            if (true) {
-                showToast(
-                    "서버 비용 문제로 준비중입니다\n" +
-                        "빠른 시일내에 업데이트 하겠습니다"
-                )
-            } else {
-                val intent = Intent(this, ChatActivity::class.java)
-                val androidId =
-                    Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
-                val nickname = androidId.makeCuteNickName() + androidId.slice(0..1)
-                intent.putExtra("userId", nickname)
-                intent.putExtra("uid", androidId)
-                startActivity(intent)
-            }
-        }
-        binding.buttonFloatingMenu.fabRounge.setOnClickListener {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(
-                        "https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)"
-                    )
-                )
-            )
-        }
-        binding.buttonFloatingMenu.fabReport.setOnClickListener {
-            val dlg = Dialog(this, R.style.DialogStyle)
-            val dlgBinding = MemberchangereportDialogBinding.inflate(layoutInflater)
-            // 커스텀 다이얼로그의 레이아웃을 설정한다.
-            dlg.setContentView(dlgBinding.root)
-            dlg.show()
-
-            dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            dlgBinding.reportSubmit.setOnClickListener {
-                val bj = dlgBinding.reportBj.text.trim().toString()
-                val content = dlgBinding.suggest.text.trim().toString()
-                if (bj.isNotEmpty() && content.isNotEmpty()) {
-                    presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
-                } else {
-                    showToast("BJ명과 건의사항을 확인해주세요")
-                }
-            }
-
-            dlgBinding.reportClose.setOnClickListener {
-                dlg.dismiss()
-            }
-        }
     }
 
     private fun refreshAct() {
@@ -237,13 +171,6 @@ class MainActivity :
         binding.loadingbar.playAnimation()
 
         presenter.getRecentBJData(bjlists, mainBJDataList)
-    }
-
-    private fun buttonListener() {
-        Log.d(TAG, "MainActivity ~ buttonListener() called")
-        binding.sujang.setOnClickListener(this)
-        binding.moreInfo.setOnClickListener(this)
-        binding.searchSijosae.setOnClickListener(this)
     }
 
     private fun upDateUi(bjlist: Array<ArrayList<BroadInfo>>) {
@@ -510,66 +437,126 @@ class MainActivity :
         toast(msg, isCenter)
     }
 
-    override fun onClick(view: View?) {
-        when (view) {
-            binding.sujang -> {
-                mainBJDataList?.let {
-                    try {
-                        val n = mainBJDataList!!.size - 1
-                        val v = mainBJDataList!![n].first()
+    private fun initButtonListener() {
+        binding.sujang.setOnClickListener {
+            mainBJDataList?.let {
+                try {
+                    val n = mainBJDataList!!.size - 1
+                    val v = mainBJDataList!![n].first()
 
-                        if (mainBJDataList!![n][0].onOff == 1) {
-                            val question = "${v.viewCnt} 명이 시청중입니다!\n이동할까요?"
-                            popDialog(v.bid, question, 1)
-                        } else {
-                            val question = "시조새는 방송중이 아닙니다\n아프리카로 이동하시겠습니까?"
-                            popDialog(v.bid, question, 0)
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG, "buttonListener: $e")
-                        showToast("밑으로 내려서 다시 로딩해 주세요", true)
+                    if (mainBJDataList!![n][0].onOff == 1) {
+                        val question = "${v.viewCnt} 명이 시청중입니다!\n이동할까요?"
+                        popDialog(v.bid, question, 1)
+                    } else {
+                        val question = "시조새는 방송중이 아닙니다\n아프리카로 이동하시겠습니까?"
+                        popDialog(v.bid, question, 0)
                     }
-                }
-            }
-            binding.moreInfo -> {
-                mainBJDataList?.let {
-                    try {
-                        val n = mainBJDataList!!.size - 1
-                        val v = mainBJDataList!![n].first()
-                        val dlg = Dialog(this)
-                        val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
-                        dlg.setContentView(dlgBinding.root)
-                        dlgBinding.infoBjname.text = v.bjname
-
-                        v.balloninfo?.let {
-                            dlgBinding.monthview.text = v.balloninfo!!.monthview
-                            dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
-                            dlgBinding.monthtime.text = v.balloninfo!!.monthtime
-                            dlgBinding.monthpay.text = v.balloninfo!!.monthpay
-                        }
-                        dlg.show()
-                        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                        CoroutineScope(Dispatchers.Main).launch {
-                            dataStore.incrementCoachMarkCount()
-                            binding.coachClick.visibility = View.GONE
-                            cancel()
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG, "buttonListener: $e")
-                        showToast("밑으로 내려서 다시 로딩해 주세요", true)
-                    }
-                }
-            }
-
-            binding.searchSijosae -> {
-                mainBJDataList?.let {
-                    val intent = Intent(this, BroadCastActivity::class.java)
-                    intent.putExtra("teamName", "시조새 검색 결과")
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                } catch (e: Exception) {
+                    Log.e(TAG, "buttonListener: $e")
+                    showToast("밑으로 내려서 다시 로딩해 주세요", true)
                 }
             }
         }
+        binding.moreInfo.setOnClickListener {
+            mainBJDataList?.let {
+                try {
+                    val n = mainBJDataList!!.size - 1
+                    val v = mainBJDataList!![n].first()
+                    val dlg = Dialog(this)
+                    val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
+                    dlg.setContentView(dlgBinding.root)
+                    dlgBinding.infoBjname.text = v.bjname
+
+                    v.balloninfo?.let {
+                        dlgBinding.monthview.text = v.balloninfo!!.monthview
+                        dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
+                        dlgBinding.monthtime.text = v.balloninfo!!.monthtime
+                        dlgBinding.monthpay.text = v.balloninfo!!.monthpay
+                    }
+                    dlg.show()
+                    dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    CoroutineScope(Dispatchers.Main).launch {
+                        dataStore.incrementCoachMarkCount()
+                        binding.coachClick.visibility = View.GONE
+                        cancel()
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "buttonListener: $e")
+                    showToast("밑으로 내려서 다시 로딩해 주세요", true)
+                }
+            }
+        }
+
+        binding.searchSijosae.setOnClickListener {
+            mainBJDataList?.let {
+                val intent = Intent(this, BroadCastActivity::class.java)
+                intent.putExtra("teamName", "시조새 검색 결과")
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+            }
+        }
+
+        binding.buttonFloatingMenu.fabChat.setOnClickListener {
+            if (true) {
+                showToast(
+                    "서버 비용 문제로 준비중입니다\n" +
+                        "빠른 시일내에 업데이트 하겠습니다"
+                )
+            } else {
+                val intent = Intent(this, ChatActivity::class.java)
+                val androidId =
+                    Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+                val nickname = androidId.makeCuteNickName() + androidId.slice(0..1)
+                intent.putExtra("userId", nickname)
+                intent.putExtra("uid", androidId)
+                startActivity(intent)
+            }
+        }
+        binding.buttonFloatingMenu.fabRounge.setOnClickListener {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(
+                        "https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)"
+                    )
+                )
+            )
+        }
+        binding.buttonFloatingMenu.fabReport.setOnClickListener {
+            val dlg = Dialog(this, R.style.DialogStyle)
+            val dlgBinding = MemberchangereportDialogBinding.inflate(layoutInflater)
+            // 커스텀 다이얼로그의 레이아웃을 설정한다.
+            dlg.setContentView(dlgBinding.root)
+            dlg.show()
+
+            dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            dlgBinding.reportSubmit.setOnClickListener {
+                val bj = dlgBinding.reportBj.text.trim().toString()
+                val content = dlgBinding.suggest.text.trim().toString()
+                if (bj.isNotEmpty() && content.isNotEmpty()) {
+                    presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
+                } else {
+                    showToast("BJ명과 건의사항을 확인해주세요")
+                }
+            }
+
+            dlgBinding.reportClose.setOnClickListener {
+                dlg.dismiss()
+            }
+        }
+    }
+
+    private fun showCoachMark() {
+        if (dataStore.coachMarkCount <= 1) {
+            binding.coachClick.visibility = View.VISIBLE
+        }
+    }
+
+    private fun createAdmob() {
+        MobileAds.initialize(this) {}
+        mAdView = binding.adView
+        mAdView.loadAd(adRequest)
     }
 
     // 라이프사이클에 맞춰 리스너 설정
