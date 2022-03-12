@@ -29,6 +29,7 @@ import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.presenter.MainPresenter
+import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_NAME
 import com.jay.josaeworld.view.SplashActivity.Companion.KEY_LAST_UPDATE_TIME
 import com.jay.josaeworld.view.SplashActivity.Companion.KEY_NEW_LIST
 import com.jay.josaeworld.view.SplashActivity.Companion.KEY_UPDATE_CODE
@@ -505,7 +506,7 @@ class MainActivity :
         binding.searchSijosae.setOnClickListener {
             mainBJDataList?.let {
                 val intent = Intent(this, BroadCastActivity::class.java)
-                intent.putExtra("teamName", "시조새 검색 결과")
+                intent.putExtra(KEY_TEAM_NAME, "시조새 검색 결과")
                 startActivity(intent)
                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             }

@@ -11,6 +11,9 @@ import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.FragmentTeamListBinding
 import com.jay.josaeworld.domain.goodString
 import com.jay.josaeworld.domain.model.response.BroadInfo
+import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_DATA_LIST
+import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_NAME
+import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_UNDER_BOSS_NAME
 
 class TeamListFragment(
     private val teamNameInfo: List<String>,
@@ -76,12 +79,9 @@ class TeamListFragment(
         val intent = Intent(requireContext(), BroadCastActivity::class.java)
         try {
             if (!teamList.isNullOrEmpty()) {
-                intent.putExtra("teamName", teamName)
-                intent.putExtra("teamInfo", teamList)
-                intent.putExtra(
-                    "secondSujang",
-                    underBoss
-                )
+                intent.putExtra(KEY_TEAM_NAME, teamName)
+                intent.putExtra(KEY_TEAM_DATA_LIST, teamList)
+                intent.putExtra(KEY_UNDER_BOSS_NAME, underBoss)
 
                 startActivity(intent)
                 // 새로운 액티비티ani, 기존 액티비티ani

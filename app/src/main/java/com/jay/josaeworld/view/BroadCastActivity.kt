@@ -63,8 +63,9 @@ class BroadCastActivity :
         super.onCreate(savedInstanceState)
         createAdmob()
 
-        val list = intent.getSerializableExtra("teamInfo") as ArrayList<BroadInfo>?
-        underBoss = intent.getStringExtra("secondSujang") ?: "1"
+        underBoss = intent.getStringExtra(KEY_UNDER_BOSS_NAME) ?: "1"
+
+        val list = intent.getSerializableExtra(KEY_TEAM_DATA_LIST) as ArrayList<BroadInfo>?
 
         binding.broadRecyclerView.layoutManager = LinearLayoutManager(baseContext)
 
@@ -73,7 +74,8 @@ class BroadCastActivity :
         } else {
             setSearchView()
         }
-        binding.teamName.text = intent.getStringExtra("teamName")
+
+        binding.teamName.text = intent.getStringExtra(KEY_TEAM_NAME)
     }
 
     /**
@@ -198,5 +200,11 @@ class BroadCastActivity :
         MobileAds.initialize(this) {}
         mAdView = binding.adView
         mAdView.loadAd(adRequest)
+    }
+
+    companion object {
+        const val KEY_TEAM_DATA_LIST = "key_team_data_list"
+        const val KEY_UNDER_BOSS_NAME = "key_under_boss"
+        const val KEY_TEAM_NAME = "key_team_name"
     }
 }
