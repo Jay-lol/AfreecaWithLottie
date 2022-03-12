@@ -336,21 +336,21 @@ class MainActivity :
             try {
                 animator.addUpdateListener { animation ->
                     val v = animation.animatedValue.toString()
-                    binding.nAllViewer.text = v.goodString()
+                    binding.viewMainInfoData.nAllViewer.text = v.goodString()
                 }
                 animator.start()
             } catch (e: Exception) {
-                binding.nAllViewer.text = num.toString()
+                binding.viewMainInfoData.nAllViewer.text = num.toString()
             }
         } else {
             try {
                 animator.addUpdateListener { animation ->
                     val v = animation.animatedValue.toString()
-                    binding.nAllBallon.text = v.goodString()
+                    binding.viewMainInfoData.nAllBallon.text = v.goodString()
                 }
                 animator.start()
             } catch (e: Exception) {
-                binding.nAllBallon.text = num.toString()
+                binding.viewMainInfoData.nAllBallon.text = num.toString()
             }
         }
     }
