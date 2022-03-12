@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.adapter.viewHolder.SearchListViewHolder
-import com.jay.josaeworld.databinding.RecyclerBroad2Binding
+import com.jay.josaeworld.databinding.ViewKeywordSearchBinding
 import com.jay.josaeworld.domain.model.response.SearchBJInfo
 import java.util.*
 
@@ -24,7 +24,7 @@ class RecyclerSearchListAdapter(
     // 객체생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchListViewHolder {
         return SearchListViewHolder(
-            RecyclerBroad2Binding.inflate(
+            ViewKeywordSearchBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
