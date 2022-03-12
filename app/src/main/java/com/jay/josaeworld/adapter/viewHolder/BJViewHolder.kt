@@ -55,7 +55,7 @@ class BJViewHolder(
             binding.viewCnt.text = ""
         }
 
-        binding.secondsujang.run {
+        binding.highlightCardViewLottie.run {
             if (broadInfo?.bid == secondSujang) {
                 visibility = View.VISIBLE
                 playAnimation()

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/secondsujang"
+        android:id="@+id/highlight_card_view_lottie"
         android:layout_width="match_parent"
         android:layout_height="280dp"
         android:layout_marginEnd="10dp"

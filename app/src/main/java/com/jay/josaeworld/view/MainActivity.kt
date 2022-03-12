@@ -150,7 +150,7 @@ class MainActivity :
         newBJDataList ?: return
         mainBJDataList = newBJDataList
         isRecentData = true
-        upDateUi(mainBJDataList!!)
+        updateUIwithRecentList(mainBJDataList!!)
         if (isDataUpdateNeeded) {
             refreshAct()
             isDataUpdateNeeded = false
@@ -173,7 +173,7 @@ class MainActivity :
         presenter.getRecentBJData(bjlists, mainBJDataList)
     }
 
-    private fun upDateUi(bjlist: Array<ArrayList<BroadInfo>>) {
+    private fun updateUIwithRecentList(bjlist: Array<ArrayList<BroadInfo>>) {
 
         if (!isCrawlingForFirebase) {
             stopLoadingAnimation()
@@ -183,7 +183,7 @@ class MainActivity :
             var nAllviewers = 0
             var nAllballon = 0
 
-            for ((index, team) in bjlist.withIndex()) {
+            for (team in bjlist) {
                 // 수장 처리는 따로
                 if (team[0].bid == "superbsw123") {
                     nAllviewers += makeSujangView(team[0])
@@ -192,7 +192,7 @@ class MainActivity :
                     break
                 }
 
-                // 팀 처리
+                // 팀 시청자, 별풍선 카운트
                 var viewCnt = 0
 
                 for (member in team) {
@@ -244,14 +244,25 @@ class MainActivity :
                     .override(480, 270)
                     .fitCenter()
                     .into(thumbnail)
+
+                viewCount += v.viewCnt.filter { it.isDigit() }.toInt()
+
+                if (viewCount >= 10_000) {
+                    highlightCardViewLottie.visibility = View.VISIBLE
+                    highlightCardViewLottie.playAnimation()
+                } else {
+                    highlightCardViewLottie.visibility = View.INVISIBLE
+                    highlightCardViewLottie.pauseAnimation()
+                }
             }
-            viewCount += v.viewCnt.filter { it.isDigit() }.toInt()
         } else {
             binding.sujangView.run {
                 viewCnt.text = ""
                 thumbnail.visibility = View.INVISIBLE
                 braodRestLottieV2.visibility = View.VISIBLE
                 braodRestLottieV2.playAnimation()
+                highlightCardViewLottie.visibility = View.INVISIBLE
+                highlightCardViewLottie.pauseAnimation()
             }
         }
 
