@@ -26,7 +26,10 @@
 
         <include
             android:id="@+id/view_main_info_data"
-            layout="@layout/view_main_info_data" />
+            layout="@layout/view_main_info_data"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <include
             android:id="@+id/sujang_view"
