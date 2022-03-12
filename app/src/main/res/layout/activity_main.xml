@@ -57,7 +57,7 @@
             android:elevation="4dp"
             android:gravity="center"
             android:paddingHorizontal="6dp"
-            android:text="시조새로 검색"
+            android:text="@string/search_as_josae"
             android:textColor="#CCFFFFFF"
             android:transitionName="changeAct"
             app:layout_constraintBottom_toTopOf="@+id/gl_bottom_ad"
@@ -82,7 +82,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/loadingbar"
+            android:id="@+id/main_loading_lottie"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#4D000000"

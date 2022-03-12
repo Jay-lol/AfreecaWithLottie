@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@id/loadingbar"
+        android:id="@id/main_loading_lottie"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#4d000000"

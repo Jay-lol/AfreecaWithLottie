@@ -167,8 +167,8 @@ class MainActivity :
      */
     private fun getNewBjData(bjlists: Array<ArrayList<BroadInfo>>) {
         Log.d(TAG, "MainActivity ~ getNewBjData() called")
-        binding.loadingbar.visibility = View.VISIBLE
-        binding.loadingbar.playAnimation()
+        binding.mainLoadingLottie.visibility = View.VISIBLE
+        binding.mainLoadingLottie.playAnimation()
 
         presenter.getRecentBJData(bjlists, mainBJDataList)
     }
@@ -417,8 +417,8 @@ class MainActivity :
     }
 
     override fun stopLoadingAnimation() {
-        binding.loadingbar.pauseAnimation()
-        binding.loadingbar.visibility = View.GONE
+        binding.mainLoadingLottie.pauseAnimation()
+        binding.mainLoadingLottie.visibility = View.GONE
     }
 
     override fun makeRefreshstate(state: Boolean) {
