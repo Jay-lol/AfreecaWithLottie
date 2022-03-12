@@ -233,42 +233,46 @@ class MainActivity :
 
     private fun makeSujangView(broadInfo: BroadInfo): Int {
         val v = broadInfo
-        var view = 0
+        var viewCount = 0
         if (v.onOff == 1) {
-            binding.sujangRest.pauseAnimation()
-            binding.sujangRest.visibility = View.INVISIBLE
-            binding.viewCnt.text = v.viewCnt
-            binding.sujangThumbnail.visibility = View.VISIBLE
-
-            Glide.with(baseContext).load(v.imgurl + "${random.nextInt(123456789)}")
-                .override(480, 270)
-                .fitCenter()
-                .into(binding.sujangThumbnail)
-
-            view += v.viewCnt.filter { it.isDigit() }.toInt()
+            binding.sujangView.run {
+                braodRestLottieV2.pauseAnimation()
+                braodRestLottieV2.visibility = View.INVISIBLE
+                viewCnt.text = v.viewCnt
+                thumbnail.visibility = View.VISIBLE
+                Glide.with(baseContext).load(v.imgurl + "${random.nextInt(123456789)}")
+                    .override(480, 270)
+                    .fitCenter()
+                    .into(thumbnail)
+            }
+            viewCount += v.viewCnt.filter { it.isDigit() }.toInt()
         } else {
-            binding.viewCnt.text = ""
-            binding.sujangThumbnail.visibility = View.INVISIBLE
-            binding.sujangRest.visibility = View.VISIBLE
-            binding.sujangRest.playAnimation()
+            binding.sujangView.run {
+                viewCnt.text = ""
+                thumbnail.visibility = View.INVISIBLE
+                braodRestLottieV2.visibility = View.VISIBLE
+                braodRestLottieV2.playAnimation()
+            }
         }
 
         Log.d(TAG, "MainActivity ~ upDateUi() called $v")
-        if (v.incFanCnt.filter { c -> (c.isDigit() || c == '-') }.toInt() < 0) {
-            binding.incFanCnt.setTextColor(Color.parseColor("#FF4A4A"))
-        } else {
-            binding.incFanCnt.setTextColor(Color.parseColor("#FFFFFF"))
+        binding.sujangView.run {
+            if (v.incFanCnt.filter { c -> (c.isDigit() || c == '-') }.toInt() < 0) {
+                incFanCnt.setTextColor(Color.parseColor("#FF4A4A"))
+            } else {
+                incFanCnt.setTextColor(Color.parseColor("#FFFFFF"))
+            }
+            incFanCnt.text = v.incFanCnt
+            fanCnt.text = v.fanCnt
+            okCnt.text = v.okCnt
+            bjname.text = v.bjname
+            title.text = v.title
+            bjname.isSelected = true
+            title.isSelected = true
+            mballon.text = v.balloninfo?.monthballon
+            dballon.text = v.balloninfo?.dayballon
         }
-        binding.incFanCnt.text = v.incFanCnt
-        binding.fanCnt.text = v.fanCnt
-        binding.okCnt.text = v.okCnt
-        binding.sujangname.text = v.bjname
-        binding.sujangTitle.text = v.title
-        binding.sujangname.isSelected = true
-        binding.sujangTitle.isSelected = true
-        binding.mballon.text = v.balloninfo?.monthballon
-        binding.dballon.text = v.balloninfo?.dayballon
-        return view
+        return viewCount
     }
 
     private fun popDialog(bid: String, question: String, code: Int) {
@@ -438,7 +442,7 @@ class MainActivity :
     }
 
     private fun initButtonListener() {
-        binding.sujang.setOnClickListener {
+        binding.sujangView.root.setOnClickListener {
             mainBJDataList?.let {
                 try {
                     val n = mainBJDataList!!.size - 1
@@ -457,7 +461,7 @@ class MainActivity :
                 }
             }
         }
-        binding.moreInfo.setOnClickListener {
+        binding.sujangView.moreInfo.setOnClickListener {
             mainBJDataList?.let {
                 try {
                     val n = mainBJDataList!!.size - 1
@@ -477,7 +481,7 @@ class MainActivity :
                     dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                     CoroutineScope(Dispatchers.Main).launch {
                         dataStore.incrementCoachMarkCount()
-                        binding.coachClick.visibility = View.GONE
+                        binding.sujangView.coachClick.visibility = View.GONE
                         cancel()
                     }
                 } catch (e: Exception) {
@@ -549,7 +553,7 @@ class MainActivity :
 
     private fun showCoachMark() {
         if (dataStore.coachMarkCount <= 1) {
-            binding.coachClick.visibility = View.VISIBLE
+            binding.sujangView.coachClick.visibility = View.VISIBLE
         }
     }
 

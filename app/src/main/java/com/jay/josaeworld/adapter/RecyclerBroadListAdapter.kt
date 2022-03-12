@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.adapter.viewHolder.BJViewHolder
-import com.jay.josaeworld.databinding.RecyclerBroadBinding
+import com.jay.josaeworld.databinding.ViewBjDataBinding
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import java.util.*
 
@@ -25,7 +25,7 @@ class RecyclerBroadListAdapter(
     // 객체생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BJViewHolder {
         return BJViewHolder(
-            RecyclerBroadBinding.inflate(
+            ViewBjDataBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             ),
             memberClick,
