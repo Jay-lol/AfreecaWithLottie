@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.github.clans.fab.FloatingActionMenu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fab_menu"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:elevation="4dp"
+    android:paddingStart="0dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="8dp"
+    app:fab_colorRipple="#99FFFFFF"
+    app:fab_shadowColor="#66000000"
+    app:fab_showShadow="true"
+    app:menu_backgroundColor="#00FFFFFF"
+    app:menu_colorNormal="#00FFFF"
+    app:menu_colorPressed="#36DADA"
+    app:menu_labels_colorNormal="#333333"
+    app:menu_labels_colorPressed="#444444"
+    app:menu_labels_colorRipple="#66FFFFFF"
+    app:menu_labels_ellipsize="end"
+    app:menu_labels_maxLines="-1"
+    app:menu_labels_position="left"
+    app:menu_labels_showShadow="true"
+    app:menu_labels_singleLine="true"
+    app:menu_openDirection="up">
+    <!--                    app:menu_fab_label="Choose an action"-->
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_edit"
+        app:fab_colorNormal="#36DADA"
+        app:fab_label="크루에게 한마디"
+        app:fab_size="mini" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabRounge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_myplaces"
+        app:fab_colorNormal="#36DADA"
+        app:fab_label="조새크루 역사관"
+        app:fab_size="mini" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabReport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_preferences"
+        app:fab_colorNormal="#36DADA"
+        app:fab_label="멤버 수정 건의하기"
+        app:fab_size="mini" />
+
+</com.github.clans.fab.FloatingActionMenu>

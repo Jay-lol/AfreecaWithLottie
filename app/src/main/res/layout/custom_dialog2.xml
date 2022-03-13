@@ -1,71 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp"
-    android:background="@drawable/alert_dialog2"
-    android:orientation="vertical">
+    android:background="@drawable/alert_dialog2">
 
     <TextView
         android:id="@+id/move_question"
         android:layout_width="match_parent"
         android:layout_height="110dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginRight="1dp"
         android:background="@android:color/transparent"
         android:gravity="center"
         android:paddingTop="20dp"
         android:text="해당 BJ로 이동?"
         android:textAlignment="center"
         android:textColor="#CCCCCC"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
+        android:id="@+id/view_button"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginRight="1dp"
-        android:background="#000000" />
+        android:layout_marginHorizontal="1dp"
+        android:background="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/move_question" />
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/moveWeb"
+        android:layout_width="0dp"
         android:layout_height="60dp"
-        android:orientation="horizontal">
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:text="Web"
+        android:textAllCaps="false"
+        android:textColor="#BFFFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/view_center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_button" />
 
-        <Button
-            android:id="@+id/moveWeb"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:text="Web"
-            android:textAllCaps="false"
-            android:textColor="#BFFFFFFF"
-            android:textSize="14sp" />
+    <View
+        android:id="@+id/view_center"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="2dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_button" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#000000" />
-
-        <Button
-            android:id="@+id/moveApp"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:text="App"
-            android:textAllCaps="false"
-            android:textColor="#BFFFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-</LinearLayout>
+    <Button
+        android:id="@+id/moveApp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:text="App"
+        android:textAllCaps="false"
+        android:textColor="#BFFFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/view_center"
+        app:layout_constraintTop_toBottomOf="@id/view_button" />
+</androidx.constraintlayout.widget.ConstraintLayout>

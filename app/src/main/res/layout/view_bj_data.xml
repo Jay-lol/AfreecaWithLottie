@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="280dp">
+    android:layout_height="wrap_content">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/secondsujang"
+        android:id="@+id/highlight_card_view_lottie"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="280dp"
         android:layout_marginEnd="10dp"
         android:scaleType="centerInside"
         android:scaleX="2.5"
@@ -40,6 +41,36 @@
             android:layout_height="match_parent"
             android:layout_gravity="center">
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/coach_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="coach_lottie, coach_lottie_text" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/coach_lottie"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="40dp"
+                android:elevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/moreInfo"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="clickmark.json"
+                app:lottie_loop="true" />
+
+            <TextView
+                android:id="@+id/coach_lottie_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:text="느낌표를\n클릭해보세요"
+                android:textAlignment="center"
+                android:textColor="#C9FFFFFF"
+                app:layout_constraintBottom_toBottomOf="@+id/coach_lottie"
+                app:layout_constraintEnd_toEndOf="@+id/coach_lottie" />
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/moreInfo"
                 android:layout_width="40dp"
@@ -47,7 +78,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"
                 android:background="@android:color/transparent"
-                android:elevation="20dp"
+                android:elevation="2dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:lottie_autoPlay="true"
@@ -64,11 +95,11 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/error_thumbnail"
+                android:id="@+id/braod_rest_lottie_v1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginStart="77dp"
-                android:visibility="invisible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/line"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -76,6 +107,18 @@
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="8438-mr-cookie-drink.json"
                 app:lottie_loop="false" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/braod_rest_lottie_v2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@id/line"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_fileName="8266-rest-sloth.json"
+                app:lottie_loop="true" />
 
             <View
                 android:id="@+id/line"
@@ -95,15 +138,14 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="9dp"
                 android:ellipsize="marquee"
-                android:fontFamily="@font/maplestory_bold"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="title"
                 android:textColor="#e6ffffff"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/bjImportInfo"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Title" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bjImportInfo"
@@ -168,7 +210,6 @@
                     android:ellipsize="marquee"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="Bj명"
                     android:textAlignment="center"
                     android:textColor="#8587fe"
                     android:textSize="13sp"
@@ -177,7 +218,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_max="80dp" />
+                    app:layout_constraintWidth_max="80dp"
+                    tools:text="Bj명" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -243,6 +285,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingStart="10dp"
+                        android:paddingEnd="0dp"
                         android:text="일일 풍력 : "
                         android:textColor="#e4d5d5d5"
                         android:textSize="9sp" />
@@ -275,6 +318,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:paddingStart="10dp"
+                    android:paddingEnd="0dp"
                     android:text="월간 풍력 : "
                     android:textColor="#e4d5d5d5"
                     android:textSize="9sp" />

@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.jay.josaeworld.adapter.viewHolder.BJViewHolder
-import com.jay.josaeworld.databinding.RecyclerBroadBinding
+import com.jay.josaeworld.databinding.ViewBjDataBinding
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import java.util.*
 
 class RecyclerBroadListAdapter(
     private val glide: RequestManager,
     private val bList: List<BroadInfo>?,
-    private val secondSujang: String,
+    private val underBoss: String,
     private val memberClick: (BroadInfo, Int) -> Unit,
     private val random: Random
 ) : RecyclerView.Adapter<BJViewHolder>() {
@@ -25,7 +25,7 @@ class RecyclerBroadListAdapter(
     // 객체생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BJViewHolder {
         return BJViewHolder(
-            RecyclerBroadBinding.inflate(
+            ViewBjDataBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             ),
             memberClick,
@@ -37,7 +37,7 @@ class RecyclerBroadListAdapter(
     // 객체 바인딩
     override fun onBindViewHolder(holder: BJViewHolder, position: Int) {
         this.bList?.let {
-            holder.bind(it[position], glide, secondSujang)
+            holder.bind(it[position], glide, underBoss)
         }
     }
 }

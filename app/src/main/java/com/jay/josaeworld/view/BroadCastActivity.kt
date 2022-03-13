@@ -42,7 +42,7 @@ class BroadCastActivity :
 
     private lateinit var mAdapter: RecyclerBroadListAdapter
     private lateinit var sAdapter: RecyclerSearchListAdapter
-    private lateinit var secondSujang: String
+    private lateinit var underBoss: String
     lateinit var mAdView: AdView
 
     @Inject
@@ -63,8 +63,9 @@ class BroadCastActivity :
         super.onCreate(savedInstanceState)
         createAdmob()
 
-        val list = intent.getSerializableExtra("teamInfo") as ArrayList<BroadInfo>?
-        secondSujang = intent.getStringExtra("secondSujang") ?: "1"
+        underBoss = intent.getStringExtra(KEY_UNDER_BOSS_NAME) ?: "1"
+
+        val list = intent.getSerializableExtra(KEY_TEAM_DATA_LIST) as ArrayList<BroadInfo>?
 
         binding.broadRecyclerView.layoutManager = LinearLayoutManager(baseContext)
 
@@ -74,7 +75,7 @@ class BroadCastActivity :
             setSearchView()
         }
 
-        binding.teamName.text = intent.getStringExtra("teamName") ?: "시조새 검색 결과"
+        binding.teamName.text = intent.getStringExtra(KEY_TEAM_NAME)
     }
 
     /**
@@ -87,13 +88,13 @@ class BroadCastActivity :
                 compareBy(
                     { -it.viewCnt.filter { c -> c.isDigit() }.toInt() }, // 시청자순
                     { -it.onOff }, // 방송켜져있는지, 비번방 처리
-                    { it.bid != secondSujang },
+                    { it.bid != underBoss },
                     { it.balloninfo?.dayballon?.filter { c -> c.isDigit() }?.toInt()?.times(-1) },
                     { it.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toInt()?.times(-1) },
                     { -it.fanCnt.filter { c -> c.isDigit() }.toInt() }
                 ) // 즐찾 순
             ),
-            secondSujang,
+            underBoss,
             memberClick,
             random
         )
@@ -115,6 +116,11 @@ class BroadCastActivity :
         binding.searchLoading.visibility = View.GONE
 
         searchBJInfo?.REAL_BROAD?.let { searchList ->
+            if (searchList.isEmpty()) {
+                binding.searchNoResult.visibility = View.VISIBLE
+                return@let
+            }
+
             sAdapter =
                 RecyclerSearchListAdapter(
                     Glide.with(this),
@@ -199,5 +205,11 @@ class BroadCastActivity :
         MobileAds.initialize(this) {}
         mAdView = binding.adView
         mAdView.loadAd(adRequest)
+    }
+
+    companion object {
+        const val KEY_TEAM_DATA_LIST = "key_team_data_list"
+        const val KEY_UNDER_BOSS_NAME = "key_under_boss"
+        const val KEY_TEAM_NAME = "key_team_name"
     }
 }

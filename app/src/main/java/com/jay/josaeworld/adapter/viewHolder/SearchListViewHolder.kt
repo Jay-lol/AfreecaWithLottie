@@ -4,12 +4,12 @@ import android.os.Build
 import android.text.Html
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.jay.josaeworld.databinding.RecyclerBroad2Binding
+import com.jay.josaeworld.databinding.ViewKeywordSearchBinding
 import com.jay.josaeworld.domain.model.response.SearchBJInfo
 import java.util.*
 
 class SearchListViewHolder(
-    private val binding: RecyclerBroad2Binding,
+    private val binding: ViewKeywordSearchBinding,
     private val memberClick: (SearchBJInfo) -> Unit,
     private val random: Random
 ) : RecyclerView.ViewHolder(binding.root) {

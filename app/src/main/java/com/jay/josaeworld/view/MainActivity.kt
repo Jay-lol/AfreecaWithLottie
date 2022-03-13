@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -28,6 +29,7 @@ import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.presenter.MainPresenter
+import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_NAME
 import com.jay.josaeworld.view.SplashActivity.Companion.KEY_LAST_UPDATE_TIME
 import com.jay.josaeworld.view.SplashActivity.Companion.KEY_NEW_LIST
 import com.jay.josaeworld.view.SplashActivity.Companion.KEY_UPDATE_CODE
@@ -42,8 +44,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity :
     BaseViewBindingActivity<ActivityMainBinding, MainPresenter>({ ActivityMainBinding.inflate(it) }),
-    MainContract.View,
-    View.OnClickListener {
+    MainContract.View {
+
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private lateinit var teamInfo: List<String>
     private var mainBJDataList: Array<ArrayList<BroadInfo>>? = null
@@ -70,7 +72,9 @@ class MainActivity :
     lateinit var random: Random
     lateinit var mAdView: AdView
     private var isRecentData = false
-    private var secondSujangList: HashMap<String, String> = hashMapOf()
+    private var underBossList: HashMap<String, String> = hashMapOf()
+
+    private var fragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,28 +91,21 @@ class MainActivity :
             )
         }
         showCoachMark()
-        getSecondSujangFromFirebase()
-        buttonListener()
+        getUnderBossFromFirebase()
         refreshListener()
-        fabButtonListener()
+        initButtonListener()
         createAdmob()
-    }
-
-    private fun showCoachMark() {
-        if (dataStore.coachMarkCount <= 1) {
-            binding.coachClick.visibility = View.VISIBLE
-        }
     }
 
     /**
      * 파이어베이스 정보로 second 정보 초기화
      */
-    private fun getSecondSujangFromFirebase() {
-        presenter.getSecondSujang()
+    private fun getUnderBossFromFirebase() {
+        presenter.getUnderBoss()
     }
 
-    override fun initSecondSujang(newList: HashMap<String, String>) {
-        secondSujangList = newList
+    override fun initUnderBoss(newList: HashMap<String, String>) {
+        underBossList = newList
     }
 
     private fun initTeamData(teamInfo: List<String>, time: Long) {
@@ -119,64 +116,6 @@ class MainActivity :
             isDataUpdateNeeded = true
         }
         setDataListener() // 팀 데이터 오면 리스너 등록
-    }
-
-    private fun createAdmob() {
-        MobileAds.initialize(this) {}
-        mAdView = binding.adView
-        mAdView.loadAd(adRequest)
-    }
-
-    private fun fabButtonListener() {
-        binding.fabChat.setOnClickListener {
-            if (true) {
-                showToast(
-                    "서버 비용 문제로 준비중입니다\n" +
-                        "빠른 시일내에 업데이트 하겠습니다"
-                )
-            } else {
-                val intent = Intent(this, ChatActivity::class.java)
-                val androidId =
-                    Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
-                val nickname = androidId.makeCuteNickName() + androidId.slice(0..1)
-                intent.putExtra("userId", nickname)
-                intent.putExtra("uid", androidId)
-                startActivity(intent)
-            }
-        }
-        binding.fabRounge.setOnClickListener {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(
-                        "https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)"
-                    )
-                )
-            )
-        }
-        binding.fabReport.setOnClickListener {
-            val dlg = Dialog(this, R.style.DialogStyle)
-            val dlgBinding = MemberchangereportDialogBinding.inflate(layoutInflater)
-            // 커스텀 다이얼로그의 레이아웃을 설정한다.
-            dlg.setContentView(dlgBinding.root)
-            dlg.show()
-
-            dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            dlgBinding.reportSubmit.setOnClickListener {
-                val bj = dlgBinding.reportBj.text.trim().toString()
-                val content = dlgBinding.suggest.text.trim().toString()
-                if (bj.isNotEmpty() && content.isNotEmpty()) {
-                    presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
-                } else {
-                    showToast("BJ명과 건의사항을 확인해주세요")
-                }
-            }
-
-            dlgBinding.reportClose.setOnClickListener {
-                dlg.dismiss()
-            }
-        }
     }
 
     private fun refreshAct() {
@@ -210,9 +149,11 @@ class MainActivity :
      */
     override fun changeMainBJData(newBJDataList: Array<ArrayList<BroadInfo>>?) {
         newBJDataList ?: return
-        mainBJDataList = newBJDataList
+        mainBJDataList = newBJDataList.clone()
         isRecentData = true
-        upDateUi(mainBJDataList!!)
+        mainBJDataList?.let {
+            updateUIwithRecentList(it)
+        }
         if (isDataUpdateNeeded) {
             refreshAct()
             isDataUpdateNeeded = false
@@ -229,24 +170,13 @@ class MainActivity :
      */
     private fun getNewBjData(bjlists: Array<ArrayList<BroadInfo>>) {
         Log.d(TAG, "MainActivity ~ getNewBjData() called")
-        binding.loadingbar.visibility = View.VISIBLE
-        binding.loadingbar.playAnimation()
+        binding.mainLoadingLottie.visibility = View.VISIBLE
+        binding.mainLoadingLottie.playAnimation()
 
         presenter.getRecentBJData(bjlists, mainBJDataList)
     }
 
-    private fun buttonListener() {
-        Log.d(TAG, "MainActivity ~ buttonListener() called")
-        binding.teamFirst.setOnClickListener(this)
-        binding.teamSecond.setOnClickListener(this)
-        binding.teamThird.setOnClickListener(this)
-        binding.teamFourth.setOnClickListener(this)
-        binding.sujang.setOnClickListener(this)
-        binding.moreInfo.setOnClickListener(this)
-        binding.searchSijosae.setOnClickListener(this)
-    }
-
-    private fun upDateUi(bjlist: Array<ArrayList<BroadInfo>>) {
+    private fun updateUIwithRecentList(bjlist: Array<ArrayList<BroadInfo>>) {
 
         if (!isCrawlingForFirebase) {
             stopLoadingAnimation()
@@ -256,84 +186,27 @@ class MainActivity :
             var nAllviewers = 0
             var nAllballon = 0
 
-            val nextOff = listOf(
-                binding.teamOnelotti, binding.teamTwolotti, binding.teamThreelotti, binding.teamFourlotti
-            )
-            val nextOn = listOf(
-                binding.teamOnelottiOn, binding.teamTwolottiOn, binding.teamThreelottiOn, binding.teamFourlottiOn
-            )
-            val nextViewCnt = listOf(
-                binding.viewCntTeam1, binding.viewCntTeam2, binding.viewCntTeam3, binding.viewCntTeam4
-            )
-
-            val teamName = listOf(
-                binding.teamOne, binding.teamTwo, binding.teamThree, binding.teamFour
-            )
-
-            val teamCardViewList = listOf(binding.teamFirst, binding.teamSecond, binding.teamThird, binding.teamFourth)
-
-            for ((index, team) in bjlist.withIndex()) {
+            for (team in bjlist) {
                 // 수장 처리는 따로
                 if (team[0].bid == "superbsw123") {
-                    nAllviewers += makeSujangView(team[0])
+                    nAllviewers += makeBossView(team[0])
                     nAllballon += team[0].balloninfo?.monthballon?.filter { c -> c.isDigit() }
                         ?.toInt() ?: 0
                     break
                 }
 
-                // 팀 처리
-                var onOff = false
+                // 팀 시청자, 별풍선 카운트
                 var viewCnt = 0
-
-                val teamNum = bjlist[index][0].teamCode
-
-                teamName[index].text = teamInfo[teamNum]
-
-                if (teamName[index].text == "X") {
-                    teamCardViewList[index].visibility = View.GONE
-                } else {
-                    teamCardViewList[index].visibility = View.VISIBLE
-                }
 
                 for (member in team) {
                     if (member.onOff == 1) {
-                        onOff = true
                         viewCnt += member.viewCnt.filter { it.isDigit() }.toInt()
                     }
                     nAllballon += member.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toInt() ?: 0
                 }
 
                 nAllviewers += viewCnt
-
-                if (onOff) {
-                    val viewer = viewCnt.toString()
-                    nextViewCnt[index].text = if (viewer.length > 3)
-                        viewer.slice(0 until viewer.length - 3) + "," + viewer.slice(viewer.length - 3 until viewer.length)
-                    else
-                        viewer
-
-                    nextOff[index].visibility = View.GONE
-                    nextOff[index].pauseAnimation()
-                    nextOn[index].visibility = View.VISIBLE
-                    nextOn[index].playAnimation()
-                } else {
-                    nextViewCnt[index].text = "0"
-                    nextOn[index].visibility = View.GONE
-                    nextOn[index].pauseAnimation()
-                    nextOff[index].visibility = View.VISIBLE
-                    nextOff[index].playAnimation()
-                }
             }
-
-            mainBJDataList = Array(bjlist.size) { arrayListOf() }
-
-            val tNSize = teamName.size
-
-            repeat(tNSize) {
-                mainBJDataList!![it] = bjlist[it]
-            }
-
-            mainBJDataList!![tNSize] = bjlist[tNSize]
 
             if (allViewers != nAllviewers) {
                 startCountAnimation(nAllviewers, 0)
@@ -344,50 +217,76 @@ class MainActivity :
                 startCountAnimation(nAllballon, 1)
                 allBallon = nAllballon
             }
+
+            if (fragment == null) {
+                TeamListFragment(teamInfo, bjlist, underBossList).run {
+                    fragment = this
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fcv_team_list, this)
+                        .commit()
+                }
+            } else {
+                (fragment as? TeamListFragment)?.updateTeamListFragmentUi(mainBJDataList)
+            }
         } catch (e: Exception) {
             Log.e(TAG, "upDateUi: $e")
             this.showError(1)
         }
     }
 
-    private fun makeSujangView(broadInfo: BroadInfo): Int {
+    private fun makeBossView(broadInfo: BroadInfo): Int {
         val v = broadInfo
-        var view = 0
+        var viewCount = 0
         if (v.onOff == 1) {
-            binding.sujangRest.pauseAnimation()
-            binding.sujangRest.visibility = View.INVISIBLE
-            binding.viewCnt.text = v.viewCnt
-            binding.sujangThumbnail.visibility = View.VISIBLE
+            binding.bossView.run {
+                braodRestLottieV2.pauseAnimation()
+                braodRestLottieV2.visibility = View.INVISIBLE
+                viewCnt.text = v.viewCnt
+                thumbnail.visibility = View.VISIBLE
+                Glide.with(baseContext).load(v.imgurl + "${random.nextInt(123456789)}")
+                    .override(480, 270)
+                    .fitCenter()
+                    .into(thumbnail)
 
-            Glide.with(baseContext).load(v.imgurl + "${random.nextInt(123456789)}")
-                .override(480, 270)
-                .fitCenter()
-                .into(binding.sujangThumbnail)
+                viewCount += v.viewCnt.filter { it.isDigit() }.toInt()
 
-            view += v.viewCnt.filter { it.isDigit() }.toInt()
+                if (viewCount >= 10_000) {
+                    highlightCardViewLottie.visibility = View.VISIBLE
+                    highlightCardViewLottie.playAnimation()
+                } else {
+                    highlightCardViewLottie.visibility = View.INVISIBLE
+                    highlightCardViewLottie.pauseAnimation()
+                }
+            }
         } else {
-            binding.viewCnt.text = ""
-            binding.sujangThumbnail.visibility = View.INVISIBLE
-            binding.sujangRest.visibility = View.VISIBLE
-            binding.sujangRest.playAnimation()
+            binding.bossView.run {
+                viewCnt.text = ""
+                thumbnail.visibility = View.INVISIBLE
+                braodRestLottieV2.visibility = View.VISIBLE
+                braodRestLottieV2.playAnimation()
+                highlightCardViewLottie.visibility = View.INVISIBLE
+                highlightCardViewLottie.pauseAnimation()
+            }
         }
 
         Log.d(TAG, "MainActivity ~ upDateUi() called $v")
-        if (v.incFanCnt.filter { c -> (c.isDigit() || c == '-') }.toInt() < 0) {
-            binding.incFanCnt.setTextColor(Color.parseColor("#FF4A4A"))
-        } else {
-            binding.incFanCnt.setTextColor(Color.parseColor("#FFFFFF"))
+        binding.bossView.run {
+            if (v.incFanCnt.filter { c -> (c.isDigit() || c == '-') }.toInt() < 0) {
+                incFanCnt.setTextColor(Color.parseColor("#FF4A4A"))
+            } else {
+                incFanCnt.setTextColor(Color.parseColor("#FFFFFF"))
+            }
+            incFanCnt.text = v.incFanCnt
+            fanCnt.text = v.fanCnt
+            okCnt.text = v.okCnt
+            bjname.text = v.bjname
+            title.text = v.title
+            bjname.isSelected = true
+            title.isSelected = true
+            mballon.text = v.balloninfo?.monthballon
+            dballon.text = v.balloninfo?.dayballon
         }
-        binding.incFanCnt.text = v.incFanCnt
-        binding.fanCnt.text = v.fanCnt
-        binding.okCnt.text = v.okCnt
-        binding.sujangname.text = v.bjname
-        binding.sujangTitle.text = v.title
-        binding.sujangname.isSelected = true
-        binding.sujangTitle.isSelected = true
-        binding.mballon.text = v.balloninfo?.monthballon
-        binding.dballon.text = v.balloninfo?.dayballon
-        return view
+        return viewCount
     }
 
     private fun popDialog(bid: String, question: String, code: Int) {
@@ -455,21 +354,21 @@ class MainActivity :
             try {
                 animator.addUpdateListener { animation ->
                     val v = animation.animatedValue.toString()
-                    binding.nAllViewer.text = v.goodString()
+                    binding.viewMainInfoData.nAllViewer.text = v.goodString()
                 }
                 animator.start()
             } catch (e: Exception) {
-                binding.nAllViewer.text = num.toString()
+                binding.viewMainInfoData.nAllViewer.text = num.toString()
             }
         } else {
             try {
                 animator.addUpdateListener { animation ->
                     val v = animation.animatedValue.toString()
-                    binding.nAllBallon.text = v.goodString()
+                    binding.viewMainInfoData.nAllBallon.text = v.goodString()
                 }
                 animator.start()
             } catch (e: Exception) {
-                binding.nAllBallon.text = num.toString()
+                binding.viewMainInfoData.nAllBallon.text = num.toString()
             }
         }
     }
@@ -532,8 +431,8 @@ class MainActivity :
     }
 
     override fun stopLoadingAnimation() {
-        binding.loadingbar.pauseAnimation()
-        binding.loadingbar.visibility = View.GONE
+        binding.mainLoadingLottie.pauseAnimation()
+        binding.mainLoadingLottie.visibility = View.GONE
     }
 
     override fun makeRefreshstate(state: Boolean) {
@@ -556,115 +455,126 @@ class MainActivity :
         toast(msg, isCenter)
     }
 
-    override fun onClick(view: View?) {
-        when (view) {
-            binding.teamFirst -> {
-                moveTeamList(
-                    binding.teamOne.text as String, mainBJDataList?.get(0),
-                    secondSujangList[binding.teamOne.text as String] ?: "1"
-                )
-            }
-            binding.teamSecond -> {
-                moveTeamList(
-                    binding.teamTwo.text as String, mainBJDataList?.get(1),
-                    secondSujangList[binding.teamTwo.text as String] ?: "2"
-                )
-            }
-            binding.teamThird -> {
-                moveTeamList(
-                    binding.teamThree.text as String, mainBJDataList?.get(2),
-                    secondSujangList[binding.teamThree.text as String] ?: "3"
-                )
-            }
-            binding.teamFourth -> {
-                moveTeamList(
-                    binding.teamFour.text as String, mainBJDataList?.get(3),
-                    secondSujangList[binding.teamFour.text as String] ?: "3"
-                )
-            }
+    private fun initButtonListener() {
+        binding.bossView.root.setOnClickListener {
+            mainBJDataList?.let {
+                try {
+                    val n = mainBJDataList!!.size - 1
+                    val v = mainBJDataList!![n].first()
 
-            binding.sujang -> {
-                mainBJDataList?.let {
-                    try {
-                        val n = mainBJDataList!!.size - 1
-                        val v = mainBJDataList!![n].first()
-
-                        if (mainBJDataList!![n][0].onOff == 1) {
-                            val question = "${v.viewCnt} 명이 시청중입니다!\n이동할까요?"
-                            popDialog(v.bid, question, 1)
-                        } else {
-                            val question = "시조새는 방송중이 아닙니다\n아프리카로 이동하시겠습니까?"
-                            popDialog(v.bid, question, 0)
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG, "buttonListener: $e")
-                        showToast("밑으로 내려서 다시 로딩해 주세요", true)
+                    if (mainBJDataList!![n][0].onOff == 1) {
+                        val question = "${v.viewCnt} 명이 시청중입니다!\n이동할까요?"
+                        popDialog(v.bid, question, 1)
+                    } else {
+                        val question = "시조새는 방송중이 아닙니다\n아프리카로 이동하시겠습니까?"
+                        popDialog(v.bid, question, 0)
                     }
+                } catch (e: Exception) {
+                    Log.e(TAG, "buttonListener: $e")
+                    showToast("밑으로 내려서 다시 로딩해 주세요", true)
                 }
             }
-            binding.moreInfo -> {
-                mainBJDataList?.let {
-                    try {
-                        val n = mainBJDataList!!.size - 1
-                        val v = mainBJDataList!![n].first()
-                        val dlg = Dialog(this)
-                        val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
-                        dlg.setContentView(dlgBinding.root)
-                        dlgBinding.infoBjname.text = v.bjname
+        }
+        binding.bossView.moreInfo.setOnClickListener {
+            mainBJDataList?.let {
+                try {
+                    val n = mainBJDataList!!.size - 1
+                    val v = mainBJDataList!![n].first()
+                    val dlg = Dialog(this)
+                    val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
+                    dlg.setContentView(dlgBinding.root)
+                    dlgBinding.infoBjname.text = v.bjname
 
-                        v.balloninfo?.let {
-                            dlgBinding.monthview.text = v.balloninfo!!.monthview
-                            dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
-                            dlgBinding.monthtime.text = v.balloninfo!!.monthtime
-                            dlgBinding.monthpay.text = v.balloninfo!!.monthpay
-                        }
-                        dlg.show()
-                        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                        CoroutineScope(Dispatchers.Main).launch {
-                            dataStore.incrementCoachMarkCount()
-                            binding.coachClick.visibility = View.GONE
-                            cancel()
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG, "buttonListener: $e")
-                        showToast("밑으로 내려서 다시 로딩해 주세요", true)
+                    v.balloninfo?.let {
+                        dlgBinding.monthview.text = v.balloninfo!!.monthview
+                        dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
+                        dlgBinding.monthtime.text = v.balloninfo!!.monthtime
+                        dlgBinding.monthpay.text = v.balloninfo!!.monthpay
                     }
+                    dlg.show()
+                    dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    CoroutineScope(Dispatchers.Main).launch {
+                        dataStore.incrementCoachMarkCount()
+                        binding.bossView.coachClick.visibility = View.GONE
+                        cancel()
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "buttonListener: $e")
+                    showToast("밑으로 내려서 다시 로딩해 주세요", true)
                 }
             }
+        }
 
-            binding.searchSijosae -> {
+        binding.searchSijosae.setOnClickListener {
+            mainBJDataList?.let {
                 val intent = Intent(this, BroadCastActivity::class.java)
-                mainBJDataList?.let {
-                    intent.putExtra("teamName", "시조새 검색 결과")
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                intent.putExtra(KEY_TEAM_NAME, "시조새 검색 결과")
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+            }
+        }
+
+        binding.buttonFloatingMenu.fabChat.setOnClickListener {
+            if (true) {
+                showToast(
+                    "서버 비용 문제로 준비중입니다\n" +
+                        "빠른 시일내에 업데이트 하겠습니다"
+                )
+            } else {
+                val intent = Intent(this, ChatActivity::class.java)
+                val androidId =
+                    Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+                val nickname = androidId.makeCuteNickName() + androidId.slice(0..1)
+                intent.putExtra("userId", nickname)
+                intent.putExtra("uid", androidId)
+                startActivity(intent)
+            }
+        }
+        binding.buttonFloatingMenu.fabRounge.setOnClickListener {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(
+                        "https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)"
+                    )
+                )
+            )
+        }
+        binding.buttonFloatingMenu.fabReport.setOnClickListener {
+            val dlg = Dialog(this, R.style.DialogStyle)
+            val dlgBinding = DialogMemberChangeReportBinding.inflate(layoutInflater)
+            // 커스텀 다이얼로그의 레이아웃을 설정한다.
+            dlg.setContentView(dlgBinding.root)
+            dlg.show()
+
+            dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            dlgBinding.reportSubmit.setOnClickListener {
+                val bj = dlgBinding.reportBj.text.trim().toString()
+                val content = dlgBinding.suggest.text.trim().toString()
+                if (bj.isNotEmpty() && content.isNotEmpty()) {
+                    presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
+                } else {
+                    showToast("BJ명과 건의사항을 확인해주세요")
                 }
+            }
+
+            dlgBinding.reportClose.setOnClickListener {
+                dlg.dismiss()
             }
         }
     }
 
-    /**
-     * 새로운 액티비티에서 해당 팀 보여주기
-     */
-    private fun moveTeamList(teamName: String, teamList: ArrayList<BroadInfo>?, secondSujang: String) {
-        val intent = Intent(this, BroadCastActivity::class.java)
-        try {
-            if (!teamList.isNullOrEmpty()) {
-                intent.putExtra("teamName", teamName)
-                intent.putExtra("teamInfo", teamList)
-                intent.putExtra(
-                    "secondSujang",
-                    secondSujang
-                )
-                startActivity(intent)
-                // 새로운 액티비티ani, 기존 액티비티ani
-                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-            } else
-                showError(3)
-        } catch (e: Exception) {
-            Log.d(TAG, "MainActivity ~ $e() called")
-            showToast("밑으로 내려서 다시 로딩해 주세요", true)
+    private fun showCoachMark() {
+        if (dataStore.coachMarkCount <= 1) {
+            binding.bossView.coachClick.visibility = View.VISIBLE
         }
+    }
+
+    private fun createAdmob() {
+        MobileAds.initialize(this) {}
+        mAdView = binding.adView
+        mAdView.loadAd(adRequest)
     }
 
     // 라이프사이클에 맞춰 리스너 설정
