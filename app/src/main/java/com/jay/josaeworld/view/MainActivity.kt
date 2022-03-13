@@ -540,7 +540,7 @@ class MainActivity :
         }
         binding.buttonFloatingMenu.fabReport.setOnClickListener {
             val dlg = Dialog(this, R.style.DialogStyle)
-            val dlgBinding = MemberchangereportDialogBinding.inflate(layoutInflater)
+            val dlgBinding = DialogMemberChangeReportBinding.inflate(layoutInflater)
             // 커스텀 다이얼로그의 레이아웃을 설정한다.
             dlg.setContentView(dlgBinding.root)
             dlg.show()
