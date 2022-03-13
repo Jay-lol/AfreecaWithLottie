@@ -16,4 +16,5 @@ MVP Pattern
 * Lottie
 * FirebaseDB
 * Cloud Functions
-* Hilt
+* Hilt 
+* [설치 링크](https://play.google.com/store/apps/details?id=com.jay.josaeworld) (안드로이드 폰에서 다운로드 가능)
