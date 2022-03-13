@@ -149,9 +149,11 @@ class MainActivity :
      */
     override fun changeMainBJData(newBJDataList: Array<ArrayList<BroadInfo>>?) {
         newBJDataList ?: return
-        mainBJDataList = newBJDataList
+        mainBJDataList = newBJDataList.clone()
         isRecentData = true
-        updateUIwithRecentList(mainBJDataList!!)
+        mainBJDataList?.let {
+            updateUIwithRecentList(it)
+        }
         if (isDataUpdateNeeded) {
             refreshAct()
             isDataUpdateNeeded = false
