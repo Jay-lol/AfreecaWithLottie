@@ -44,6 +44,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/teamName" />
 
+    <TextView
+        android:id="@+id/search_no_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="검색 결과 없음"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/gl_bottom_ad"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/teamName" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_bottom_ad"

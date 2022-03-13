@@ -116,6 +116,11 @@ class BroadCastActivity :
         binding.searchLoading.visibility = View.GONE
 
         searchBJInfo?.REAL_BROAD?.let { searchList ->
+            if (searchList.isEmpty()) {
+                binding.searchNoResult.visibility = View.VISIBLE
+                return@let
+            }
+
             sAdapter =
                 RecyclerSearchListAdapter(
                     Glide.with(this),
