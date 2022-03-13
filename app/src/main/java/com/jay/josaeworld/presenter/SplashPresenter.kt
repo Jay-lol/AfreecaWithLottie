@@ -3,6 +3,7 @@ package com.jay.josaeworld.presenter
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import androidx.core.text.isDigitsOnly
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -34,7 +35,11 @@ class SplashPresenter @Inject constructor(
                                 "currentversionCode" ->
                                     currentversionCode =
                                         (x.value as Long).toInt()
-                                else -> list.add(x.value as String)
+                                else -> {
+                                    if (x.key?.isDigitsOnly() == true) {
+                                        list.add(x.value as String)
+                                    }
+                                }
                             }
                         }
                         Log.d(TAG, "SplashPresenter ~ onDataChange() called $list")
