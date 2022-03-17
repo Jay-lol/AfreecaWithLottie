@@ -219,12 +219,10 @@ class MainActivity :
             }
 
             if (fragment == null) {
-                TeamListFragment(teamInfo, bjlist, underBossList).run {
-                    fragment = this
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fcv_team_list, this)
-                        .commit()
-                }
+                fragment = TeamListFragment.newInstance(teamInfo, bjlist, underBossList)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fcv_team_list, fragment as TeamListFragment)
+                    .commit()
             } else {
                 (fragment as? TeamListFragment)?.updateTeamListFragmentUi(mainBJDataList)
             }

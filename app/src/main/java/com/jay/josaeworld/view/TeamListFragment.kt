@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.FragmentTeamListBinding
@@ -15,15 +16,15 @@ import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_DATA_LIST
 import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_NAME
 import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_UNDER_BOSS_NAME
 
-class TeamListFragment(
-    private val teamNameInfo: List<String>,
-    private var teamList: Array<ArrayList<BroadInfo>>?,
-    private var underBossList: HashMap<String, String>
-) : Fragment() {
+class TeamListFragment : Fragment() {
 
     private val TAG = "로그 ${this.javaClass.simpleName}"
     private var _binding: FragmentTeamListBinding? = null
     private val binding get() = requireNotNull(_binding)
+
+    private lateinit var teamNameInfo: List<String>
+    private var teamList: Array<ArrayList<BroadInfo>>? = null
+    private lateinit var underBossList: HashMap<String, String>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,6 +32,13 @@ class TeamListFragment(
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTeamListBinding.inflate(inflater, container, false)
+        arguments?.run {
+            teamNameInfo = getStringArrayList(KEY_TEAM_NAME) ?: List(4) { "" }
+            @Suppress("UNCHECKED_CAST")
+            teamList = get(KEY_TEAM_DATA_LIST) as Array<ArrayList<BroadInfo>>
+            @Suppress("UNCHECKED_CAST")
+            underBossList = get(KEY_UNDER_BOSS_NAME) as HashMap<String, String>
+        }
         return binding.root
     }
 
@@ -151,5 +159,20 @@ class TeamListFragment(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+
+        fun newInstance(
+            teamNameInfo: List<String>,
+            teamList: Array<ArrayList<BroadInfo>>?,
+            underBossList: HashMap<String, String>
+        ) = TeamListFragment().apply {
+            arguments = bundleOf(
+                KEY_TEAM_NAME to teamNameInfo,
+                KEY_TEAM_DATA_LIST to teamList,
+                KEY_UNDER_BOSS_NAME to underBossList
+            )
+        }
     }
 }
