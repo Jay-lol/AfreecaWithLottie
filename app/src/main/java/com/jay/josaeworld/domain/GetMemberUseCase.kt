@@ -1,8 +1,7 @@
 package com.jay.josaeworld.domain
 
 import com.jay.josaeworld.data.repository.DataRepository
-import com.jay.josaeworld.domain.model.response.BroadInfo
-import io.reactivex.Single
+import com.jay.josaeworld.domain.model.response.AfSearchResponse
 import javax.inject.Inject
 
 class GetMemberUseCase @Inject constructor(
@@ -15,7 +14,6 @@ class GetMemberUseCase @Inject constructor(
         val liveImgUrl: String
     )
 
-    operator fun invoke(params: Params): Single<BroadInfo> =
-        repository.getBjInfo(params.teamCode, params.bid)
-            .toBroadInfo(params)
+    suspend operator fun invoke(params: Params): AfSearchResponse =
+        repository.getBjInfoWithCoroutines(params.bid)
 }

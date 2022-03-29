@@ -3,6 +3,7 @@ package com.jay.josaeworld.contract
 import com.jay.josaeworld.base.BasePresenter
 import com.jay.josaeworld.base.BaseView
 import com.jay.josaeworld.domain.model.response.BroadInfo
+import kotlinx.coroutines.Job
 
 interface MainContract {
 
@@ -19,7 +20,7 @@ interface MainContract {
         fun getRecentBJData(
             bjLists: Array<ArrayList<BroadInfo>>,
             bjDataList: Array<ArrayList<BroadInfo>>?
-        )
+        ): Job
 
         fun createBJDataListener(teamSize: Int)
         fun removeBJDataListener()

@@ -4,45 +4,44 @@ import android.util.Log
 import com.jay.josaeworld.domain.model.response.AfSearchResponse
 import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
-import io.reactivex.Single
 
-fun Single<AfSearchResponse?>.toBroadInfo(params: GetMemberUseCase.Params): Single<BroadInfo> =
-    map { searchResponse ->
-        searchResponse.station ?: return@map BroadInfo(
+fun AfSearchResponse.toBroadInfo(params: GetMemberUseCase.Params): BroadInfo =
+    run {
+        station ?: return BroadInfo(
             teamCode = 403,
             onOff = 1,
             bid = params.bid,
             balloninfo = BallonInfo()
         )
 
-        val CLIENT_ID = searchResponse.station.user_id
+        val CLIENT_ID = station.user_id
 
-        val onOff: Int = searchResponse.broad?.let { 1 } ?: 0
-        val bjname = searchResponse.station.user_nick
-        val title = searchResponse.broad?.broad_title?.replace("   ", "")
+        val onOff: Int = broad?.let { 1 } ?: 0
+        val bjname = station.user_nick
+        val title = broad?.broad_title?.replace("   ", "")
             ?: "방송 중이지 않습니다"
         val allviewers =
-            searchResponse.broad?.current_sum_viewer?.toString()?.goodString() ?: "0" // 전체 시청자
-        val imgurl: String = searchResponse.broad?.let {
+            broad?.current_sum_viewer?.toString()?.goodString() ?: "0" // 전체 시청자
+        val imgurl: String = broad?.let {
             "${params.liveImgUrl}${it.broad_no}_480x270.jpg?dummy="
         } ?: params.defaultLogoImgUrl
 
         // 0아니면 1 today0, today1
-        val activeNo = searchResponse.station.active_no
-        val profile = "http:" + searchResponse.profile
+        val activeNo = station.active_no
+        val profile = "http:$profile"
         // 팬 숫자
-        val fanCnt = searchResponse.station.upd.fan_cnt.toString().goodString()
+        val fanCnt = station.upd.fan_cnt.toString().goodString()
         // 추천 숫자
         val okCnt = if (activeNo == 0)
-            searchResponse.station.upd.today0_ok_cnt.toString().goodString()
+            station.upd.today0_ok_cnt.toString().goodString()
         else
-            searchResponse.station.upd.today1_ok_cnt.toString().goodString()
+            station.upd.today1_ok_cnt.toString().goodString()
 
         // 오늘 추가된 즐겨찾기 수
         var incFanCnt = if (activeNo == 0)
-            searchResponse.station.upd.today0_fav_cnt.toString()
+            station.upd.today0_fav_cnt.toString()
         else
-            searchResponse.station.upd.today1_fav_cnt.toString()
+            station.upd.today1_fav_cnt.toString()
 
         incFanCnt = if (incFanCnt.toInt() < 0)
             "-" + incFanCnt.slice(1 until incFanCnt.length).goodString()
@@ -66,11 +65,6 @@ fun Single<AfSearchResponse?>.toBroadInfo(params: GetMemberUseCase.Params): Sing
             incFanCnt,
             profile,
             null
-        )
-    }.onErrorReturn {
-        BroadInfo(
-            teamCode = 403, onOff = 1,
-            bid = params.bid, balloninfo = BallonInfo()
         )
     }
 

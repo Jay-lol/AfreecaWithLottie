@@ -8,9 +8,6 @@ import com.jay.josaeworld.data.service.ApiCall
 import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.model.response.AfSearchResponse
 import com.jay.josaeworld.domain.model.response.gsonParse.RealBroad
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class DataRepositoryImpl @Inject constructor(
@@ -19,16 +16,14 @@ class DataRepositoryImpl @Inject constructor(
     private val searchRetrofit: ApiCall.Search,
     private val database: FirebaseDatabase,
 ) : DataRepository {
-    override fun getBjInfo(teamCode: Int, bid: String): Single<AfSearchResponse?> =
-        memberRetrofit.getBjInfo(requestHeader, bid) // bj의 고유 id
-            .timeout(3, TimeUnit.SECONDS)
-            .subscribeOn(Schedulers.io())
 
-    override fun searchJosae(): Single<RealBroad?> =
+    override suspend fun getBjInfoWithCoroutines(bid: String): AfSearchResponse =
+        memberRetrofit
+            .getBjInfoWithCoroutines(requestHeader, bid)
+
+    override suspend fun searchJosaeWithCoroutines(): RealBroad =
         searchRetrofit
-            .getSearchInfo(requestHeader)
-            .timeout(3, TimeUnit.SECONDS)
-            .subscribeOn(Schedulers.io())
+            .getSearchInfoWithCoroutines(requestHeader)
 
     override fun updateRepoData(updateData: HashMap<String, Any>): Task<Void> =
         database.reference.updateChildren(updateData)

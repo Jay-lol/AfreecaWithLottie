@@ -64,12 +64,6 @@ dependencies {
     testImplementation(TestLibs.JUNIT)
     androidTestImplementation(TestLibs.ANDROIDX_JUNIT)
 
-    // rxjava
-    implementation(Libs.RXANDROID3)
-    implementation(Libs.RXANDROID)
-    implementation(Libs.RXJAVA3)
-    implementation(Libs.RXBINDING4)
-
     // Lottie for Android
     implementation(Libs.LOTTIE)
 
@@ -93,7 +87,6 @@ dependencies {
     implementation(Libs.OKHTTP)
     implementation(Libs.RETROFIT)
     implementation(Libs.RETROFIT_CONVERTER)
-    implementation(Libs.RETROFIT_ADAPTER)
 
     implementation(Libs.PLAY_SERVICES_ADS)
 

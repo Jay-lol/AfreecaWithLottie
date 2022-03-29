@@ -5,14 +5,14 @@ import com.google.firebase.database.ValueEventListener
 import com.jay.josaeworld.data.repository.DataRepository
 import com.jay.josaeworld.domain.model.response.AfSearchResponse
 import com.jay.josaeworld.domain.model.response.gsonParse.RealBroad
-import io.reactivex.Single
 
 class MockDataRepositoryImpl : DataRepository {
-    override fun getBjInfo(teamCode: Int, bid: String): Single<AfSearchResponse?> {
+
+    override suspend fun getBjInfoWithCoroutines(bid: String): AfSearchResponse {
         TODO("Not yet implemented")
     }
 
-    override fun searchJosae(): Single<RealBroad?> {
+    override suspend fun searchJosaeWithCoroutines(): RealBroad {
         TODO("Not yet implemented")
     }
 

@@ -10,7 +10,7 @@ MVP Pattern
 
 ---
 
-* RxJava
+* Coroutines
 * Retrofit
 * Glide
 * Lottie

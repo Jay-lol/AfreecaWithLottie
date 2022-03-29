@@ -2,8 +2,10 @@ package com.jay.josaeworld.presenter
 
 import com.jay.josaeworld.contract.BroadContract
 import com.jay.josaeworld.domain.SearchKeywordUseCase
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BroadPresenter @Inject constructor(
@@ -11,20 +13,22 @@ class BroadPresenter @Inject constructor(
     private val keywordUseCase: SearchKeywordUseCase
 ) : BroadContract.Presenter {
 
-    private var disposable: Disposable? = null
+    private var job: Job? = null
 
     override fun searchJosae() {
-        disposable = keywordUseCase()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        job = CoroutineScope(Dispatchers.Main).launch {
+            runCatching {
+                keywordUseCase()
+            }.onSuccess {
                 searchView?.showSearchResult(it)
-            }, {
+            }.onFailure {
                 searchView?.showToast("검색 실패! $it")
-            })
+            }
+        }
     }
 
     override fun dropView() {
         searchView = null
-        disposable?.dispose()
+        job?.cancel()
     }
 }

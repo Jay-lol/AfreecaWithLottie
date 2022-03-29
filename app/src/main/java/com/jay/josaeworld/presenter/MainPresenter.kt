@@ -9,11 +9,7 @@ import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.*
 import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
-import com.jay.josaeworld.extension.addToDisposable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(
@@ -29,7 +25,7 @@ class MainPresenter @Inject constructor(
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
 
-    private val disposables = arrayListOf<Disposable?>()
+    private val job = Job()
     private var bjStatusListener: ValueEventListener? = null
 
     /**
@@ -38,7 +34,7 @@ class MainPresenter @Inject constructor(
     override fun getRecentBJData(
         bjLists: Array<ArrayList<BroadInfo>>,
         bjDataList: Array<ArrayList<BroadInfo>>?
-    ) {
+    ) = CoroutineScope(Dispatchers.Main.immediate + job).launch {
         val bidList = arrayListOf<Pair<Int, String>>()
 
         for (team in bjLists) {
@@ -46,77 +42,85 @@ class MainPresenter @Inject constructor(
             for (member in team) bidList.add(Pair(index, member.bid))
         }
 
-        val singles = (bidList).map { targetBJ ->
-            memberUseCase(
-                GetMemberUseCase.Params(
-                    targetBJ.first,
-                    targetBJ.second,
+        val bjdata = ArrayList<BroadInfo>()
+
+        val jobs = List(bidList.size) { index ->
+            launch(Dispatchers.IO) {
+                val params = GetMemberUseCase.Params(
+                    bidList[index].first,
+                    bidList[index].second,
                     defaultLogoImgUrl,
                     liveImgUrl
                 )
-            )
-        }.toList()
-
-        Single
-            .zip(singles) { array ->
-                array.map {
-                    it as BroadInfo
+                runCatching {
+                    memberUseCase(params)
+                }.onSuccess {
+                    bjdata.add(it.toBroadInfo(params))
+                }.onFailure {
+                    bjdata.add(
+                        BroadInfo(
+                            teamCode = 403, onOff = 1,
+                            bid = params.bid, balloninfo = BallonInfo()
+                        )
+                    )
                 }
             }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ bjdata ->
-                searchView?.stopLoadingAnimation()
-                searchView?.makeRefreshstate(false)
+        }
 
-                val errorCnt: Int = bjdata.count { Bj -> Bj.teamCode == 403 }
+        runCatching {
+            jobs.joinAll()
+        }.onSuccess {
+            searchView?.stopLoadingAnimation()
+            searchView?.makeRefreshstate(false)
 
-                if (errorCnt == bjdata.size) {
-                    // 전부 에러일 경우
-                    searchView?.showError(4)
-                    searchView?.changeIsCrawlingForFirebaseState(false)
-                } else {
-                    // 일부 비제이 정보만 누락된 경우
-                    sendUpdateData(bjdata.filter { bj -> bj.teamCode != 403 }) { result: Boolean ->
-                        val name: String = bjdata.find { it.teamCode == 403 }?.bid ?: ""
-                        if (result) {
-                            if (errorCnt != 0) {
-                                var n = 0
-                                bjLists.forEach { n += it.size }
-                                var bjname = "unknown"
-                                try {
-                                    var find = false
-                                    for (i in bjDataList!!) {
-                                        if (find) break
-                                        for (member in i)
-                                            if (member.bid == name) {
-                                                find = true
-                                                bjname = member.bjname
-                                                break
-                                            }
-                                    }
-                                } catch (e: Exception) {
-                                    searchView?.showError(1)
-                                    Log.e(TAG, "finishSendBjStatus: $e")
+            val errorCnt: Int = bjdata.count { Bj -> Bj.teamCode == 403 }
+
+            if (errorCnt == bjdata.size) {
+                // 전부 에러일 경우
+                searchView?.showError(4)
+                searchView?.changeIsCrawlingForFirebaseState(false)
+            } else {
+                // 일부 비제이 정보만 누락된 경우
+                sendUpdateData(bjdata.filter { bj -> bj.teamCode != 403 }) { result: Boolean ->
+                    val name: String = bjdata.find { it.teamCode == 403 }?.bid ?: ""
+                    if (result) {
+                        if (errorCnt != 0) {
+                            var n = 0
+                            bjLists.forEach { n += it.size }
+                            var bjname = "unknown"
+                            try {
+                                var find = false
+                                for (i in bjDataList!!) {
+                                    if (find) break
+                                    for (member in i)
+                                        if (member.bid == name) {
+                                            find = true
+                                            bjname = member.bjname
+                                            break
+                                        }
                                 }
-
-                                if (errorCnt == 1)
-                                    searchView?.showToast("${n}명 중 아프리카 에러로\n  $bjname 정보 누락")
-                                else
-                                    searchView?.showToast("      ${n}명 중 응답 에러로\n $bjname 외 ${errorCnt - 1}명의 정보 누락")
+                            } catch (e: Exception) {
+                                searchView?.showError(1)
+                                Log.e(TAG, "finishSendBjStatus: $e")
                             }
+
+                            if (errorCnt == 1)
+                                searchView?.showToast("${n}명 중 아프리카 에러로\n  $bjname 정보 누락")
+                            else
+                                searchView?.showToast("      ${n}명 중 응답 에러로\n $bjname 외 ${errorCnt - 1}명의 정보 누락")
                         }
-                        searchView?.changeIsCrawlingForFirebaseState(false)
                     }
+                    searchView?.changeIsCrawlingForFirebaseState(false)
                 }
-            }, {
-                searchView?.run {
-                    stopLoadingAnimation()
-                    makeRefreshstate(false)
-                    showError(4)
-                    changeIsCrawlingForFirebaseState(false)
-                }
-            }).addToDisposable(disposables)
+            }
+        }.onFailure {
+            searchView?.run {
+                stopLoadingAnimation()
+                makeRefreshstate(false)
+                showError(4)
+                changeIsCrawlingForFirebaseState(false)
+            }
+        }
     }
 
     // 데이터를 업데이트하는 함수
@@ -286,6 +290,8 @@ class MainPresenter @Inject constructor(
 
     override fun dropView() {
         searchView = null
-        disposables.clear()
+        if (job.isActive) {
+            job.cancel()
+        }
     }
 }
