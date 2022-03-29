@@ -32,11 +32,10 @@ class TeamListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTeamListBinding.inflate(inflater, container, false)
+        @Suppress("UNCHECKED_CAST")
         arguments?.run {
             teamNameInfo = getStringArrayList(KEY_TEAM_NAME) ?: List(4) { "" }
-            @Suppress("UNCHECKED_CAST")
             teamList = get(KEY_TEAM_DATA_LIST) as Array<ArrayList<BroadInfo>>
-            @Suppress("UNCHECKED_CAST")
             underBossList = get(KEY_UNDER_BOSS_NAME) as HashMap<String, String>
         }
         return binding.root
