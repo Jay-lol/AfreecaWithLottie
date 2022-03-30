@@ -11,11 +11,13 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.jay.josaeworld.BuildConfig
 import com.jay.josaeworld.R
 import com.jay.josaeworld.base.BaseViewBindingActivity
@@ -53,6 +55,9 @@ class MainActivity :
     private var allViewers = 0
     private var allBallon = 0
     private var isDataUpdateNeeded = false
+
+    @Inject
+    lateinit var firebaseAnalytics: FirebaseAnalytics
 
     @Inject
     lateinit var dataStore: UserPreferencesRepository
@@ -129,6 +134,7 @@ class MainActivity :
     private fun refreshListener() {
         binding.refreshLayout.setOnRefreshListener {
             if (isRecentData) {
+                firebaseAnalytics.logEvent("request_refresh", bundleOf("scroll_down" to true))
                 refreshAct()
             } else {
                 binding.refreshLayout.isRefreshing = false
@@ -307,6 +313,10 @@ class MainActivity :
             if (code == 0) {
                 intent.data = Uri.parse("afreeca://")
                 intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                firebaseAnalytics.logEvent(
+                    "move_app",
+                    bundleOf("click_boss" to true, "status" to "broad_off")
+                )
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {
@@ -320,6 +330,10 @@ class MainActivity :
             } else {
                 intent.data = Uri.parse(goLiveUrlApp + bid)
                 intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                firebaseAnalytics.logEvent(
+                    "move_app",
+                    bundleOf("click_boss" to true, "status" to "broad_on")
+                )
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {
@@ -339,6 +353,7 @@ class MainActivity :
                     Intent.ACTION_VIEW,
                     Uri.parse(goLiveUrlWeb + bid)
                 )
+                firebaseAnalytics.logEvent("move_web", bundleOf("move" to true))
                 startActivity(intent)
             }
             dlg.dismiss()
@@ -403,11 +418,13 @@ class MainActivity :
                 dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 // 커스텀 다이얼로그의 각 위젯들을 정의한다.
                 dlgBinding.closeOkButton.setOnClickListener {
+                    firebaseAnalytics.logEvent("click_update", bundleOf("click" to true))
                     if (gotoMarket())
                         dlg.dismiss()
                 }
 
                 dlgBinding.closeNotOk.setOnClickListener {
+                    firebaseAnalytics.logEvent("click_close_update", bundleOf("click" to true))
                     dlg.dismiss()
                 }
             }
@@ -467,6 +484,7 @@ class MainActivity :
                         val question = "시조새는 방송중이 아닙니다\n아프리카로 이동하시겠습니까?"
                         popDialog(v.bid, question, 0)
                     }
+                    firebaseAnalytics.logEvent("click_boss", bundleOf("click" to true))
                 } catch (e: Exception) {
                     Log.e(TAG, "buttonListener: $e")
                     showToast("밑으로 내려서 다시 로딩해 주세요", true)
@@ -496,6 +514,7 @@ class MainActivity :
                         binding.bossView.coachClick.visibility = View.GONE
                         cancel()
                     }
+                    firebaseAnalytics.logEvent("click_boss_moreInfo", bundleOf("click" to true))
                 } catch (e: Exception) {
                     Log.e(TAG, "buttonListener: $e")
                     showToast("밑으로 내려서 다시 로딩해 주세요", true)
@@ -507,12 +526,14 @@ class MainActivity :
             mainBJDataList?.let {
                 val intent = Intent(this, BroadCastActivity::class.java)
                 intent.putExtra(KEY_TEAM_NAME, "시조새 검색 결과")
+                firebaseAnalytics.logEvent("click_searchKeyword", bundleOf("click" to true))
                 startActivity(intent)
                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             }
         }
 
         binding.buttonFloatingMenu.fabChat.setOnClickListener {
+            firebaseAnalytics.logEvent("click_chat_button", bundleOf("click" to true))
             if (true) {
                 showToast(
                     "서버 비용 문제로 준비중입니다\n" +
@@ -566,6 +587,7 @@ class MainActivity :
     private fun showCoachMark() {
         if (dataStore.coachMarkCount <= 1) {
             binding.bossView.coachClick.visibility = View.VISIBLE
+            firebaseAnalytics.logEvent("show_coachmark", bundleOf("show" to true))
         }
     }
 

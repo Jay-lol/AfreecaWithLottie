@@ -8,11 +8,13 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.jay.josaeworld.adapter.RecyclerBroadListAdapter
 import com.jay.josaeworld.adapter.RecyclerSearchListAdapter
 import com.jay.josaeworld.base.BaseViewBindingActivity
@@ -46,6 +48,9 @@ class BroadCastActivity :
     lateinit var mAdView: AdView
 
     @Inject
+    lateinit var firebaseAnalytics: FirebaseAnalytics
+
+    @Inject
     lateinit var adRequest: AdRequest
 
     @Inject
@@ -76,6 +81,7 @@ class BroadCastActivity :
         }
 
         binding.teamName.text = intent.getStringExtra(KEY_TEAM_NAME)
+        firebaseAnalytics.logEvent("view_team", bundleOf("teamName" to binding.teamName.text))
     }
 
     /**
@@ -135,18 +141,23 @@ class BroadCastActivity :
 
     private val memberClick: (BroadInfo, Int) -> Unit = { v, code ->
         if (code == 0) {
+            firebaseAnalytics.logEvent(
+                "click_member",
+                bundleOf("member_name" to v.bjname, "member_viewCnt" to v.viewCnt)
+            )
             moveToLive(v.bid, v.bjname, v.viewCnt)
         } else {
+            firebaseAnalytics.logEvent("click_member_moreInfo", bundleOf("member_name" to v.bjname))
             val dlg = Dialog(this)
             val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
             dlg.setContentView(dlgBinding.root)
             dlgBinding.infoBjname.text = v.bjname
 
-            v.balloninfo?.let {
-                dlgBinding.monthview.text = v.balloninfo!!.monthview
-                dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
-                dlgBinding.monthtime.text = v.balloninfo!!.monthtime
-                dlgBinding.monthpay.text = v.balloninfo!!.monthpay
+            v.balloninfo?.run {
+                dlgBinding.monthview.text = monthview
+                dlgBinding.monthmaxview.text = monthmaxview
+                dlgBinding.monthtime.text = monthtime
+                dlgBinding.monthpay.text = monthpay
             }
             dlg.show()
             dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -172,6 +183,7 @@ class BroadCastActivity :
             intent.data = Uri.parse(goLiveUrlApp + bid)
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
             try {
+                firebaseAnalytics.logEvent("move_app", bundleOf("move" to true))
                 startActivity(intent)
             } catch (e: Exception) {
                 intent = Intent(
@@ -184,6 +196,7 @@ class BroadCastActivity :
         }
 
         dlgBinding.moveWeb.setOnClickListener {
+            firebaseAnalytics.logEvent("move_web", bundleOf("move" to true))
             intent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(goLiveUrlWeb + bid)

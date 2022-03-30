@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.ads.AdRequest
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -75,6 +76,11 @@ object DatabaseModule {
     fun providesFirebaseDatabase(): FirebaseDatabase {
         return Firebase.database
     }
+
+    @Provides
+    @Singleton
+    fun providesFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics =
+        FirebaseAnalytics.getInstance(context)
 
     @Provides
     fun providesAdRequest(): AdRequest = AdRequest.Builder().build()
