@@ -11,6 +11,7 @@ apply {
 }
 
 android {
+    namespace = "com.jay.josaeworld"
     compileSdk = Android.COMPILE_SDK
     defaultConfig {
         applicationId = "com.jay.josaeworld"
@@ -26,7 +27,7 @@ android {
             manifestPlaceholders["appLabel"] = "조새크루"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
@@ -40,17 +41,18 @@ android {
         }
     }
 
-    viewBinding {
-        isEnabled = true
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = "17"
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -69,7 +71,7 @@ dependencies {
 
     // Glide
     implementation(Libs.GLIDE)
-    annotationProcessor(Libs.GLIDE_COMPILER)
+    kapt(Libs.GLIDE_COMPILER)
 
     // firebase
     implementation(platform(Libs.FIREBASE))

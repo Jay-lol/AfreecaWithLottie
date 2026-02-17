@@ -1,6 +1,6 @@
 object Android {
-    const val COMPILE_SDK = 31
-    const val TARGET_SDK = 30
+    const val COMPILE_SDK = 36
+    const val TARGET_SDK = 36
     const val MIN_SDK = 21
 }
 
@@ -40,17 +40,17 @@ object Versions {
     const val versionName = "2.3.2"
     const val versionCode = 48
 
-    const val ANDROID_GRADLE_PLUGIN = "7.1.2"
+    const val ANDROID_GRADLE_PLUGIN = "8.5.0"
     const val ANDROIDX_RECYCLERVIEW = "1.2.1"
-    const val FIREBASE_CRASHLYTICS = "2.8.1"
+    const val FIREBASE_CRASHLYTICS = "2.9.9"
     const val CORE_KTX = "1.7.0"
-    const val GOOGLE_SERVICES = "4.3.10"
-    const val KOTLIN = "1.6.10"
+    const val GOOGLE_SERVICES = "4.4.0"
+    const val KOTLIN = "1.9.22"
     const val GITHUB_CLANS_FAB = "1.6.4"
     const val FIREBASE = "29.1.0"
     const val PLAY_SERVICES_ADS = "20.6.0"
 
-    const val HILT = "2.41"
+    const val HILT = "2.48"
 
     // androidx
     const val ANDROIDX_CONSTRAINTLAYOUT = "2.1.3"
