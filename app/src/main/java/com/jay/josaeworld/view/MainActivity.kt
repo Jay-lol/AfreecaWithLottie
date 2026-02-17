@@ -28,9 +28,9 @@ import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.ui.theme.JosaeWorldTheme
-import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_DATA_LIST
-import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_NAME
-import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_UNDER_BOSS_NAME
+import com.jay.josaeworld.view.BroadListActivity.Companion.KEY_TEAM_DATA_LIST
+import com.jay.josaeworld.view.BroadListActivity.Companion.KEY_TEAM_NAME
+import com.jay.josaeworld.view.BroadListActivity.Companion.KEY_UNDER_BOSS_NAME
 import com.jay.josaeworld.view.InitialActivity.Companion.KEY_LAST_UPDATE_TIME
 import com.jay.josaeworld.view.InitialActivity.Companion.KEY_NEW_LIST
 import com.jay.josaeworld.view.InitialActivity.Companion.KEY_UPDATE_CODE
@@ -206,7 +206,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
     }
 
     private fun moveTeamList(teamName: String, teamList: ArrayList<BroadInfo>?, underBoss: String) {
-        val intent = Intent(this, BroadCastActivity::class.java)
+        val intent = Intent(this, BroadListActivity::class.java)
         if (!teamList.isNullOrEmpty()) {
             intent.putExtra(KEY_TEAM_NAME, teamName)
             intent.putExtra(KEY_TEAM_DATA_LIST, teamList)

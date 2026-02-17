@@ -69,6 +69,7 @@ import com.jay.josaeworld.databinding.ButtonFloatingMenuBinding
 import com.jay.josaeworld.domain.goodString
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.ui.component.AdBanner
+import com.jay.josaeworld.ui.component.BJCard
 import com.jay.josaeworld.ui.component.LoadingOverlay
 import com.jay.josaeworld.ui.component.MainInfoSection
 import com.jay.josaeworld.ui.theme.MapleStory
@@ -135,11 +136,12 @@ fun MainScreen(
                 ) {
                     item {
                         state.mainBJDataList?.lastOrNull()?.firstOrNull()?.let { bossInfo ->
-                            BossSection(
-                                bossInfo = bossInfo,
+                            BJCard(
+                                bjInfo = bossInfo,
                                 onClick = { onBossClick(bossInfo) },
                                 onMoreInfoClick = { onBossMoreInfoClick(bossInfo) },
-                                isCoachMarkVisible = isCoachMarkVisible
+                                isCoachMarkVisible = isCoachMarkVisible,
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
@@ -232,297 +234,6 @@ fun MainScreen(
             backgroundColor = Color.DarkGray,
             contentColor = Color.White
         )
-    }
-}
-
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun BossSection(
-    bossInfo: BroadInfo,
-    onClick: () -> Unit,
-    onMoreInfoClick: () -> Unit,
-    isCoachMarkVisible: Boolean
-) {
-    val random = remember { java.util.Random() }
-    val isOn = bossInfo.onOff == 1
-    val viewCountInt = bossInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
-    val isHighViewCount = isOn && viewCountInt >= 10000
-
-    val tightTextStyle = LocalTextStyle.current.copy(
-        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false),
-        lineHeightStyle = LineHeightStyle(
-            alignment = LineHeightStyle.Alignment.Center,
-            trim = LineHeightStyle.Trim.Both
-        )
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp, bottom = 12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        if (isHighViewCount) {
-            val highlightComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lf30_editor_cecsqjtv.json"))
-            LottieAnimation(
-                composition = highlightComposition,
-                iterations = LottieConstants.IterateForever,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(280.dp)
-                    .scale(2.5f),
-                contentScale = ContentScale.Inside
-            )
-        }
-
-        Card(
-            modifier = Modifier
-                .width(295.dp)
-                .wrapContentHeight()
-                .clickable { onClick() },
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF333333))
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                // 썸네일 영역
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(16f / 9f)
-                ) {
-                    if (isOn) {
-                        GlideImage(
-                            model = bossInfo.imgurl + "${random.nextInt(123456789)}",
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        val restComposition by rememberLottieComposition(
-                            LottieCompositionSpec.Asset(
-                                "8266-rest-sloth.json"
-                            )
-                        )
-                        LottieAnimation(
-                            composition = restComposition,
-                            iterations = LottieConstants.IterateForever,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-                    val infoComposition by rememberLottieComposition(LottieCompositionSpec.Asset("12246-info.json"))
-                    LottieAnimation(
-                        composition = infoComposition,
-                        iterations = 1,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(4.dp)
-                            .size(40.dp, 45.dp)
-                            .clickable { onMoreInfoClick() }
-                    )
-
-                    if (isCoachMarkVisible) {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(top = 35.dp, end = 15.dp)
-                        ) {
-                            val clickComposition by rememberLottieComposition(
-                                LottieCompositionSpec.Asset(
-                                    "clickmark.json"
-                                )
-                            )
-                            LottieAnimation(
-                                composition = clickComposition,
-                                iterations = LottieConstants.IterateForever,
-                                modifier = Modifier.size(100.dp)
-                            )
-                            Text(
-                                text = "느낌표를\n클릭해보세요",
-                                color = Color(0xC9FFFFFF),
-                                fontSize = 9.sp,
-                                lineHeight = 9.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.align(Alignment.BottomCenter),
-                                style = tightTextStyle
-                            )
-                        }
-                    }
-                }
-
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 5.dp),
-                    thickness = 2.dp,
-                    color = Color(0xFFA6A6A6)
-                )
-
-                // 정보 영역
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = bossInfo.title,
-                        color = Color(0xE6FFFFFF),
-                        fontSize = 16.sp,
-                        lineHeight = 16.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center,
-                        fontFamily = MapleStory,
-                        style = tightTextStyle,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .padding(bottom = 9.dp)
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .padding(bottom = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_baseline_star_border_24),
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp)
-                            )
-                            Text(
-                                text = bossInfo.fanCnt,
-                                color = Color.White,
-                                fontSize = 9.sp,
-                                lineHeight = 9.sp,
-                                style = tightTextStyle,
-                                modifier = Modifier.padding(start = 1.dp)
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_outline_thumb_up_alt_24),
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp)
-                            )
-                            Text(
-                                text = bossInfo.okCnt,
-                                color = Color.White,
-                                fontSize = 9.sp,
-                                lineHeight = 9.sp,
-                                style = tightTextStyle,
-                                modifier = Modifier.padding(start = 1.dp)
-                            )
-                        }
-                        Text(
-                            text = bossInfo.bjname,
-                            color = Color(0xFF8587FE),
-                            fontSize = 13.sp,
-                            lineHeight = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = MapleStory,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.widthIn(max = 80.dp),
-                            style = tightTextStyle
-                        )
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_baseline_people_alt_24),
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp)
-                            )
-                            Text(
-                                text = bossInfo.viewCnt,
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                lineHeight = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                style = tightTextStyle,
-                                modifier = Modifier.padding(start = 2.dp)
-                            )
-                        }
-                    }
-
-                    // 풍력 정보 (자연스럽게 밀착됨)
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .padding(bottom = 2.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "오늘의 즐겨찾기 : ",
-                                color = Color(0xE4D5D5D5),
-                                fontSize = 9.sp,
-                                lineHeight = 9.sp,
-                                style = tightTextStyle
-                            )
-                            val fanCntVal = bossInfo.incFanCnt.filter { it.isDigit() || it == '-' }
-                                .toIntOrNull() ?: 0
-                            Text(
-                                text = bossInfo.incFanCnt,
-                                color = if (fanCntVal < 0) Color(0xFFFF4A4A) else Color.White,
-                                fontSize = 9.sp,
-                                lineHeight = 9.sp,
-                                fontWeight = FontWeight.Bold,
-                                style = tightTextStyle
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Text(
-                                text = "일일 풍력 : ",
-                                color = Color(0xE4D5D5D5),
-                                fontSize = 9.sp,
-                                lineHeight = 9.sp,
-                                style = tightTextStyle
-                            )
-                            Text(
-                                text = bossInfo.balloninfo?.dayballon ?: "-",
-                                color = Color(0xFF46E9FF),
-                                fontSize = 11.sp,
-                                lineHeight = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                style = tightTextStyle
-                            )
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "월간 풍력 : ",
-                                color = Color(0xE4D5D5D5),
-                                fontSize = 9.sp,
-                                lineHeight = 9.sp,
-                                style = tightTextStyle
-                            )
-                            Text(
-                                text = bossInfo.balloninfo?.monthballon ?: "-",
-                                color = Color(0xFF46E9FF),
-                                fontSize = 11.sp,
-                                lineHeight = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                style = tightTextStyle
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -623,11 +334,12 @@ fun BossSectionPreview() {
             monthballon = "150,000"
         )
     )
-    BossSection(
-        bossInfo = mockBoss,
+    BJCard(
+        bjInfo = mockBoss,
         onClick = {},
         onMoreInfoClick = {},
-        isCoachMarkVisible = true
+        isCoachMarkVisible = true,
+        modifier = Modifier.fillMaxWidth()
     )
 }
 

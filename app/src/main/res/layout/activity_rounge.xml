@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <com.google.android.gms.ads.AdView
-        android:id="@id/adView"
+        android:id="@+id/adView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@id/main_loading_lottie"
+        android:id="@+id/main_loading_lottie"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#4d000000"
