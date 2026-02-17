@@ -12,9 +12,12 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -22,7 +25,7 @@ import com.google.android.gms.ads.MobileAds
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.jay.josaeworld.BuildConfig
 import com.jay.josaeworld.R
-import com.jay.josaeworld.base.BaseViewBindingActivity
+import com.jay.josaeworld.base.BaseViewBindingViewModelActivity
 import com.jay.josaeworld.contract.MainContract
 import com.jay.josaeworld.data.UserPreferencesRepository
 import com.jay.josaeworld.databinding.*
@@ -32,7 +35,8 @@ import com.jay.josaeworld.domain.makeCuteNickName
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
-import com.jay.josaeworld.presenter.MainPresenter
+import com.jay.josaeworld.viewmodel.MainSideEffect
+import com.jay.josaeworld.viewmodel.MainViewModel
 import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_NAME
 import com.jay.josaeworld.view.SplashActivity.Companion.KEY_LAST_UPDATE_TIME
 import com.jay.josaeworld.view.SplashActivity.Companion.KEY_NEW_LIST
@@ -48,8 +52,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity :
-    BaseViewBindingActivity<ActivityMainBinding, MainPresenter>({ ActivityMainBinding.inflate(it) }),
+    BaseViewBindingViewModelActivity<ActivityMainBinding, MainViewModel>({ ActivityMainBinding.inflate(it) }),
     MainContract.View {
+
+    override val viewModel: MainViewModel by viewModels()
 
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
     private lateinit var teamInfo: List<String>
@@ -100,6 +106,7 @@ class MainActivity :
         }
         showCoachMark()
         getUnderBossFromFirebase()
+        observeViewModel()
         refreshListener()
         initButtonListener()
         createAdmob()
@@ -111,11 +118,36 @@ class MainActivity :
         })
     }
 
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.uiState.collect { state ->
+                        changeMainBJData(state.mainBJDataList)
+                        if (!state.isLoading) stopLoadingAnimation()
+                        makeRefreshstate(state.isRefreshing)
+                        changeIsCrawlingForFirebaseState(state.isCrawlingForFirebase)
+                        initUnderBoss(state.underBossList)
+                    }
+                }
+                launch {
+                    viewModel.sideEffect.collect { effect ->
+                        when (effect) {
+                            is MainSideEffect.ShowError -> showError(effect.code)
+                            is MainSideEffect.ShowToast -> showToast(effect.message)
+                            is MainSideEffect.ShowCustomDialog -> showCustomDialog(effect.code)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 파이어베이스 정보로 second 정보 초기화
      */
     private fun getUnderBossFromFirebase() {
-        presenter.getUnderBoss()
+        viewModel.getUnderBoss()
     }
 
     override fun initUnderBoss(newList: HashMap<String, String>) {
@@ -156,7 +188,7 @@ class MainActivity :
      * #1 파이어베이스 BJStatus 리스너 설정
      */
     private fun setDataListener() {
-        presenter.createBJDataListener(teamInfo.size + 1)
+        viewModel.createBJDataListener(teamInfo.size + 1)
     }
 
     /**
@@ -177,7 +209,7 @@ class MainActivity :
 
     private fun removeDataListener() {
         isRecentData = false
-        presenter.removeBJDataListener()
+        viewModel.removeBJDataListener()
     }
 
     /**
@@ -188,7 +220,7 @@ class MainActivity :
         binding.mainLoadingLottie.visibility = View.VISIBLE
         binding.mainLoadingLottie.playAnimation()
 
-        presenter.getRecentBJData(bjlists, mainBJDataList)
+        viewModel.getRecentBJData(bjlists, mainBJDataList)
     }
 
     private fun updateUIwithRecentList(bjlist: Array<ArrayList<BroadInfo>>) {
@@ -576,7 +608,7 @@ class MainActivity :
                 val bj = dlgBinding.reportBj.text.trim().toString()
                 val content = dlgBinding.suggest.text.trim().toString()
                 if (bj.isNotEmpty() && content.isNotEmpty()) {
-                    presenter.sendReport(listOf(bj, content)) { dlg.dismiss() }
+                    viewModel.sendReport(listOf(bj, content)) { dlg.dismiss() }
                 } else {
                     showToast("BJ명과 건의사항을 확인해주세요")
                 }
