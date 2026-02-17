@@ -1,25 +1,44 @@
+# Gradle and Build
+.gradle/
+build/
+app/build/
+buildSrc/build/
+captures/
+
+# Android Studio and IntelliJ
 *.iml
-.idea
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+.idea/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/deploymentTargetDropDown.xml
+.idea/kotlinc.xml
+
+# Local configuration
+local.properties
+
+# Secrets and Signing
 /app/google-services.json
-/app/release
-/app/src/debug
-/app/src/release
-.DS_Store
-/build
-/buildSrc/build
-/buildSrc/.gradle
-/captures
-.externalNativeBuild
-.cxx
+/app/release/
+/app/src/debug/
+/app/src/release/
 /app/src/main/res/values/strings.xml
+*.keystore
+*.jks
+
+# Device and OS
+.DS_Store
+*.apk
+*.aar
+*.bundle
+captures/
 
 # Gemini Agent Context
 GEMINI.md
+
+# External Native Build
+.externalNativeBuild/
+.cxx/
