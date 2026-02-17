@@ -19,4 +19,4 @@
 /captures
 .externalNativeBuild
 .cxx
-/app/src/main/res/values/strings.xml
+/app/src/main/res/values/strings.xml\n# Gemini Agent Context\nGEMINI.md
