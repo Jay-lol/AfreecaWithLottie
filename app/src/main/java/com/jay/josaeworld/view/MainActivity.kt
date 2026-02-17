@@ -166,8 +166,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
     }
 
     private fun handleSearchClick() {
-        val intent = Intent(this, BroadCastActivity::class.java)
-        intent.putExtra(KEY_TEAM_NAME, "시조새 검색 결과")
+        val intent = Intent(this, SearchActivity::class.java)
         firebaseAnalytics.logEvent("click_searchKeyword", bundleOf("click" to true))
         startActivity(intent)
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)

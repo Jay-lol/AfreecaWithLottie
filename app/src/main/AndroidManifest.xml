@@ -29,6 +29,10 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
+            android:name=".view.SearchActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".view.InitialActivity"
             android:exported="true"
             android:screenOrientation="portrait"

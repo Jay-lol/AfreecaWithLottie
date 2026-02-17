@@ -68,6 +68,8 @@ import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.ButtonFloatingMenuBinding
 import com.jay.josaeworld.domain.goodString
 import com.jay.josaeworld.domain.model.response.BroadInfo
+import com.jay.josaeworld.ui.component.AdBanner
+import com.jay.josaeworld.ui.component.LoadingOverlay
 import com.jay.josaeworld.ui.component.MainInfoSection
 import com.jay.josaeworld.ui.theme.MapleStory
 import com.jay.josaeworld.viewmodel.MainUiState
@@ -600,41 +602,6 @@ fun TeamItem(teamName: String, teamList: List<BroadInfo>, onClick: () -> Unit) {
                 )
             }
         }
-    }
-}
-
-@Composable
-fun AdBanner(adRequest: AdRequest) {
-    val adUnitId = stringResource(id = R.string.bannerId)
-    AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        factory = { context ->
-            AdView(context).apply {
-                setAdSize(AdSize.BANNER)
-                this.adUnitId = adUnitId
-                loadAd(adRequest)
-            }
-        },
-        update = { it.loadAd(adRequest) }
-    )
-}
-
-@Composable
-fun LoadingOverlay() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0x4D000000))
-            .clickable(enabled = false) {}, contentAlignment = Alignment.Center
-    ) {
-        val composition by rememberLottieComposition(LottieCompositionSpec.Asset("8438-mr-cookie-drink2.json"))
-        LottieAnimation(
-            composition = composition,
-            iterations = LottieConstants.IterateForever,
-            modifier = Modifier.fillMaxSize()
-        )
     }
 }
 
