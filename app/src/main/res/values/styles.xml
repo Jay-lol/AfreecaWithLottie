@@ -12,8 +12,28 @@
         <item name="android:fitsSystemWindows">true</item>
     </style>
 
-    <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:windowFullscreen">false</item>
-    </style>
+        <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
 
-</resources>
+            <item name="android:windowFullscreen">false</item>
+
+        </style>
+
+    
+
+        <!-- Splash Screen Theme -->
+
+        <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+
+            <item name="windowSplashScreenBackground">@color/colorPrimaryDark</item>
+
+            <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+
+            <item name="postSplashScreenTheme">@style/AppTheme</item>
+
+        </style>
+
+    
+
+    </resources>
+
+    

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.jay.josaeworld.base.BaseViewBindingActivity
 import com.jay.josaeworld.contract.SplashContract
 import com.jay.josaeworld.databinding.ActivitySplashBinding
@@ -25,6 +26,7 @@ class SplashActivity :
     SplashContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         presenter.getInitTeamData()
     }
