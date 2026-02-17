@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.cardview)
     implementation(libs.lottie)
+    implementation(libs.lottie.compose)
     implementation(libs.github.clans.fab)
 
     // Compose

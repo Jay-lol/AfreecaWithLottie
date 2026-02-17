@@ -85,6 +85,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 
 # UI & Misc
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 github-clans-fab = { group = "com.github.clans", name = "fab", version.ref = "githubClansFab" }

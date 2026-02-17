@@ -42,9 +42,9 @@ import com.jay.josaeworld.ui.theme.JosaeWorldTheme
 import com.jay.josaeworld.viewmodel.MainSideEffect
 import com.jay.josaeworld.viewmodel.MainViewModel
 import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_NAME
-import com.jay.josaeworld.view.SplashActivity.Companion.KEY_LAST_UPDATE_TIME
-import com.jay.josaeworld.view.SplashActivity.Companion.KEY_NEW_LIST
-import com.jay.josaeworld.view.SplashActivity.Companion.KEY_UPDATE_CODE
+import com.jay.josaeworld.view.InitialActivity.Companion.KEY_LAST_UPDATE_TIME
+import com.jay.josaeworld.view.InitialActivity.Companion.KEY_NEW_LIST
+import com.jay.josaeworld.view.InitialActivity.Companion.KEY_UPDATE_CODE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

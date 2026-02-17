@@ -1,24 +1,37 @@
-package com.jay.josaeworld.presenter
+package com.jay.josaeworld.viewmodel
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.jay.josaeworld.contract.SplashContract
 import com.jay.josaeworld.domain.GetInitTeamDataUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SplashPresenter @Inject constructor(
+@HiltViewModel
+class InitialViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private var searchView: SplashContract.View?,
     private val getInitTeamDataUseCase: GetInitTeamDataUseCase
-) : SplashContract.Presenter {
+) : ViewModel() {
 
-    override fun getInitTeamData() {
+    private val _uiState = MutableStateFlow(InitialUiState())
+    val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<InitialSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
+
+    fun getInitTeamData() {
         getInitTeamDataUseCase(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -42,21 +55,24 @@ class SplashPresenter @Inject constructor(
                                 }
                             }
                         }
-                        Log.d(TAG, "SplashPresenter ~ onDataChange() called $list")
-                        initTeamData(list, time, minversionCode, currentversionCode)
+                        checkVersionAndNavigate(list, time, minversionCode, currentversionCode)
                     } catch (e: Exception) {
-                        searchView?.showToast("$e")
+                        viewModelScope.launch {
+                            _sideEffect.emit(InitialSideEffect.ShowToast(e.message ?: "Unknown Error"))
+                        }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    searchView?.showToast("$error")
+                    viewModelScope.launch {
+                        _sideEffect.emit(InitialSideEffect.ShowToast(error.message))
+                    }
                 }
             }
         )
     }
 
-    private fun initTeamData(
+    private fun checkVersionAndNavigate(
         newList: List<String>,
         time: Long,
         minversionCode: Int,
@@ -66,27 +82,28 @@ class SplashPresenter @Inject constructor(
         val vc = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             pi.longVersionCode
         } else {
+            @Suppress("DEPRECATION")
             pi.versionCode.toLong()
         }
 
-        when {
-            vc < minversionCode -> {
-                searchView?.startMainActivity(newList, time, 3)
-            }
-            vc < currentversionCode -> {
-                searchView?.startMainActivity(newList, time, 2)
-            }
-            else -> {
-                searchView?.startMainActivity(newList, time)
-            }
+        val code = when {
+            vc < minversionCode -> 3
+            vc < currentversionCode -> 2
+            else -> 0
+        }
+
+        _uiState.update { it.copy(isLoading = false) }
+        viewModelScope.launch {
+            _sideEffect.emit(InitialSideEffect.NavigateToMain(newList, time, code))
         }
     }
+}
 
-    override fun dropView() {
-        searchView = null
-    }
+data class InitialUiState(
+    val isLoading: Boolean = true
+)
 
-    companion object {
-        private val TAG: String = "로그 SplashPresenter"
-    }
+sealed class InitialSideEffect {
+    data class NavigateToMain(val newList: List<String>, val time: Long, val code: Int) : InitialSideEffect()
+    data class ShowToast(val message: String) : InitialSideEffect()
 }
