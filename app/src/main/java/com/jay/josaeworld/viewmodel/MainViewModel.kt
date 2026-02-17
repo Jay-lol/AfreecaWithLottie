@@ -72,7 +72,7 @@ class MainViewModel
         }
 
         /**
-         비제이들 고유 아이디 가져와서 데이터 요청
+         스트리머들 고유 아이디 가져와서 데이터 요청
          */
         fun getRecentStreamerData(
             streamerLists: Array<ArrayList<BroadInfo>>,
@@ -88,7 +88,7 @@ class MainViewModel
                     for (member in team) streamerIdList.add(Pair(index, member.streamerId))
                 }
 
-                val streamerdata = java.util.Collections.synchronizedList(ArrayList<BroadInfo>())
+                val streamerData = java.util.Collections.synchronizedList(ArrayList<BroadInfo>())
 
                 val jobs =
                     streamerIdList.map { item ->
@@ -103,9 +103,9 @@ class MainViewModel
                             runCatching {
                                 memberUseCase(params)
                             }.onSuccess {
-                                streamerdata.add(it.toBroadInfo(params))
+                                streamerData.add(it.toBroadInfo(params))
                             }.onFailure {
-                                streamerdata.add(
+                                streamerData.add(
                                     BroadInfo(
                                         teamCode = 403,
                                         onOff = 1,
@@ -122,14 +122,15 @@ class MainViewModel
                 }.onSuccess {
                     _uiState.update { it.copy(isLoading = false, isRefreshing = false) }
 
-                    val errorCnt: Int = streamerdata.count { Streamer -> Streamer.teamCode == 403 }
+                    val errorCnt: Int = streamerData.count { streamer -> streamer.teamCode == 403 }
 
-                    if (errorCnt == streamerdata.size) {
+                    if (errorCnt == streamerData.size) {
+                        Log.e(TAG, " 여기")
                         _sideEffect.emit(MainSideEffect.ShowError(4))
                         _uiState.update { it.copy(isCrawlingForFirebase = false, isRefreshing = false) }
                     } else {
-                        sendUpdateData(streamerdata.filter { streamer -> streamer.teamCode != 403 }) { result: Boolean ->
-                            val name: String = streamerdata.find { it.teamCode == 403 }?.streamerId ?: ""
+                        sendUpdateData(streamerData.filter { streamer -> streamer.teamCode != 403 }) { result: Boolean ->
+                            val name: String = streamerData.find { it.teamCode == 403 }?.streamerId ?: ""
                             if (result) {
                                 if (errorCnt != 0) {
                                     var n = 0
