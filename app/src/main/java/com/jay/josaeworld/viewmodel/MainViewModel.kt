@@ -22,6 +22,7 @@ class MainViewModel @Inject constructor(
     private val getUnderBossUseCase: GetUnderBossUseCase,
     private val getBallonDataUseCase: GetBallonDataUseCase,
     private val listenBJUpToDateUseCase: ListenBJUpToDateUseCase,
+    private val dataStore: com.jay.josaeworld.data.UserPreferencesRepository,
     @UrlModule.DEFAULT_LOGO_IMG private val defaultLogoImgUrl: String,
     @UrlModule.LIVE_IMG_URL private val liveImgUrl: String
 ) : ViewModel() {
@@ -34,7 +35,25 @@ class MainViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<MainSideEffect>()
     val sideEffect: SharedFlow<MainSideEffect> = _sideEffect.asSharedFlow()
 
-    private var bjStatusListener: ValueEventListener? = null
+    private var bjStatusListener: com.google.firebase.database.ValueEventListener? = null
+
+    init {
+        observeCoachMark()
+    }
+
+    private fun observeCoachMark() {
+        viewModelScope.launch {
+            dataStore.coachMarkCount.collect { count ->
+                _uiState.update { it.copy(isCoachMarkVisible = count <= 1) }
+            }
+        }
+    }
+
+    fun incrementCoachMark() {
+        viewModelScope.launch {
+            dataStore.incrementCoachMarkCount()
+        }
+    }
 
     /**
      비제이들 고유 아이디 가져와서 데이터 요청
@@ -186,7 +205,27 @@ class MainViewModel @Inject constructor(
                                 }
                             }
                             Log.d(TAG, "MainViewModel ~ bjDataListener() 갱신 성공")
-                            _uiState.update { it.copy(mainBJDataList = recentBJList) }
+                            
+                            var nAllviewers = 0
+                            var nAllballon = 0
+
+                            for (team in recentBJList) {
+                                if (team.isEmpty()) continue
+                                for (member in team) {
+                                    if (member.onOff == 1) {
+                                        nAllviewers += member.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
+                                    }
+                                    nAllballon += member.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toIntOrNull() ?: 0
+                                }
+                            }
+
+                            _uiState.update { 
+                                it.copy(
+                                    mainBJDataList = recentBJList,
+                                    allViewers = nAllviewers,
+                                    allBallons = nAllballon
+                                ) 
+                            }
                         } catch (e: Exception) {
                             _uiState.update { it.copy(isLoading = false) }
                             viewModelScope.launch { _sideEffect.emit(MainSideEffect.ShowToast("$e")) }
@@ -194,7 +233,7 @@ class MainViewModel @Inject constructor(
                     }
                 }
 
-                override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
                     _uiState.update { it.copy(isLoading = false) }
                     viewModelScope.launch { _sideEffect.emit(MainSideEffect.ShowToast("$error")) }
                 }
@@ -299,10 +338,6 @@ class MainViewModel @Inject constructor(
     fun setIsCrawlingForFirebase(isCrawling: Boolean) {
         _uiState.update { it.copy(isCrawlingForFirebase = isCrawling) }
     }
-
-    fun setAllInfo(allViewers: Int, allBallons: Int) {
-        _uiState.update { it.copy(allViewers = allViewers, allBallons = allBallons) }
-    }
 }
 
 data class MainUiState(
@@ -312,7 +347,8 @@ data class MainUiState(
     val isCrawlingForFirebase: Boolean = false,
     val underBossList: HashMap<String, String> = hashMapOf(),
     val allViewers: Int = 0,
-    val allBallons: Int = 0
+    val allBallons: Int = 0,
+    val isCoachMarkVisible: Boolean = false
 )
 
 sealed class MainSideEffect {

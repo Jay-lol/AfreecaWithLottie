@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.viewmodel)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -91,6 +92,7 @@ dependencies {
 
     // Images
     implementation(libs.glide)
+    implementation(libs.glide.compose)
     ksp(libs.glide.compiler)
 
     // Firebase
