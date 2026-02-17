@@ -49,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -245,8 +246,12 @@ fun BossSection(
     val viewCountInt = bossInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
     val isHighViewCount = isOn && viewCountInt >= 10000
 
-    val textStyleNoPadding = LocalTextStyle.current.copy(
-        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false)
+    val tightTextStyle = LocalTextStyle.current.copy(
+        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false),
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.Both
+        )
     )
 
     Box(
@@ -336,8 +341,10 @@ fun BossSection(
                                 text = "느낌표를\n클릭해보세요",
                                 color = Color(0xC9FFFFFF),
                                 fontSize = 9.sp,
+                                lineHeight = 9.sp,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.align(Alignment.BottomCenter)
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                style = tightTextStyle
                             )
                         }
                     }
@@ -359,11 +366,12 @@ fun BossSection(
                         text = bossInfo.title,
                         color = Color(0xE6FFFFFF),
                         fontSize = 16.sp,
+                        lineHeight = 16.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
                         fontFamily = MapleStory,
-                        style = textStyleNoPadding,
+                        style = tightTextStyle,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp)
@@ -391,7 +399,8 @@ fun BossSection(
                                 text = bossInfo.fanCnt,
                                 color = Color.White,
                                 fontSize = 9.sp,
-                                style = textStyleNoPadding,
+                                lineHeight = 9.sp,
+                                style = tightTextStyle,
                                 modifier = Modifier.padding(start = 1.dp)
                             )
                             Spacer(modifier = Modifier.width(2.dp))
@@ -404,7 +413,8 @@ fun BossSection(
                                 text = bossInfo.okCnt,
                                 color = Color.White,
                                 fontSize = 9.sp,
-                                style = textStyleNoPadding,
+                                lineHeight = 9.sp,
+                                style = tightTextStyle,
                                 modifier = Modifier.padding(start = 1.dp)
                             )
                         }
@@ -412,11 +422,12 @@ fun BossSection(
                             text = bossInfo.bjname,
                             color = Color(0xFF8587FE),
                             fontSize = 13.sp,
+                            lineHeight = 13.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = MapleStory,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.widthIn(max = 80.dp),
-                            style = textStyleNoPadding
+                            style = tightTextStyle
                         )
                         Row(
                             modifier = Modifier.weight(1f),
@@ -432,20 +443,20 @@ fun BossSection(
                                 text = bossInfo.viewCnt,
                                 color = Color.White,
                                 fontSize = 12.sp,
+                                lineHeight = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                style = textStyleNoPadding,
+                                style = tightTextStyle,
                                 modifier = Modifier.padding(start = 2.dp)
                             )
                         }
                     }
 
-                    // 풍력 정보 (촘촘하게 배치)
+                    // 풍력 정보 (자연스럽게 밀착됨)
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp)
-                            .padding(bottom = 2.dp),
-                        verticalArrangement = Arrangement.spacedBy((-4).dp)
+                            .padding(bottom = 2.dp)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -455,7 +466,8 @@ fun BossSection(
                                 text = "오늘의 즐겨찾기 : ",
                                 color = Color(0xE4D5D5D5),
                                 fontSize = 9.sp,
-                                style = textStyleNoPadding
+                                lineHeight = 9.sp,
+                                style = tightTextStyle
                             )
                             val fanCntVal = bossInfo.incFanCnt.filter { it.isDigit() || it == '-' }
                                 .toIntOrNull() ?: 0
@@ -463,22 +475,25 @@ fun BossSection(
                                 text = bossInfo.incFanCnt,
                                 color = if (fanCntVal < 0) Color(0xFFFF4A4A) else Color.White,
                                 fontSize = 9.sp,
+                                lineHeight = 9.sp,
                                 fontWeight = FontWeight.Bold,
-                                style = textStyleNoPadding
+                                style = tightTextStyle
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
                                 text = "일일 풍력 : ",
                                 color = Color(0xE4D5D5D5),
                                 fontSize = 9.sp,
-                                style = textStyleNoPadding
+                                lineHeight = 9.sp,
+                                style = tightTextStyle
                             )
                             Text(
                                 text = bossInfo.balloninfo?.dayballon ?: "-",
                                 color = Color(0xFF46E9FF),
                                 fontSize = 11.sp,
+                                lineHeight = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                style = textStyleNoPadding
+                                style = tightTextStyle
                             )
                         }
                         Row(
@@ -490,14 +505,16 @@ fun BossSection(
                                 text = "월간 풍력 : ",
                                 color = Color(0xE4D5D5D5),
                                 fontSize = 9.sp,
-                                style = textStyleNoPadding
+                                lineHeight = 9.sp,
+                                style = tightTextStyle
                             )
                             Text(
                                 text = bossInfo.balloninfo?.monthballon ?: "-",
                                 color = Color(0xFF46E9FF),
                                 fontSize = 11.sp,
+                                lineHeight = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                style = textStyleNoPadding
+                                style = tightTextStyle
                             )
                         }
                     }
