@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
@@ -7,38 +9,50 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) load(file.inputStream())
+}
+
+// local.properties에서 값을 가져오는 헬퍼 함수
+fun getSecret(key: String, default: String = ""): String =
+    localProperties.getProperty(key) ?: default
+
 android {
     namespace = "com.jay.josaeworld"
-    compileSdk =
-        libs.versions.compileSdk
-            .get()
-            .toInt()
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.jay.josaeworld"
-        minSdk =
-            libs.versions.minSdk
-                .get()
-                .toInt()
-        targetSdk =
-            libs.versions.targetSdk
-                .get()
-                .toInt()
-        versionCode =
-            libs.versions.versionCode
-                .get()
-                .toInt()
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // API & URL Configs
+        buildConfigField("String", "BASE_URL", "\"${getSecret("BASE_URL")}\"")
+        buildConfigField("String", "SEARCH_BASE_URL", "\"${getSecret("SEARCH_BASE_URL")}\"")
+        buildConfigField("String", "REQUEST_HEADER", "\"${getSecret("REQUEST_HEADER")}\"")
+        buildConfigField("String", "GO_LIVE_URL_APP", "\"${getSecret("GO_LIVE_URL_APP")}\"")
+        buildConfigField("String", "GO_LIVE_URL_WEB", "\"${getSecret("GO_LIVE_URL_WEB")}\"")
+        buildConfigField("String", "DEFAULT_LOGO_IMG", "\"${getSecret("DEFAULT_LOGO_IMG")}\"")
+        buildConfigField("String", "LIVE_IMG_URL", "\"${getSecret("LIVE_IMG_URL")}\"")
     }
 
     buildTypes {
         getByName("release") {
             manifestPlaceholders["appLabel"] = "조새크루"
+            
+            // AdMob Configs
+            resValue("string", "adMobId", getSecret("ADMOB_APP_ID"))
+            resValue("string", "bannerId", getSecret("ADMOB_BANNER_ID"))
+            buildConfigField("String", "ADMOB_BANNER_ID", "\"${getSecret("ADMOB_BANNER_ID")}\"")
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
@@ -47,6 +61,12 @@ android {
         getByName("debug") {
             applicationIdSuffix = ".debug"
             manifestPlaceholders["appLabel"] = "조새크루 Debug"
+            
+            // AdMob Configs (Debug)
+            resValue("string", "adMobId", getSecret("ADMOB_APP_ID_DEBUG"))
+            resValue("string", "bannerId", getSecret("ADMOB_BANNER_ID_DEBUG"))
+            buildConfigField("String", "ADMOB_BANNER_ID", "\"${getSecret("ADMOB_BANNER_ID_DEBUG")}\"")
+
             isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
         }
@@ -56,6 +76,7 @@ android {
         viewBinding = true
         buildConfig = true
         compose = true
+        resValues = true
     }
 
     compileOptions {

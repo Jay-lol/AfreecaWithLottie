@@ -25,7 +25,6 @@ local.properties
 /app/release/
 /app/src/debug/
 /app/src/release/
-/app/src/main/res/values/strings.xml
 *.keystore
 *.jks
 

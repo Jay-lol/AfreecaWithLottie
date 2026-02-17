@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">조새크루</string>
+    <string name="exit">문학동을 나갈까요?</string>
+    <string name="search_as_josae">시조새로 검색</string>
+
+    <!-- Dialog Buttons -->
+    <string name="move_app">App</string>
+    <string name="move_web">Web</string>
+    <string name="move_text">이동</string>
+    <string name="no_text">아니요</string>
+    <string name="update">업데이트</string>
+    <string name="later">나중에</string>
+    <string name="cancel">취소</string>
+    <string name="submit">제출</string>
+    <string name="app_kor">앱으로</string>
+    <string name="web_kor">웹으로</string>
+    <string name="exit_title">나감</string>
+    <string name="exit_cancel">안나감</string>
+</resources>

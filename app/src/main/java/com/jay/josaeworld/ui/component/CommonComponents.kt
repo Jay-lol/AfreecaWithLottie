@@ -21,6 +21,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.jay.josaeworld.BuildConfig
 import com.jay.josaeworld.R
 
 @Composable
@@ -28,7 +29,7 @@ fun AdBanner(
     adRequest: AdRequest,
     modifier: Modifier = Modifier,
 ) {
-    val adUnitId = stringResource(id = R.string.bannerId)
+    val adUnitId = BuildConfig.ADMOB_BANNER_ID
     AndroidView(
         modifier =
             modifier
