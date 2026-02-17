@@ -54,6 +54,7 @@ import com.jay.josaeworld.domain.model.response.SearchStreamerInfo
 import com.jay.josaeworld.ui.component.AdBanner
 import com.jay.josaeworld.ui.component.LoadingOverlay
 import com.jay.josaeworld.ui.theme.MapleStory
+import com.jay.josaeworld.ui.theme.tightTextStyle
 import com.jay.josaeworld.viewmodel.SearchUiState
 
 @Composable
@@ -62,14 +63,6 @@ fun SearchScreen(
     adRequest: AdRequest,
     onItemClick: (SearchStreamerInfo) -> Unit
 ) {
-    val tightTextStyle = LocalTextStyle.current.copy(
-        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false),
-        lineHeightStyle = LineHeightStyle(
-            alignment = LineHeightStyle.Alignment.Center,
-            trim = LineHeightStyle.Trim.Both
-        )
-    )
-
     Box(modifier = Modifier.fillMaxSize()) {
         // 배경 Lottie
         val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("10201-background-full-screen-night.json"))
@@ -105,7 +98,6 @@ fun SearchScreen(
                             Text(
                                 text = "검색 결과가 없습니다",
                                 color = Color.White,
-                                fontFamily = MapleStory,
                                 style = tightTextStyle
                             )
                         }
@@ -140,14 +132,6 @@ fun SearchScreen(
 fun SearchTopBar(
     title: String
 ) {
-    val tightTextStyle = LocalTextStyle.current.copy(
-        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false),
-        lineHeightStyle = LineHeightStyle(
-            alignment = LineHeightStyle.Alignment.Center,
-            trim = LineHeightStyle.Trim.Both
-        )
-    )
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -159,7 +143,6 @@ fun SearchTopBar(
             text = title,
             color = Color.White,
             fontSize = 20.sp,
-            fontFamily = MapleStory,
             textAlign = TextAlign.Center,
             style = tightTextStyle
         )
@@ -172,14 +155,6 @@ fun SearchStreamerItem(
     item: SearchStreamerInfo,
     onClick: () -> Unit
 ) {
-    val tightTextStyle = LocalTextStyle.current.copy(
-        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false),
-        lineHeightStyle = LineHeightStyle(
-            alignment = LineHeightStyle.Alignment.Center,
-            trim = LineHeightStyle.Trim.Both
-        )
-    )
-
     val random = remember { java.util.Random() }
     val broadTitle = remember(item.broad_title) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -232,7 +207,6 @@ fun SearchStreamerItem(
                 color = Color(0xFF8587FE),
                 fontSize = 11.sp,
                 lineHeight = 11.sp,
-                fontFamily = MapleStory,
                 style = tightTextStyle
             )
             

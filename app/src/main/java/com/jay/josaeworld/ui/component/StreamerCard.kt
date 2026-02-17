@@ -48,6 +48,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.jay.josaeworld.R
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.ui.theme.MapleStory
+import com.jay.josaeworld.ui.theme.tightTextStyle
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -64,18 +65,6 @@ fun StreamerCard(
     val isOn = streamerInfo.onOff == 1
     val viewCountInt = streamerInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
     val isHighViewCount = isOn && viewCountInt >= 10000
-
-    val tightTextStyle =
-        LocalTextStyle.current.copy(
-            platformStyle =
-                androidx.compose.ui.text
-                    .PlatformTextStyle(includeFontPadding = false),
-            lineHeightStyle =
-                LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.Both,
-                ),
-        )
 
     Box(
         modifier =
@@ -220,7 +209,6 @@ fun StreamerCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        fontFamily = MapleStory,
                         style = tightTextStyle,
                         modifier =
                             Modifier
@@ -276,7 +264,6 @@ fun StreamerCard(
                             fontSize = 13.sp,
                             lineHeight = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            fontFamily = MapleStory,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.widthIn(max = 80.dp),
                             style = tightTextStyle,
