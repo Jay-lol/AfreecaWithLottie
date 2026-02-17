@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -57,60 +58,6 @@ class InitialActivity : ComponentActivity() {
 
         observeViewModel()
         viewModel.getInitTeamData()
-    }
-
-    @Composable
-    private fun InitialScreenContent() {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(androidx.compose.ui.graphics.Color(0xFF282828))
-        ) {
-            // 배경 애니메이션
-            val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("434-gradient-animated-background.json"))
-            LottieAnimation(
-                composition = bgComposition,
-                iterations = LottieConstants.IterateForever,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(40.dp))
-
-                // 상단 히어로 애니메이션
-                val heroComposition by rememberLottieComposition(LottieCompositionSpec.Asset("34763-hero-on-its-way.json"))
-                LottieAnimation(
-                    composition = heroComposition,
-                    iterations = LottieConstants.IterateForever,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                )
-
-                // 중앙 로고
-                Image(
-                    painter = painterResource(id = R.drawable.splash_logo3),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(210.dp)
-                )
-            }
-
-            // 하단 텍스트
-            Text(
-                text = "만든이 : °へ°",
-                color = androidx.compose.ui.graphics.Color.White,
-                fontSize = 14.sp,
-                fontFamily = MapleStory,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            )
-        }
     }
 
     private fun observeViewModel() {
@@ -176,5 +123,67 @@ class InitialActivity : ComponentActivity() {
         const val KEY_NEW_LIST = "key_new_list"
         const val KEY_LAST_UPDATE_TIME = "key_last_update_time"
         const val KEY_UPDATE_CODE = "key_update_code"
+    }
+}
+
+@Composable
+private fun InitialScreenContent() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(androidx.compose.ui.graphics.Color(0xFF282828))
+    ) {
+        // 배경 애니메이션
+        val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("434-gradient-animated-background.json"))
+        LottieAnimation(
+            composition = bgComposition,
+            iterations = LottieConstants.IterateForever,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // 상단 히어로 애니메이션
+            val heroComposition by rememberLottieComposition(LottieCompositionSpec.Asset("34763-hero-on-its-way.json"))
+            LottieAnimation(
+                composition = heroComposition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+
+            // 중앙 로고
+            Image(
+                painter = painterResource(id = R.drawable.splash_logo3),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(210.dp)
+            )
+        }
+
+        // 하단 텍스트
+        Text(
+            text = "만든이 : °へ°",
+            color = androidx.compose.ui.graphics.Color.White,
+            fontSize = 14.sp,
+            fontFamily = MapleStory,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun InitialActivityPreview() {
+    JosaeWorldTheme {
+        InitialScreenContent()
     }
 }
