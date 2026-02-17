@@ -6,16 +6,40 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -30,7 +54,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.airbnb.lottie.compose.*
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.android.gms.ads.AdRequest
@@ -43,6 +70,9 @@ import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.ui.component.MainInfoSection
 import com.jay.josaeworld.ui.theme.MapleStory
 import com.jay.josaeworld.viewmodel.MainUiState
+
+import androidx.compose.ui.tooling.preview.Preview
+import com.jay.josaeworld.domain.model.response.BallonInfo
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -82,7 +112,7 @@ fun MainScreen(
 
         // 전체 수직 구조
         Column(modifier = Modifier.fillMaxSize()) {
-            
+
             // 1. 상단 컨텐츠 영역 (스크롤 가능)
             Column(
                 modifier = Modifier
@@ -133,7 +163,14 @@ fun MainScreen(
                                         TeamItem(
                                             teamName = teamName,
                                             teamList = teamList,
-                                            onClick = { onTeamClick(teamName, teamList, state.underBossList[teamName] ?: (index + 1).toString()) }
+                                            onClick = {
+                                                onTeamClick(
+                                                    teamName,
+                                                    teamList,
+                                                    state.underBossList[teamName]
+                                                        ?: (index + 1).toString()
+                                                )
+                                            }
                                         )
                                     }
                                 }
@@ -164,7 +201,8 @@ fun MainScreen(
         // 3. 플로팅 메뉴 (광고 바로 위 우측에 고정)
         AndroidView(
             factory = { context ->
-                val binding = ButtonFloatingMenuBinding.inflate(android.view.LayoutInflater.from(context))
+                val binding =
+                    ButtonFloatingMenuBinding.inflate(android.view.LayoutInflater.from(context))
                 binding.fabChat.setOnClickListener { onFabChatClick() }
                 binding.fabRounge.setOnClickListener { onFabRoungeClick() }
                 binding.fabReport.setOnClickListener { onFabReportClick() }
@@ -177,7 +215,11 @@ fun MainScreen(
         )
 
         // 로딩 및 새로고침 UI
-        AnimatedVisibility(visible = state.isLoading || state.isCrawlingForFirebase, enter = fadeIn(), exit = fadeOut()) {
+        AnimatedVisibility(
+            visible = state.isLoading || state.isCrawlingForFirebase,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             LoadingOverlay()
         }
         PullRefreshIndicator(
@@ -198,85 +240,265 @@ fun BossSection(
     onMoreInfoClick: () -> Unit,
     isCoachMarkVisible: Boolean
 ) {
+    val random = remember { java.util.Random() }
+    val isOn = bossInfo.onOff == 1
+    val viewCountInt = bossInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
+    val isHighViewCount = isOn && viewCountInt >= 10000
+
+    val textStyleNoPadding = LocalTextStyle.current.copy(
+        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false)
+    )
+
     Box(
         modifier = Modifier
-            .padding(vertical = 12.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(top = 4.dp, bottom = 12.dp),
         contentAlignment = Alignment.Center
     ) {
-        if (bossInfo.onOff == 1 && (bossInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0) >= 10000) {
+        if (isHighViewCount) {
             val highlightComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lf30_editor_cecsqjtv.json"))
             LottieAnimation(
                 composition = highlightComposition,
                 iterations = LottieConstants.IterateForever,
-                modifier = Modifier.size(380.dp, 260.dp).scale(2.2f)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(280.dp)
+                    .scale(2.5f),
+                contentScale = ContentScale.Inside
             )
         }
 
         Card(
-            modifier = Modifier.width(275.dp).wrapContentHeight().clickable { onClick() },
+            modifier = Modifier
+                .width(295.dp)
+                .wrapContentHeight()
+                .clickable { onClick() },
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = Color(0xFF333333))
         ) {
-            Column {
-                Box(modifier = Modifier.size(275.dp, 130.dp)) {
-                    if (bossInfo.onOff == 1) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // 썸네일 영역
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16f / 9f)
+                ) {
+                    if (isOn) {
                         GlideImage(
-                            model = bossInfo.imgurl + System.currentTimeMillis(),
+                            model = bossInfo.imgurl + "${random.nextInt(123456789)}",
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
                     } else {
-                        val restComposition by rememberLottieComposition(LottieCompositionSpec.Asset("8266-rest-sloth.json"))
-                        LottieAnimation(composition = restComposition, iterations = LottieConstants.IterateForever, modifier = Modifier.fillMaxSize())
+                        val restComposition by rememberLottieComposition(
+                            LottieCompositionSpec.Asset(
+                                "8266-rest-sloth.json"
+                            )
+                        )
+                        LottieAnimation(
+                            composition = restComposition,
+                            iterations = LottieConstants.IterateForever,
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
+
                     val infoComposition by rememberLottieComposition(LottieCompositionSpec.Asset("12246-info.json"))
                     LottieAnimation(
                         composition = infoComposition,
                         iterations = 1,
-                        modifier = Modifier.align(Alignment.TopEnd).padding(4.dp).size(35.dp, 40.dp).clickable { onMoreInfoClick() }
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                            .size(40.dp, 45.dp)
+                            .clickable { onMoreInfoClick() }
                     )
+
                     if (isCoachMarkVisible) {
-                        Box(modifier = Modifier.align(Alignment.TopEnd).padding(top = 35.dp, end = 15.dp)) {
-                            val clickComposition by rememberLottieComposition(LottieCompositionSpec.Asset("clickmark.json"))
-                            LottieAnimation(composition = clickComposition, iterations = LottieConstants.IterateForever, modifier = Modifier.size(70.dp))
-                            Text(text = "느낌표를\n클릭해보세요", color = Color(0xC9FFFFFF), fontSize = 9.sp, textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.BottomCenter))
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(top = 35.dp, end = 15.dp)
+                        ) {
+                            val clickComposition by rememberLottieComposition(
+                                LottieCompositionSpec.Asset(
+                                    "clickmark.json"
+                                )
+                            )
+                            LottieAnimation(
+                                composition = clickComposition,
+                                iterations = LottieConstants.IterateForever,
+                                modifier = Modifier.size(100.dp)
+                            )
+                            Text(
+                                text = "느낌표를\n클릭해보세요",
+                                color = Color(0xC9FFFFFF),
+                                fontSize = 9.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.align(Alignment.BottomCenter)
+                            )
                         }
                     }
                 }
-                HorizontalDivider(color = Color(0xFFA6A6A6), thickness = 1.dp)
-                Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = bossInfo.title, color = Color(0xE6FFFFFF), fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = MapleStory, modifier = Modifier.padding(bottom = 4.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
-                            Image(painter = painterResource(id = R.drawable.ic_baseline_star_border_24), contentDescription = null, modifier = Modifier.size(10.dp))
-                            Text(text = bossInfo.fanCnt, color = Color.White, fontSize = 8.sp, modifier = Modifier.padding(start = 2.dp))
-                            Spacer(modifier = Modifier.width(3.dp))
-                            Image(painter = painterResource(id = R.drawable.ic_outline_thumb_up_alt_24), contentDescription = null, modifier = Modifier.size(10.dp))
-                            Text(text = bossInfo.okCnt, color = Color.White, fontSize = 8.sp, modifier = Modifier.padding(start = 2.dp))
+
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 5.dp),
+                    thickness = 2.dp,
+                    color = Color(0xFFA6A6A6)
+                )
+
+                // 정보 영역
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = bossInfo.title,
+                        color = Color(0xE6FFFFFF),
+                        fontSize = 16.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        fontFamily = MapleStory,
+                        style = textStyleNoPadding,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp)
+                            .padding(bottom = 9.dp)
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp)
+                            .padding(bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_baseline_star_border_24),
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp)
+                            )
+                            Text(
+                                text = bossInfo.fanCnt,
+                                color = Color.White,
+                                fontSize = 9.sp,
+                                style = textStyleNoPadding,
+                                modifier = Modifier.padding(start = 1.dp)
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_outline_thumb_up_alt_24),
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp)
+                            )
+                            Text(
+                                text = bossInfo.okCnt,
+                                color = Color.White,
+                                fontSize = 9.sp,
+                                style = textStyleNoPadding,
+                                modifier = Modifier.padding(start = 1.dp)
+                            )
                         }
-                        Text(text = bossInfo.bjname, color = Color(0xFF8587FE), fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFamily = MapleStory, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
-                        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End) {
-                            Image(painter = painterResource(id = R.drawable.ic_baseline_people_alt_24), contentDescription = null, modifier = Modifier.size(14.dp))
-                            Text(text = bossInfo.viewCnt, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 2.dp))
+                        Text(
+                            text = bossInfo.bjname,
+                            color = Color(0xFF8587FE),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = MapleStory,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.widthIn(max = 80.dp),
+                            style = textStyleNoPadding
+                        )
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_baseline_people_alt_24),
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Text(
+                                text = bossInfo.viewCnt,
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                style = textStyleNoPadding,
+                                modifier = Modifier.padding(start = 2.dp)
+                            )
                         }
                     }
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "오늘 즐겨찾기: ", color = Color(0xE4D5D5D5), fontSize = 8.sp)
-                            Text(text = bossInfo.incFanCnt, color = if ((bossInfo.incFanCnt.filter { it.isDigit() || it == '-' }.toIntOrNull() ?: 0) < 0) Color(0xFFFF4A4A) else Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+
+                    // 풍력 정보 (촘촘하게 배치)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp)
+                            .padding(bottom = 2.dp),
+                        verticalArrangement = Arrangement.spacedBy((-4).dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "오늘의 즐겨찾기 : ",
+                                color = Color(0xE4D5D5D5),
+                                fontSize = 9.sp,
+                                style = textStyleNoPadding
+                            )
+                            val fanCntVal = bossInfo.incFanCnt.filter { it.isDigit() || it == '-' }
+                                .toIntOrNull() ?: 0
+                            Text(
+                                text = bossInfo.incFanCnt,
+                                color = if (fanCntVal < 0) Color(0xFFFF4A4A) else Color.White,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                style = textStyleNoPadding
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = "일일 풍력 : ",
+                                color = Color(0xE4D5D5D5),
+                                fontSize = 9.sp,
+                                style = textStyleNoPadding
+                            )
+                            Text(
+                                text = bossInfo.balloninfo?.dayballon ?: "-",
+                                color = Color(0xFF46E9FF),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                style = textStyleNoPadding
+                            )
                         }
-                        Column(horizontalAlignment = Alignment.End) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(text = "일일 풍력: ", color = Color(0xE4D5D5D5), fontSize = 8.sp)
-                                Text(text = bossInfo.balloninfo?.dayballon ?: "-", color = Color(0xFF46E9FF), fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                            }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(text = "월간 풍력: ", color = Color(0xE4D5D5D5), fontSize = 8.sp)
-                                Text(text = bossInfo.balloninfo?.monthballon ?: "-", color = Color(0xFF46E9FF), fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                            }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "월간 풍력 : ",
+                                color = Color(0xE4D5D5D5),
+                                fontSize = 9.sp,
+                                style = textStyleNoPadding
+                            )
+                            Text(
+                                text = bossInfo.balloninfo?.monthballon ?: "-",
+                                color = Color(0xFF46E9FF),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                style = textStyleNoPadding
+                            )
                         }
                     }
                 }
@@ -292,33 +514,73 @@ fun SearchBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
         color = Color(0xFF3A3A3A), shape = RoundedCornerShape(20.dp),
         border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF00CCFF))
     ) {
-        Text(text = stringResource(id = R.string.search_as_josae), color = Color(0xCCFFFFFF), modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp), fontSize = 14.sp)
+        Text(
+            text = stringResource(id = R.string.search_as_josae),
+            color = Color(0xCCFFFFFF),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            fontSize = 14.sp
+        )
     }
 }
 
 @Composable
 fun TeamItem(teamName: String, teamList: List<BroadInfo>, onClick: () -> Unit) {
     val isOn = teamList.any { it.onOff == 1 }
-    val totalViewers = teamList.filter { it.onOff == 1 }.sumOf { it.viewCnt.filter { c -> c.isDigit() }.toIntOrNull() ?: 0 }
+    val totalViewers = teamList.filter { it.onOff == 1 }
+        .sumOf { it.viewCnt.filter { c -> c.isDigit() }.toIntOrNull() ?: 0 }
     Card(
-        modifier = Modifier.fillMaxWidth().height(80.dp).clickable { onClick() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF444444))
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.width(65.dp).fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                Text(text = teamName, color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, fontFamily = MapleStory)
+            Column(
+                modifier = Modifier
+                    .width(65.dp)
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = teamName,
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    fontFamily = MapleStory
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(painter = painterResource(id = R.drawable.ic_baseline_people_alt_24), contentDescription = null, modifier = Modifier.size(12.dp))
-                    Text(text = totalViewers.toString().goodString(), color = Color.White, fontSize = 11.sp, modifier = Modifier.padding(start = 2.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_baseline_people_alt_24),
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Text(
+                        text = totalViewers.toString().goodString(),
+                        color = Color.White,
+                        fontSize = 11.sp,
+                        modifier = Modifier.padding(start = 2.dp)
+                    )
                 }
             }
             VerticalDivider(color = Color(0xFFA6A6A6), thickness = 1.dp)
-            Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
-                val lottieFile = if (isOn) "35627-weather-day-clear-sky.json" else "8438-mr-cookie-drink.json"
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.Center
+            ) {
+                val lottieFile =
+                    if (isOn) "35627-weather-day-clear-sky.json" else "8438-mr-cookie-drink.json"
                 val composition by rememberLottieComposition(LottieCompositionSpec.Asset(lottieFile))
-                LottieAnimation(composition = composition, iterations = if (isOn) LottieConstants.IterateForever else 1, modifier = Modifier.fillMaxSize())
+                LottieAnimation(
+                    composition = composition,
+                    iterations = if (isOn) LottieConstants.IterateForever else 1,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }
@@ -326,18 +588,104 @@ fun TeamItem(teamName: String, teamList: List<BroadInfo>, onClick: () -> Unit) {
 
 @Composable
 fun AdBanner(adRequest: AdRequest) {
-    val context = LocalContext.current
+    val adUnitId = stringResource(id = R.string.bannerId)
     AndroidView(
-        modifier = Modifier.fillMaxWidth().height(50.dp),
-        factory = { AdView(it).apply { setAdSize(AdSize.BANNER); adUnitId = context.getString(R.string.bannerId); loadAd(adRequest) } },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        factory = { context ->
+            AdView(context).apply {
+                setAdSize(AdSize.BANNER)
+                this.adUnitId = adUnitId
+                loadAd(adRequest)
+            }
+        },
         update = { it.loadAd(adRequest) }
     )
 }
 
 @Composable
 fun LoadingOverlay() {
-    Box(modifier = Modifier.fillMaxSize().background(Color(0x4D000000)).clickable(enabled = false) {}, contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0x4D000000))
+            .clickable(enabled = false) {}, contentAlignment = Alignment.Center
+    ) {
         val composition by rememberLottieComposition(LottieCompositionSpec.Asset("8438-mr-cookie-drink2.json"))
-        LottieAnimation(composition = composition, iterations = LottieConstants.IterateForever, modifier = Modifier.fillMaxSize())
+        LottieAnimation(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Composable
+fun BossSectionPreview() {
+    val mockBoss = BroadInfo(
+        teamCode = 0,
+        onOff = 1,
+        bid = "test",
+        title = "JosaeWorld에 오신 것을 환영합니다!",
+        bjname = "시조새",
+        viewCnt = "12,345",
+        fanCnt = "50,000",
+        okCnt = "1,234",
+        incFanCnt = "123",
+        balloninfo = BallonInfo(
+            dayballon = "5,000",
+            monthballon = "150,000"
+        )
+    )
+    BossSection(
+        bossInfo = mockBoss,
+        onClick = {},
+        onMoreInfoClick = {},
+        isCoachMarkVisible = true
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreview() {
+    val mockBoss = BroadInfo(
+        teamCode = 0,
+        onOff = 1,
+        bid = "test",
+        title = "방송 중입니다!",
+        bjname = "시조새",
+        viewCnt = "15,000",
+        fanCnt = "100,000",
+        okCnt = "1,000",
+        incFanCnt = "150",
+        balloninfo = BallonInfo(
+            dayballon = "10,000",
+            monthballon = "300,000"
+        )
+    )
+
+    val state = MainUiState(
+        mainBJDataList = arrayOf(arrayListOf(mockBoss)),
+        allViewers = 25000,
+        allBallons = 500000,
+        isCoachMarkVisible = true
+    )
+
+    MainScreen(
+        state = state,
+        teamNames = listOf("X"),
+        onRefresh = {},
+        onBossClick = {},
+        onBossMoreInfoClick = {},
+        onTeamClick = { _, _, _ -> },
+        onSearchClick = {},
+        onFabChatClick = {},
+        onFabRoungeClick = {},
+        onFabReportClick = {},
+        adRequest = AdRequest.Builder().build(),
+        isCoachMarkVisible = true
+    )
+}
+

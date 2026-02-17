@@ -38,7 +38,7 @@ fun MainInfoSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(top = 12.dp, bottom = 0.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
