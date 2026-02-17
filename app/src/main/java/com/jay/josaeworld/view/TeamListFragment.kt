@@ -105,6 +105,7 @@ class TeamListFragment : Fragment() {
     }
 
     fun updateTeamListFragmentUi(mainBJDataList: Array<ArrayList<BroadInfo>>?) {
+        val binding = _binding ?: return
         mainBJDataList ?: return
         val teamBJDataList = mainBJDataList.clone().dropLast(1)
 
@@ -116,15 +117,16 @@ class TeamListFragment : Fragment() {
         )
 
         for ((index, team) in teamBJDataList.withIndex()) {
+            if (index >= viewTeamDataList.size) break
 
             val teamView = viewTeamDataList[index]
 
             var onOff = false
             var viewCnt = 0
 
-            val teamNum = teamBJDataList[index][0].teamCode
+            val teamNum = team[0].teamCode
 
-            teamView.teamName.text = teamNameInfo[teamNum]
+            teamView.teamName.text = teamNameInfo.getOrNull(teamNum) ?: ""
 
             if (teamView.teamName.text == "X") {
                 teamView.root.visibility = View.GONE
@@ -135,7 +137,7 @@ class TeamListFragment : Fragment() {
             for (member in team) {
                 if (member.onOff == 1) {
                     onOff = true
-                    viewCnt += member.viewCnt.filter { it.isDigit() }.toInt()
+                    viewCnt += member.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
                 }
             }
 

@@ -252,12 +252,14 @@ class MainActivity :
             var nAllballon = 0
 
             for (team in bjlist) {
+                if (team.isEmpty()) continue
+
                 // 수장 처리는 따로
                 if (team[0].bid == "superbsw123") {
                     nAllviewers += makeBossView(team[0])
                     nAllballon += team[0].balloninfo?.monthballon?.filter { c -> c.isDigit() }
-                        ?.toInt() ?: 0
-                    break
+                        ?.toIntOrNull() ?: 0
+                    continue
                 }
 
                 // 팀 시청자, 별풍선 카운트
@@ -265,9 +267,9 @@ class MainActivity :
 
                 for (member in team) {
                     if (member.onOff == 1) {
-                        viewCnt += member.viewCnt.filter { it.isDigit() }.toInt()
+                        viewCnt += member.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
                     }
-                    nAllballon += member.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toInt() ?: 0
+                    nAllballon += member.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toIntOrNull() ?: 0
                 }
 
                 nAllviewers += viewCnt
@@ -279,7 +281,7 @@ class MainActivity :
                 fragment = TeamListFragment.newInstance(teamInfo, bjlist, underBossList)
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fcv_team_list, fragment as TeamListFragment)
-                    .commit()
+                    .commitAllowingStateLoss()
             } else {
                 (fragment as? TeamListFragment)?.updateTeamListFragmentUi(mainBJDataList)
             }
@@ -303,7 +305,7 @@ class MainActivity :
                     .fitCenter()
                     .into(thumbnail)
 
-                viewCount += v.viewCnt.filter { it.isDigit() }.toInt()
+                viewCount += v.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
 
                 if (viewCount >= 10_000) {
                     highlightCardViewLottie.visibility = View.VISIBLE
@@ -326,7 +328,8 @@ class MainActivity :
 
         Log.d(TAG, "MainActivity ~ upDateUi() called $v")
         binding.bossView.run {
-            if (v.incFanCnt.filter { c -> (c.isDigit() || c == '-') }.toInt() < 0) {
+            val fanCntVal = v.incFanCnt.filter { c -> (c.isDigit() || c == '-') }.toIntOrNull() ?: 0
+            if (fanCntVal < 0) {
                 incFanCnt.setTextColor(Color.parseColor("#FF4A4A"))
             } else {
                 incFanCnt.setTextColor(Color.parseColor("#FFFFFF"))
