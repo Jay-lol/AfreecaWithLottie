@@ -10,8 +10,8 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.ads.AdRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.database
+import com.google.firebase.Firebase
 import com.jay.josaeworld.data.repository.DataRepository
 import com.jay.josaeworld.data.repository.impl.DataRepositoryImpl
 import com.jay.josaeworld.data.service.ApiCall

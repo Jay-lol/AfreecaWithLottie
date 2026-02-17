@@ -18,13 +18,13 @@ import dagger.hilt.android.components.ActivityComponent
 abstract class PresenterModule {
 
     @Binds
-    abstract fun bindsSplashContractView(activity: SplashActivity): SplashContract.View?
+    abstract fun bindsSplashContractView(activity: SplashActivity): SplashContract.View
 
     @Binds
-    abstract fun bindsMainContractView(activity: MainActivity): MainContract.View?
+    abstract fun bindsMainContractView(activity: MainActivity): MainContract.View
 
     @Binds
-    abstract fun bindsBroadContractView(activity: BroadCastActivity): BroadContract.View?
+    abstract fun bindsBroadContractView(activity: BroadCastActivity): BroadContract.View
 
     companion object {
         @Provides
