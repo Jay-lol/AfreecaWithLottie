@@ -26,13 +26,14 @@ import com.jay.josaeworld.R
 @Composable
 fun AdBanner(
     adRequest: AdRequest,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val adUnitId = stringResource(id = R.string.bannerId)
     AndroidView(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(50.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(50.dp),
         factory = { context ->
             AdView(context).apply {
                 setAdSize(AdSize.BANNER)
@@ -40,23 +41,25 @@ fun AdBanner(
                 loadAd(adRequest)
             }
         },
-        update = { it.loadAd(adRequest) }
+        update = { it.loadAd(adRequest) },
     )
 }
 
 @Composable
 fun LoadingOverlay() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0x4D000000))
-            .clickable(enabled = false) {}, contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color(0x4D000000))
+                .clickable(enabled = false) {},
+        contentAlignment = Alignment.Center,
     ) {
         val composition by rememberLottieComposition(LottieCompositionSpec.Asset("8438-mr-cookie-drink2.json"))
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

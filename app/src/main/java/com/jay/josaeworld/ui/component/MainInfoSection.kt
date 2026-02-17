@@ -22,36 +22,37 @@ import com.jay.josaeworld.ui.theme.MapleStory
 fun MainInfoSection(
     allViewers: Int,
     allBallons: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val animatedViewers by animateIntAsState(
         targetValue = allViewers,
         animationSpec = tween(durationMillis = 1500),
-        label = "viewers"
+        label = "viewers",
     )
     val animatedBallons by animateIntAsState(
         targetValue = allBallons,
         animationSpec = tween(durationMillis = 1500),
-        label = "ballons"
+        label = "ballons",
     )
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp, bottom = 0.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp, bottom = 0.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Box(modifier = Modifier.weight(0.55f), contentAlignment = Alignment.CenterEnd) {
                 Text(
                     text = "전체 시청자 : ",
                     color = Color(0xFFBCBCBC),
                     fontSize = 18.sp,
-                    fontFamily = MapleStory
+                    fontFamily = MapleStory,
                 )
             }
             Box(modifier = Modifier.weight(0.45f), contentAlignment = Alignment.CenterStart) {
@@ -61,7 +62,7 @@ fun MainInfoSection(
                         color = Color(0xFFEDFF49),
                         fontSize = 21.sp,
                         fontFamily = MapleStory,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = " 명",
@@ -69,7 +70,7 @@ fun MainInfoSection(
                         fontSize = 16.sp,
                         fontFamily = MapleStory,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 2.dp, bottom = 2.dp)
+                        modifier = Modifier.padding(start = 2.dp, bottom = 2.dp),
                     )
                 }
             }
@@ -80,14 +81,14 @@ fun MainInfoSection(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Box(modifier = Modifier.weight(0.55f), contentAlignment = Alignment.CenterEnd) {
                 Text(
                     text = "이번 달 크루 풍력 : ",
                     color = Color(0xFFBCBCBC),
                     fontSize = 16.sp,
-                    fontFamily = MapleStory
+                    fontFamily = MapleStory,
                 )
             }
             Box(modifier = Modifier.weight(0.45f), contentAlignment = Alignment.CenterStart) {
@@ -95,7 +96,7 @@ fun MainInfoSection(
                     text = animatedBallons.toString().goodString(),
                     color = Color(0xFF46E9FF),
                     fontSize = 18.sp,
-                    fontFamily = MapleStory
+                    fontFamily = MapleStory,
                 )
             }
         }
@@ -105,21 +106,21 @@ fun MainInfoSection(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Box(modifier = Modifier.weight(0.55f), contentAlignment = Alignment.CenterEnd) {
                 Text(
                     text = "●출처: 풍투데이 ",
                     color = Color(0xB2FFFFFF),
                     fontSize = 12.sp,
-                    fontFamily = MapleStory
+                    fontFamily = MapleStory,
                 )
             }
             Box(modifier = Modifier.weight(0.45f), contentAlignment = Alignment.CenterStart) {
                 Image(
                     painter = painterResource(id = R.drawable.logo2),
                     contentDescription = null,
-                    modifier = Modifier.size(width = 55.dp, height = 22.dp)
+                    modifier = Modifier.size(width = 55.dp, height = 22.dp),
                 )
             }
         }

@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -67,6 +68,7 @@ import com.google.android.gms.ads.AdView
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.ButtonFloatingMenuBinding
 import com.jay.josaeworld.domain.goodString
+import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.ui.component.AdBanner
 import com.jay.josaeworld.ui.component.BJCard
@@ -74,9 +76,6 @@ import com.jay.josaeworld.ui.component.LoadingOverlay
 import com.jay.josaeworld.ui.component.MainInfoSection
 import com.jay.josaeworld.ui.theme.MapleStory
 import com.jay.josaeworld.viewmodel.MainUiState
-
-import androidx.compose.ui.tooling.preview.Preview
-import com.jay.josaeworld.domain.model.response.BallonInfo
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -92,18 +91,20 @@ fun MainScreen(
     onFabRoungeClick: () -> Unit,
     onFabReportClick: () -> Unit,
     adRequest: AdRequest,
-    isCoachMarkVisible: Boolean
+    isCoachMarkVisible: Boolean,
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = state.isRefreshing,
-        onRefresh = onRefresh
-    )
+    val pullRefreshState =
+        rememberPullRefreshState(
+            refreshing = state.isRefreshing,
+            onRefresh = onRefresh,
+        )
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .pullRefresh(pullRefreshState)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .pullRefresh(pullRefreshState),
     ) {
         // 배경 Lottie
         val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("10201-background-full-screen-night.json"))
@@ -111,28 +112,28 @@ fun MainScreen(
             composition = bgComposition,
             iterations = 1,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         )
 
         // 전체 수직 구조
         Column(modifier = Modifier.fillMaxSize()) {
-
             // 1. 상단 컨텐츠 영역 (스크롤 가능)
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .statusBarsPadding()
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .statusBarsPadding(),
             ) {
                 MainInfoSection(
                     allViewers = state.allViewers,
-                    allBallons = state.allBallons
+                    allBallons = state.allBallons,
                 )
 
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(bottom = 16.dp)
+                    contentPadding = PaddingValues(bottom = 16.dp),
                 ) {
                     item {
                         state.mainBJDataList?.lastOrNull()?.firstOrNull()?.let { bossInfo ->
@@ -141,27 +142,31 @@ fun MainScreen(
                                 onClick = { onBossClick(bossInfo) },
                                 onMoreInfoClick = { onBossMoreInfoClick(bossInfo) },
                                 isCoachMarkVisible = isCoachMarkVisible,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
                     }
 
                     state.mainBJDataList?.let { allData ->
                         val teamsData = allData.dropLast(1)
-                        val filteredTeams = teamsData.mapIndexedNotNull { index, teamList ->
-                            val teamName = teamNames.getOrNull(index) ?: ""
-                            if (teamName != "X" && teamList.isNotEmpty()) {
-                                Triple(teamName, teamList, index)
-                            } else null
-                        }
+                        val filteredTeams =
+                            teamsData.mapIndexedNotNull { index, teamList ->
+                                val teamName = teamNames.getOrNull(index) ?: ""
+                                if (teamName != "X" && teamList.isNotEmpty()) {
+                                    Triple(teamName, teamList, index)
+                                } else {
+                                    null
+                                }
+                            }
 
                         val rows = filteredTeams.chunked(2)
                         items(rows.size) { rowIndex ->
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 rows[rowIndex].forEach { (teamName, teamList, index) ->
                                     Box(modifier = Modifier.weight(1f)) {
@@ -173,9 +178,9 @@ fun MainScreen(
                                                     teamName,
                                                     teamList,
                                                     state.underBossList[teamName]
-                                                        ?: (index + 1).toString()
+                                                        ?: (index + 1).toString(),
                                                 )
-                                            }
+                                            },
                                         )
                                     }
                                 }
@@ -190,14 +195,15 @@ fun MainScreen(
 
             // 2. 하단 고정 영역 (검색 바 + 광고)
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 SearchBar(
                     modifier = Modifier.padding(bottom = 4.dp),
-                    onClick = onSearchClick
+                    onClick = onSearchClick,
                 )
                 AdBanner(adRequest = adRequest)
             }
@@ -213,17 +219,18 @@ fun MainScreen(
                 binding.fabReport.setOnClickListener { onFabReportClick() }
                 binding.root
             },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .navigationBarsPadding()
-                .padding(bottom = 50.dp) // AdBanner 높이(50dp) 만큼 띄움
+            modifier =
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .navigationBarsPadding()
+                    .padding(bottom = 50.dp), // AdBanner 높이(50dp) 만큼 띄움
         )
 
         // 로딩 및 새로고침 UI
         AnimatedVisibility(
             visible = state.isLoading || state.isCrawlingForFirebase,
             enter = fadeIn(),
-            exit = fadeOut()
+            exit = fadeOut(),
         ) {
             LoadingOverlay()
         }
@@ -232,76 +239,89 @@ fun MainScreen(
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter),
             backgroundColor = Color.DarkGray,
-            contentColor = Color.White
+            contentColor = Color.White,
         )
     }
 }
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     Surface(
         modifier = modifier.clickable { onClick() },
-        color = Color(0xFF3A3A3A), shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF00CCFF))
+        color = Color(0xFF3A3A3A),
+        shape = RoundedCornerShape(20.dp),
+        border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF00CCFF)),
     ) {
         Text(
             text = stringResource(id = R.string.search_as_josae),
             color = Color(0xCCFFFFFF),
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            fontSize = 14.sp
+            fontSize = 14.sp,
         )
     }
 }
 
 @Composable
-fun TeamItem(teamName: String, teamList: List<BroadInfo>, onClick: () -> Unit) {
+fun TeamItem(
+    teamName: String,
+    teamList: List<BroadInfo>,
+    onClick: () -> Unit,
+) {
     val isOn = teamList.any { it.onOff == 1 }
-    val totalViewers = teamList.filter { it.onOff == 1 }
-        .sumOf { it.viewCnt.filter { c -> c.isDigit() }.toIntOrNull() ?: 0 }
+    val totalViewers =
+        teamList
+            .filter { it.onOff == 1 }
+            .sumOf { it.viewCnt.filter { c -> c.isDigit() }.toIntOrNull() ?: 0 }
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .clickable { onClick() },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .clickable { onClick() },
         shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF444444))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF444444)),
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             Column(
-                modifier = Modifier
-                    .width(65.dp)
-                    .fillMaxHeight(),
+                modifier =
+                    Modifier
+                        .width(65.dp)
+                        .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = teamName,
                     color = Color.White,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
-                    fontFamily = MapleStory
+                    fontFamily = MapleStory,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_baseline_people_alt_24),
                         contentDescription = null,
-                        modifier = Modifier.size(12.dp)
+                        modifier = Modifier.size(12.dp),
                     )
                     Text(
                         text = totalViewers.toString().goodString(),
                         color = Color.White,
                         fontSize = 11.sp,
-                        modifier = Modifier.padding(start = 2.dp)
+                        modifier = Modifier.padding(start = 2.dp),
                     )
                 }
             }
             VerticalDivider(color = Color(0xFFA6A6A6), thickness = 1.dp)
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                contentAlignment = Alignment.Center,
             ) {
                 val lottieFile =
                     if (isOn) "35627-weather-day-clear-sky.json" else "8438-mr-cookie-drink.json"
@@ -309,7 +329,7 @@ fun TeamItem(teamName: String, teamList: List<BroadInfo>, onClick: () -> Unit) {
                 LottieAnimation(
                     composition = composition,
                     iterations = if (isOn) LottieConstants.IterateForever else 1,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }
@@ -319,55 +339,60 @@ fun TeamItem(teamName: String, teamList: List<BroadInfo>, onClick: () -> Unit) {
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 fun BossSectionPreview() {
-    val mockBoss = BroadInfo(
-        teamCode = 0,
-        onOff = 1,
-        bid = "test",
-        title = "JosaeWorld에 오신 것을 환영합니다!",
-        bjname = "시조새",
-        viewCnt = "12,345",
-        fanCnt = "50,000",
-        okCnt = "1,234",
-        incFanCnt = "123",
-        balloninfo = BallonInfo(
-            dayballon = "5,000",
-            monthballon = "150,000"
+    val mockBoss =
+        BroadInfo(
+            teamCode = 0,
+            onOff = 1,
+            bid = "test",
+            title = "JosaeWorld에 오신 것을 환영합니다!",
+            bjname = "시조새",
+            viewCnt = "12,345",
+            fanCnt = "50,000",
+            okCnt = "1,234",
+            incFanCnt = "123",
+            balloninfo =
+                BallonInfo(
+                    dayballon = "5,000",
+                    monthballon = "150,000",
+                ),
         )
-    )
     BJCard(
         bjInfo = mockBoss,
         onClick = {},
         onMoreInfoClick = {},
         isCoachMarkVisible = true,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    val mockBoss = BroadInfo(
-        teamCode = 0,
-        onOff = 1,
-        bid = "test",
-        title = "방송 중입니다!",
-        bjname = "시조새",
-        viewCnt = "15,000",
-        fanCnt = "100,000",
-        okCnt = "1,000",
-        incFanCnt = "150",
-        balloninfo = BallonInfo(
-            dayballon = "10,000",
-            monthballon = "300,000"
+    val mockBoss =
+        BroadInfo(
+            teamCode = 0,
+            onOff = 1,
+            bid = "test",
+            title = "방송 중입니다!",
+            bjname = "시조새",
+            viewCnt = "15,000",
+            fanCnt = "100,000",
+            okCnt = "1,000",
+            incFanCnt = "150",
+            balloninfo =
+                BallonInfo(
+                    dayballon = "10,000",
+                    monthballon = "300,000",
+                ),
         )
-    )
 
-    val state = MainUiState(
-        mainBJDataList = arrayOf(arrayListOf(mockBoss)),
-        allViewers = 25000,
-        allBallons = 500000,
-        isCoachMarkVisible = true
-    )
+    val state =
+        MainUiState(
+            mainBJDataList = arrayOf(arrayListOf(mockBoss)),
+            allViewers = 25000,
+            allBallons = 500000,
+            isCoachMarkVisible = true,
+        )
 
     MainScreen(
         state = state,
@@ -381,7 +406,6 @@ fun MainScreenPreview() {
         onFabRoungeClick = {},
         onFabReportClick = {},
         adRequest = AdRequest.Builder().build(),
-        isCoachMarkVisible = true
+        isCoachMarkVisible = true,
     )
 }
-

@@ -26,7 +26,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchActivity : ComponentActivity() {
-
     private val viewModel: SearchViewModel by viewModels()
 
     @Inject
@@ -57,7 +56,7 @@ class SearchActivity : ComponentActivity() {
                 SearchScreen(
                     state = state,
                     adRequest = adRequest,
-                    onItemClick = { item -> moveToLive(item) }
+                    onItemClick = { item -> moveToLive(item) },
                 )
             }
         }
@@ -84,20 +83,22 @@ class SearchActivity : ComponentActivity() {
             try {
                 startActivity(intent)
             } catch (e: Exception) {
-                intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=kr.co.nowcom.mobile.afreeca")
-                )
+                intent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=kr.co.nowcom.mobile.afreeca"),
+                    )
                 startActivity(intent)
             }
             dlg.dismiss()
         }
 
         dlgBinding.moveWeb.setOnClickListener {
-            intent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(goLiveUrlWeb + bid)
-            )
+            intent =
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(goLiveUrlWeb + bid),
+                )
             startActivity(intent)
             dlg.dismiss()
         }

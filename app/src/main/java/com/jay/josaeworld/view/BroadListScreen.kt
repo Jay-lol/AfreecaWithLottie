@@ -17,8 +17,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.android.gms.ads.AdRequest
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.ui.component.AdBanner
@@ -30,7 +30,7 @@ fun BroadListScreen(
     state: BroadListUiState,
     adRequest: AdRequest,
     onBJClick: (BroadInfo) -> Unit,
-    onMoreInfoClick: (BroadInfo) -> Unit
+    onMoreInfoClick: (BroadInfo) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // 배경 Lottie
@@ -39,7 +39,7 @@ fun BroadListScreen(
             composition = bgComposition,
             iterations = 1,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         )
 
         Scaffold(
@@ -50,15 +50,16 @@ fun BroadListScreen(
             bottomBar = {
                 AdBanner(
                     adRequest = adRequest,
-                    modifier = Modifier.navigationBarsPadding()
+                    modifier = Modifier.navigationBarsPadding(),
                 )
-            }
+            },
         ) { paddingValues ->
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(vertical = 8.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 items(state.items, key = { it.bid }) { bjInfo ->
                     BJCard(
@@ -67,7 +68,7 @@ fun BroadListScreen(
                         onMoreInfoClick = { onMoreInfoClick(bjInfo) },
                         isUnderBoss = bjInfo.bid == state.underBoss,
                         useProfileImage = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }

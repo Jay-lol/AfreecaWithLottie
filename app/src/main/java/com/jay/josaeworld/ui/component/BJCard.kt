@@ -58,25 +58,30 @@ fun BJCard(
     modifier: Modifier = Modifier,
     isCoachMarkVisible: Boolean = false,
     isUnderBoss: Boolean = false,
-    useProfileImage: Boolean = false // 오프라인 시 Lottie 대신 프로필 이미지를 사용할지 여부
+    useProfileImage: Boolean = false, // 오프라인 시 Lottie 대신 프로필 이미지를 사용할지 여부
 ) {
     val random = remember { java.util.Random() }
     val isOn = bjInfo.onOff == 1
     val viewCountInt = bjInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
     val isHighViewCount = isOn && viewCountInt >= 10000
 
-    val tightTextStyle = LocalTextStyle.current.copy(
-        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false),
-        lineHeightStyle = LineHeightStyle(
-            alignment = LineHeightStyle.Alignment.Center,
-            trim = LineHeightStyle.Trim.Both
+    val tightTextStyle =
+        LocalTextStyle.current.copy(
+            platformStyle =
+                androidx.compose.ui.text
+                    .PlatformTextStyle(includeFontPadding = false),
+            lineHeightStyle =
+                LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Center,
+                    trim = LineHeightStyle.Trim.Both,
+                ),
         )
-    )
 
     Box(
-        modifier = modifier
-            .padding(vertical = 4.dp),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .padding(vertical = 4.dp),
+        contentAlignment = Alignment.Center,
     ) {
         // 배경 효과 (고시청자 또는 부수장)
         if (isHighViewCount || isUnderBoss) {
@@ -85,64 +90,68 @@ fun BJCard(
             LottieAnimation(
                 composition = highlightComposition,
                 iterations = LottieConstants.IterateForever,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(280.dp)
-                    .scale(2.5f),
-                contentScale = ContentScale.Inside
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(280.dp)
+                        .scale(2.5f),
+                contentScale = ContentScale.Inside,
             )
         }
 
         Card(
-            modifier = Modifier
-                .width(295.dp)
-                .wrapContentHeight()
-                .clickable { onClick() },
+            modifier =
+                Modifier
+                    .width(295.dp)
+                    .wrapContentHeight()
+                    .clickable { onClick() },
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF333333))
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF333333)),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 // 썸네일 영역
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(16f / 9f)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16f / 9f),
                 ) {
                     if (isOn) {
                         GlideImage(
                             model = bjInfo.imgurl + "${random.nextInt(123456789)}",
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
                     } else {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             if (!useProfileImage) {
                                 // 보스 섹션 등: 방송 종료 시 나무늘보 Lottie 표시
                                 val restComposition by rememberLottieComposition(
                                     LottieCompositionSpec.Asset(
-                                        "8266-rest-sloth.json"
-                                    )
+                                        "8266-rest-sloth.json",
+                                    ),
                                 )
                                 LottieAnimation(
                                     composition = restComposition,
                                     iterations = LottieConstants.IterateForever,
-                                    modifier = Modifier.fillMaxSize()
+                                    modifier = Modifier.fillMaxSize(),
                                 )
                             } else {
                                 // 일반 섹션 등: 방송 종료 시 프로필 이미지(원형) 표시
                                 GlideImage(
                                     model = bjInfo.profilePhoto,
                                     contentDescription = null,
-                                    modifier = Modifier
-                                        .size(100.dp)
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop
+                                    modifier =
+                                        Modifier
+                                            .size(100.dp)
+                                            .clip(CircleShape),
+                                    contentScale = ContentScale.Crop,
                                 )
                             }
                         }
@@ -152,28 +161,30 @@ fun BJCard(
                     LottieAnimation(
                         composition = infoComposition,
                         iterations = 1,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(4.dp)
-                            .size(40.dp, 45.dp)
-                            .clickable { onMoreInfoClick() }
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(4.dp)
+                                .size(40.dp, 45.dp)
+                                .clickable { onMoreInfoClick() },
                     )
 
                     if (isCoachMarkVisible) {
                         Box(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(top = 35.dp, end = 15.dp)
+                            modifier =
+                                Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(top = 35.dp, end = 15.dp),
                         ) {
                             val clickComposition by rememberLottieComposition(
                                 LottieCompositionSpec.Asset(
-                                    "clickmark.json"
-                                )
+                                    "clickmark.json",
+                                ),
                             )
                             LottieAnimation(
                                 composition = clickComposition,
                                 iterations = LottieConstants.IterateForever,
-                                modifier = Modifier.size(100.dp)
+                                modifier = Modifier.size(100.dp),
                             )
                             Text(
                                 text = "느낌표를\n클릭해보세요",
@@ -182,23 +193,24 @@ fun BJCard(
                                 lineHeight = 9.sp,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.align(Alignment.BottomCenter),
-                                style = tightTextStyle
+                                style = tightTextStyle,
                             )
                         }
                     }
                 }
 
                 HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 5.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 5.dp),
                     thickness = 2.dp,
-                    color = Color(0xFFA6A6A6)
+                    color = Color(0xFFA6A6A6),
                 )
 
                 // 정보 영역
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
                         text = bjInfo.title,
@@ -210,28 +222,30 @@ fun BJCard(
                         textAlign = TextAlign.Center,
                         fontFamily = MapleStory,
                         style = tightTextStyle,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .padding(bottom = 9.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
+                                .padding(bottom = 9.dp),
                     )
 
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .padding(bottom = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
+                                .padding(bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Row(
                             modifier = Modifier.weight(1f),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
+                            horizontalArrangement = Arrangement.Start,
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_baseline_star_border_24),
                                 contentDescription = null,
-                                modifier = Modifier.size(12.dp)
+                                modifier = Modifier.size(12.dp),
                             )
                             Text(
                                 text = bjInfo.fanCnt,
@@ -239,13 +253,13 @@ fun BJCard(
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
                                 style = tightTextStyle,
-                                modifier = Modifier.padding(start = 1.dp)
+                                modifier = Modifier.padding(start = 1.dp),
                             )
                             Spacer(modifier = Modifier.width(2.dp))
                             Image(
                                 painter = painterResource(id = R.drawable.ic_outline_thumb_up_alt_24),
                                 contentDescription = null,
-                                modifier = Modifier.size(12.dp)
+                                modifier = Modifier.size(12.dp),
                             )
                             Text(
                                 text = bjInfo.okCnt,
@@ -253,7 +267,7 @@ fun BJCard(
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
                                 style = tightTextStyle,
-                                modifier = Modifier.padding(start = 1.dp)
+                                modifier = Modifier.padding(start = 1.dp),
                             )
                         }
                         Text(
@@ -265,17 +279,17 @@ fun BJCard(
                             fontFamily = MapleStory,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.widthIn(max = 80.dp),
-                            style = tightTextStyle
+                            style = tightTextStyle,
                         )
                         Row(
                             modifier = Modifier.weight(1f),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.End
+                            horizontalArrangement = Arrangement.End,
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_baseline_people_alt_24),
                                 contentDescription = null,
-                                modifier = Modifier.size(14.dp)
+                                modifier = Modifier.size(14.dp),
                             )
                             Text(
                                 text = if (isOn) bjInfo.viewCnt else "",
@@ -284,38 +298,41 @@ fun BJCard(
                                 lineHeight = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 style = tightTextStyle,
-                                modifier = Modifier.padding(start = 2.dp)
+                                modifier = Modifier.padding(start = 2.dp),
                             )
                         }
                     }
 
                     // 풍력 정보
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                            .padding(bottom = 4.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
+                                .padding(bottom = 4.dp),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
                                 text = "오늘의 즐겨찾기 : ",
                                 color = Color(0xE4D5D5D5),
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
-                                style = tightTextStyle
+                                style = tightTextStyle,
                             )
-                            val fanCntVal = bjInfo.incFanCnt.filter { it.isDigit() || it == '-' }
-                                .toIntOrNull() ?: 0
+                            val fanCntVal =
+                                bjInfo.incFanCnt
+                                    .filter { it.isDigit() || it == '-' }
+                                    .toIntOrNull() ?: 0
                             Text(
                                 text = bjInfo.incFanCnt,
                                 color = if (fanCntVal < 0) Color(0xFFFF4A4A) else Color.White,
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
                                 fontWeight = FontWeight.Bold,
-                                style = tightTextStyle
+                                style = tightTextStyle,
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
@@ -323,7 +340,7 @@ fun BJCard(
                                 color = Color(0xE4D5D5D5),
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
-                                style = tightTextStyle
+                                style = tightTextStyle,
                             )
                             Text(
                                 text = bjInfo.balloninfo?.dayballon ?: "-",
@@ -331,20 +348,20 @@ fun BJCard(
                                 fontSize = 11.sp,
                                 lineHeight = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                style = tightTextStyle
+                                style = tightTextStyle,
                             )
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.End,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
                                 text = "월간 풍력 : ",
                                 color = Color(0xE4D5D5D5),
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
-                                style = tightTextStyle
+                                style = tightTextStyle,
                             )
                             Text(
                                 text = bjInfo.balloninfo?.monthballon ?: "-",
@@ -352,7 +369,7 @@ fun BJCard(
                                 fontSize = 11.sp,
                                 lineHeight = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                style = tightTextStyle
+                                style = tightTextStyle,
                             )
                         }
                     }

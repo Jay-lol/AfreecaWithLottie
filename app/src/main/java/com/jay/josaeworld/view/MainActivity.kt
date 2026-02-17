@@ -41,7 +41,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : androidx.activity.ComponentActivity() {
-
     private val viewModel: MainViewModel by viewModels()
 
     private lateinit var teamInfo: List<String>
@@ -72,7 +71,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
             }
             initTeamData(
                 getStringArrayList(KEY_NEW_LIST) as List<String>,
-                getLong(KEY_LAST_UPDATE_TIME)
+                getLong(KEY_LAST_UPDATE_TIME),
             )
         }
 
@@ -104,21 +103,27 @@ class MainActivity : androidx.activity.ComponentActivity() {
                     onFabRoungeClick = { handleRoungeClick() },
                     onFabReportClick = { handleReportClick() },
                     adRequest = adRequest,
-                    isCoachMarkVisible = state.isCoachMarkVisible
+                    isCoachMarkVisible = state.isCoachMarkVisible,
                 )
             }
         }
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                showCustomDialog(1)
-            }
-        })
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    showCustomDialog(1)
+                }
+            },
+        )
 
         viewModel.getUnderBoss()
     }
 
-    private fun initTeamData(teamInfo: List<String>, time: Long) {
+    private fun initTeamData(
+        teamInfo: List<String>,
+        time: Long,
+    ) {
         this.teamInfo = teamInfo
         val now = System.currentTimeMillis()
         if (now - time > 30000) {
@@ -181,8 +186,8 @@ class MainActivity : androidx.activity.ComponentActivity() {
         startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)")
-            )
+                Uri.parse("https://namu.wiki/w/%EC%8B%9C%EC%A1%B0%EC%83%88(%EC%9D%B8%ED%84%B0%EB%84%B7%20%EB%B0%A9%EC%86%A1%EC%9D%B8)"),
+            ),
         )
     }
 
@@ -194,8 +199,14 @@ class MainActivity : androidx.activity.ComponentActivity() {
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dlgBinding.reportSubmit.setOnClickListener {
-            val bj = dlgBinding.reportBj.text.trim().toString()
-            val content = dlgBinding.suggest.text.trim().toString()
+            val bj =
+                dlgBinding.reportBj.text
+                    .trim()
+                    .toString()
+            val content =
+                dlgBinding.suggest.text
+                    .trim()
+                    .toString()
             if (bj.isNotEmpty() && content.isNotEmpty()) {
                 viewModel.sendReport(listOf(bj, content)) { dlg.dismiss() }
             } else {
@@ -205,7 +216,11 @@ class MainActivity : androidx.activity.ComponentActivity() {
         dlgBinding.reportClose.setOnClickListener { dlg.dismiss() }
     }
 
-    private fun moveTeamList(teamName: String, teamList: ArrayList<BroadInfo>?, underBoss: String) {
+    private fun moveTeamList(
+        teamName: String,
+        teamList: ArrayList<BroadInfo>?,
+        underBoss: String,
+    ) {
         val intent = Intent(this, BroadListActivity::class.java)
         if (!teamList.isNullOrEmpty()) {
             intent.putExtra(KEY_TEAM_NAME, teamName)
@@ -218,7 +233,11 @@ class MainActivity : androidx.activity.ComponentActivity() {
         }
     }
 
-    private fun popDialog(bid: String, question: String, code: Int) {
+    private fun popDialog(
+        bid: String,
+        question: String,
+        code: Int,
+    ) {
         var intent = Intent(Intent.ACTION_VIEW)
         val dlg = Dialog(this)
         val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
@@ -240,7 +259,13 @@ class MainActivity : androidx.activity.ComponentActivity() {
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {
-                    intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.afreecatv.com/total_search.html?szSearchType=total&szStype=di&szKeyword=%EC%8B%9C%EC%A1%B0%EC%83%88"))
+                    intent =
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(
+                                "http://www.afreecatv.com/total_search.html?szSearchType=total&szStype=di&szKeyword=%EC%8B%9C%EC%A1%B0%EC%83%88",
+                            ),
+                        )
                     startActivity(intent)
                 }
                 dlg.dismiss()
@@ -251,7 +276,8 @@ class MainActivity : androidx.activity.ComponentActivity() {
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {
-                    intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=kr.co.nowcom.mobile.afreeca"))
+                    intent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=kr.co.nowcom.mobile.afreeca"))
                     startActivity(intent)
                 }
                 dlg.dismiss()
@@ -284,6 +310,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
                 }
                 dlgBinding.closeNotOk.setOnClickListener { dlg.dismiss() }
             }
+
             2 -> {
                 dlgBinding.question.text = "새로운 버전이 출시되었습니다\n지금 업데이트 하시겠습니까?"
                 dlgBinding.warning.text = ""
