@@ -44,12 +44,8 @@ class InitialActivity : ComponentActivity() {
     private val viewModel: InitialViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
         super.onCreate(savedInstanceState)
-
-        // 시스템 스플래시 화면을 데이터 로딩이 완료될 때까지 유지
-        splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.isLoading }
-
         setContent {
             JosaeWorldTheme {
                 InitialScreenContent()
@@ -133,7 +129,7 @@ private fun InitialScreenContent() {
             .fillMaxSize()
             .background(androidx.compose.ui.graphics.Color(0xFF282828))
     ) {
-        // 배경 애니메이션
+        // 배경 애니메이션 (전체 화면 유지)
         val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("434-gradient-animated-background.json"))
         LottieAnimation(
             composition = bgComposition,
@@ -142,7 +138,10 @@ private fun InitialScreenContent() {
         )
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding() // 상단 상태바 영역 패딩
+                .padding(horizontal = 32.dp), // 좌우 여백 추가
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
@@ -167,7 +166,7 @@ private fun InitialScreenContent() {
             )
         }
 
-        // 하단 텍스트
+        // 하단 텍스트 (네비게이션바 영역 패딩 추가)
         Text(
             text = "만든이 : °へ°",
             color = androidx.compose.ui.graphics.Color.White,
@@ -175,6 +174,7 @@ private fun InitialScreenContent() {
             fontFamily = MapleStory,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
                 .padding(16.dp)
         )
     }
