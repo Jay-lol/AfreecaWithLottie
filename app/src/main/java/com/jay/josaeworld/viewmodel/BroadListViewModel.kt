@@ -45,11 +45,21 @@ class BroadListViewModel @Inject constructor(
             )
         )
     }
+
+    fun showDialog(dialogType: BroadListDialogType?) {
+        _uiState.update { it.copy(dialogType = dialogType) }
+    }
 }
 
 data class BroadListUiState(
     val teamName: String = "",
     val items: List<BroadInfo> = emptyList(),
     val underBoss: String = "1",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val dialogType: BroadListDialogType? = null
 )
+
+sealed class BroadListDialogType {
+    data class Info(val broadInfo: BroadInfo) : BroadListDialogType()
+    data class Move(val broadInfo: BroadInfo) : BroadListDialogType()
+}

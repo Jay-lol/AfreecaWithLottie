@@ -1,9 +1,6 @@
 package com.jay.josaeworld.view
 
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,22 +8,23 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.core.os.bundleOf
 import com.google.android.gms.ads.AdRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.jay.josaeworld.R
-import com.jay.josaeworld.databinding.CustomDialog2Binding
-import com.jay.josaeworld.databinding.InfoDialogBinding
 import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.model.response.BroadInfo
+import com.jay.josaeworld.ui.component.JosaeInfoDialog
+import com.jay.josaeworld.ui.component.JosaeMoveDialog
 import com.jay.josaeworld.ui.theme.JosaeWorldTheme
+import com.jay.josaeworld.viewmodel.BroadListDialogType
 import com.jay.josaeworld.viewmodel.BroadListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BroadListActivity : ComponentActivity() {
-
     private val viewModel: BroadListViewModel by viewModels()
 
     @Inject
@@ -57,78 +55,86 @@ class BroadListActivity : ComponentActivity() {
                             "click_member",
                             bundleOf(
                                 "member_name" to streamerInfo.streamerName,
-                                "member_viewCnt" to streamerInfo.viewCnt
-                            )
+                                "member_viewCnt" to streamerInfo.viewCnt,
+                            ),
                         )
-                        moveToLive(streamerInfo)
+                        viewModel.showDialog(BroadListDialogType.Move(streamerInfo))
                     },
                     onMoreInfoClick = { streamerInfo ->
                         firebaseAnalytics.logEvent(
                             "click_member_moreInfo",
-                            bundleOf("member_name" to streamerInfo.streamerName)
+                            bundleOf("member_name" to streamerInfo.streamerName),
                         )
-                        showMoreInfo(streamerInfo)
-                    }
+                        viewModel.showDialog(BroadListDialogType.Info(streamerInfo))
+                    },
                 )
+
+                // Dialogs
+                state.dialogType?.let { type ->
+                    when (type) {
+                        is BroadListDialogType.Move -> {
+                            val streamerName = type.broadInfo.streamerName
+                            val viewCnt = type.broadInfo.viewCnt
+                            JosaeMoveDialog(
+                                question = "$viewCnt 명이 시청중입니다!\n$streamerName 방송으로 이동할까요?",
+                                okText = stringResource(id = R.string.move_app),
+                                cancelText = stringResource(id = R.string.move_web),
+                                onConfirm = {
+                                    moveToLive(type.broadInfo, true)
+                                    viewModel.showDialog(null)
+                                },
+                                onCancel = {
+                                    moveToLive(type.broadInfo, false)
+                                    viewModel.showDialog(null)
+                                },
+                                onDismiss = {
+                                    viewModel.showDialog(null)
+                                },
+                            )
+                        }
+
+                        is BroadListDialogType.Info -> {
+                            JosaeInfoDialog(
+                                streamerName = type.broadInfo.streamerName,
+                                ballonInfo = type.broadInfo.balloninfo,
+                                onDismiss = { viewModel.showDialog(null) },
+                            )
+                        }
+                    }
+                }
             }
         }
         firebaseAnalytics.logEvent("view_team", bundleOf("teamName" to intent.getStringExtra(KEY_TEAM_NAME)))
     }
 
-    private fun moveToLive(v: BroadInfo) {
+    private fun moveToLive(
+        v: BroadInfo,
+        isApp: Boolean,
+    ) {
         val streamerId = v.streamerId
-        val streamerName = v.streamerName
-        val viewCnt = v.viewCnt
-
         var intent = Intent(Intent.ACTION_VIEW)
-        val dlg = Dialog(this)
-        val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
-        dlg.setContentView(dlgBinding.root)
 
-        dlgBinding.moveQuestion.text = "$viewCnt 명이 시청중입니다!\n$streamerName 방송으로 이동할까요?"
-
-        dlg.show()
-        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        dlgBinding.moveApp.setOnClickListener {
+        if (isApp) {
             intent.data = Uri.parse(goLiveUrlApp + streamerId)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             try {
                 startActivity(intent)
             } catch (e: Exception) {
-                intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=kr.co.nowcom.mobile.afreeca")
-                )
+                intent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=kr.co.nowcom.mobile.afreeca"),
+                    )
                 startActivity(intent)
             }
-            dlg.dismiss()
-        }
-
-        dlgBinding.moveWeb.setOnClickListener {
-            intent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(goLiveUrlWeb + streamerId)
-            )
+        } else {
+            intent =
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(goLiveUrlWeb + streamerId),
+                )
             startActivity(intent)
-            dlg.dismiss()
         }
-    }
-
-    private fun showMoreInfo(v: BroadInfo) {
-        val dlg = Dialog(this)
-        val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
-        dlg.setContentView(dlgBinding.root)
-        dlgBinding.infoStreamerName.text = v.streamerName
-
-        v.balloninfo?.run {
-            dlgBinding.monthview.text = monthview
-            dlgBinding.monthmaxview.text = monthmaxview
-            dlgBinding.monthtime.text = monthtime
-            dlgBinding.monthpay.text = monthpay
-        }
-        dlg.show()
-        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun finish() {

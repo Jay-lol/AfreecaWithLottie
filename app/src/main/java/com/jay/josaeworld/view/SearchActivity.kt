@@ -1,9 +1,7 @@
 package com.jay.josaeworld.view
 
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,12 +10,16 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import com.google.android.gms.ads.AdRequest
 import com.jay.josaeworld.R
-import com.jay.josaeworld.databinding.CustomDialog2Binding
 import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.model.response.SearchStreamerInfo
 import com.jay.josaeworld.extension.toast
+import com.jay.josaeworld.ui.component.JosaeMoveDialog
 import com.jay.josaeworld.ui.theme.JosaeWorldTheme
 import com.jay.josaeworld.viewmodel.SearchSideEffect
 import com.jay.josaeworld.viewmodel.SearchViewModel
@@ -44,6 +46,7 @@ class SearchActivity : ComponentActivity() {
         setContent {
             JosaeWorldTheme {
                 val state by viewModel.uiState.collectAsState()
+                var moveDialogInfo by remember { mutableStateOf<SearchStreamerInfo?>(null) }
 
                 LaunchedEffect(Unit) {
                     viewModel.sideEffect.collect { effect ->
@@ -56,30 +59,38 @@ class SearchActivity : ComponentActivity() {
                 SearchScreen(
                     state = state,
                     adRequest = adRequest,
-                    onItemClick = { item -> moveToLive(item) },
+                    onItemClick = { item -> moveDialogInfo = item },
                 )
+
+                moveDialogInfo?.let { info ->
+                    JosaeMoveDialog(
+                        question = "${info.total_view_cnt} 명이 시청중입니다!\n${info.user_nick} 방송으로 이동할까요?",
+                        okText = stringResource(id = R.string.move_app),
+                        cancelText = stringResource(id = R.string.move_web),
+                        onConfirm = {
+                            moveToLive(info, true)
+                            moveDialogInfo = null
+                        },
+                        onCancel = {
+                            moveToLive(info, false)
+                            moveDialogInfo = null
+                        },
+                        onDismiss = {
+                            moveDialogInfo = null
+                        }
+                    )
+                }
             }
         }
     }
 
-    private fun moveToLive(item: SearchStreamerInfo) {
+    private fun moveToLive(item: SearchStreamerInfo, isApp: Boolean) {
         val streamerId = item.user_id
-        val streamerName = item.user_nick
-        val viewCnt = item.total_view_cnt
-
         var intent = Intent(Intent.ACTION_VIEW)
-        val dlg = Dialog(this)
-        val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
-        dlg.setContentView(dlgBinding.root)
 
-        dlgBinding.moveQuestion.text = "$viewCnt 명이 시청중입니다!\n$streamerName 방송으로 이동할까요?"
-
-        dlg.show()
-        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        dlgBinding.moveApp.setOnClickListener {
+        if (isApp) {
             intent.data = Uri.parse(goLiveUrlApp + streamerId)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
             try {
                 startActivity(intent)
             } catch (e: Exception) {
@@ -90,17 +101,13 @@ class SearchActivity : ComponentActivity() {
                     )
                 startActivity(intent)
             }
-            dlg.dismiss()
-        }
-
-        dlgBinding.moveWeb.setOnClickListener {
+        } else {
             intent =
                 Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(goLiveUrlWeb + streamerId),
                 )
             startActivity(intent)
-            dlg.dismiss()
         }
     }
 

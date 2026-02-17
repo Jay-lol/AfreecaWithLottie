@@ -393,6 +393,10 @@ class MainViewModel
             _uiState.update { it.copy(isRefreshing = isRefreshing) }
         }
 
+        fun showDialog(dialogType: MainDialogType?) {
+            _uiState.update { it.copy(dialogType = dialogType) }
+        }
+
         companion object {
             private const val TAG: String = "로그 MainViewModel"
         }
@@ -407,7 +411,15 @@ data class MainUiState(
     val allViewers: Int = 0,
     val allBallons: Int = 0,
     val isCoachMarkVisible: Boolean = false,
+    val dialogType: MainDialogType? = null,
 )
+
+sealed class MainDialogType {
+    object Exit : MainDialogType()
+    object Update : MainDialogType()
+    object Report : MainDialogType()
+    data class Info(val broadInfo: BroadInfo) : MainDialogType()
+}
 
 sealed class MainSideEffect {
     data class ShowError(

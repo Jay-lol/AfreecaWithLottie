@@ -1,13 +1,10 @@
 package com.jay.josaeworld.view
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,6 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,22 +31,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.jay.josaeworld.R
-import com.jay.josaeworld.databinding.CustomDialogBinding
 import com.jay.josaeworld.extension.toast
+import com.jay.josaeworld.ui.component.JosaeCustomDialog
 import com.jay.josaeworld.ui.theme.JosaeWorldTheme
 import com.jay.josaeworld.ui.theme.MapleStory
 import com.jay.josaeworld.viewmodel.InitialSideEffect
 import com.jay.josaeworld.viewmodel.InitialViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class InitialActivity : ComponentActivity() {
@@ -58,58 +54,31 @@ class InitialActivity : ComponentActivity() {
             JosaeWorldTheme {
                 InitialScreenContent(
                     onNavigate = { newList, time, code ->
-                        handleNavigation(newList, time, code)
+                        val intent = Intent(this, MainActivity::class.java).apply {
+                            putStringArrayListExtra(KEY_NEW_LIST, ArrayList(newList))
+                            putExtra(KEY_LAST_UPDATE_TIME, time)
+                            putExtra(KEY_UPDATE_CODE, code)
+                        }
+                        startActivity(intent)
+                        finish()
                     },
                     onToast = { message ->
                         toast(message)
+                    },
+                    onForceUpdate = {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse("https://play.google.com/store/apps/details?id=com.jay.josaeworld")
+                        }
+                        try {
+                            startActivity(intent)
+                            finish()
+                        } catch (e: Exception) {
+                            toast("플레이스토어 연결 불가")
+                        }
                     }
                 )
             }
         }
-    }
-
-    private fun handleNavigation(newList: List<String>, time: Long, code: Int) {
-        if (code == 3) {
-            showUpdateDialog()
-        } else {
-            val intent = Intent(this, MainActivity::class.java).apply {
-                putStringArrayListExtra(KEY_NEW_LIST, ArrayList(newList))
-                putExtra(KEY_LAST_UPDATE_TIME, time)
-                putExtra(KEY_UPDATE_CODE, code)
-            }
-            startActivity(intent)
-            finish()
-        }
-    }
-
-    private fun showUpdateDialog() {
-        val dlgBinding = CustomDialogBinding.inflate(layoutInflater)
-        val builder = AlertDialog.Builder(this)
-        builder.setView(dlgBinding.root)
-        val dlg = builder.create()
-
-        dlgBinding.run {
-            question.text = "업데이트를 필수로 진행해야 합니다!"
-            warning.text = ""
-            closeOkButton.text = "업데이트"
-            closeNotOk.text = ""
-            closeOkButton.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse("https://play.google.com/store/apps/details?id=com.jay.josaeworld")
-                }
-                try {
-                    startActivity(intent)
-                    finish()
-                } catch (e: Exception) {
-                    toast("플레이스토어 연결 불가")
-                }
-            }
-        }
-
-        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dlg.setCancelable(false)
-        dlg.setCanceledOnTouchOutside(false)
-        dlg.show()
     }
 
     companion object {
@@ -123,12 +92,21 @@ class InitialActivity : ComponentActivity() {
 private fun InitialScreenContent(
     viewModel: InitialViewModel = hiltViewModel(),
     onNavigate: (List<String>, Long, Int) -> Unit,
-    onToast: (String) -> Unit
+    onToast: (String) -> Unit,
+    onForceUpdate: () -> Unit
 ) {
+    var showUpdateDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                is InitialSideEffect.NavigateToMain -> onNavigate(effect.newList, effect.time, effect.code)
+                is InitialSideEffect.NavigateToMain -> {
+                    if (effect.code == 3) {
+                        showUpdateDialog = true
+                    } else {
+                        onNavigate(effect.newList, effect.time, effect.code)
+                    }
+                }
                 is InitialSideEffect.ShowToast -> onToast(effect.message)
             }
         }
@@ -136,6 +114,16 @@ private fun InitialScreenContent(
 
     LaunchedEffect(Unit) {
         viewModel.getInitTeamData()
+    }
+
+    if (showUpdateDialog) {
+        JosaeCustomDialog(
+            question = "업데이트를 필수로 진행해야 합니다!",
+            okText = "업데이트",
+            cancelText = "",
+            onConfirm = onForceUpdate,
+            onDismiss = {} // Prevent dismissal
+        )
     }
 
     InitialScreenContentInner()

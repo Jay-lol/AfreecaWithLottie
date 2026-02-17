@@ -1,10 +1,7 @@
 package com.jay.josaeworld.view
 
-import android.app.Dialog
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
@@ -13,20 +10,24 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.core.os.bundleOf
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.jay.josaeworld.BuildConfig
 import com.jay.josaeworld.R
-import com.jay.josaeworld.databinding.CustomDialog2Binding
-import com.jay.josaeworld.databinding.CustomDialogBinding
-import com.jay.josaeworld.databinding.DialogMemberChangeReportBinding
-import com.jay.josaeworld.databinding.InfoDialogBinding
 import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
+import com.jay.josaeworld.ui.component.JosaeCustomDialog
+import com.jay.josaeworld.ui.component.JosaeInfoDialog
+import com.jay.josaeworld.ui.component.JosaeMoveDialog
+import com.jay.josaeworld.ui.component.JosaeReportDialog
 import com.jay.josaeworld.ui.theme.JosaeWorldTheme
 import com.jay.josaeworld.view.BroadListActivity.Companion.KEY_TEAM_DATA_LIST
 import com.jay.josaeworld.view.BroadListActivity.Companion.KEY_TEAM_NAME
@@ -34,6 +35,7 @@ import com.jay.josaeworld.view.BroadListActivity.Companion.KEY_UNDER_BOSS_NAME
 import com.jay.josaeworld.view.InitialActivity.Companion.KEY_LAST_UPDATE_TIME
 import com.jay.josaeworld.view.InitialActivity.Companion.KEY_NEW_LIST
 import com.jay.josaeworld.view.InitialActivity.Companion.KEY_UPDATE_CODE
+import com.jay.josaeworld.viewmodel.MainDialogType
 import com.jay.josaeworld.viewmodel.MainSideEffect
 import com.jay.josaeworld.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,12 +69,15 @@ class MainActivity : androidx.activity.ComponentActivity() {
 
         intent.extras?.run {
             if (getInt(KEY_UPDATE_CODE) == 2) {
-                showCustomDialog(2)
+                viewModel.showDialog(MainDialogType.Update)
             }
-            initTeamData(
-                getStringArrayList(KEY_NEW_LIST) as List<String>,
-                getLong(KEY_LAST_UPDATE_TIME),
-            )
+            val newList = getStringArrayList(KEY_NEW_LIST) as? List<String>
+            newList?.let {
+                initTeamData(
+                    it,
+                    getLong(KEY_LAST_UPDATE_TIME),
+                )
+            }
         }
 
         MobileAds.initialize(this) {}
@@ -80,13 +85,25 @@ class MainActivity : androidx.activity.ComponentActivity() {
         setContent {
             JosaeWorldTheme {
                 val state by viewModel.uiState.collectAsState()
+                var moveDialogInfo by remember { mutableStateOf<Triple<String, String, Int>?>(null) }
 
                 LaunchedEffect(Unit) {
                     viewModel.sideEffect.collect { effect ->
                         when (effect) {
-                            is MainSideEffect.ShowError -> showErrorToast(effect.code)
-                            is MainSideEffect.ShowToast -> toast(effect.message)
-                            is MainSideEffect.ShowCustomDialog -> showCustomDialog(effect.code)
+                            is MainSideEffect.ShowError -> {
+                                showErrorToast(effect.code)
+                            }
+
+                            is MainSideEffect.ShowToast -> {
+                                toast(effect.message)
+                            }
+
+                            is MainSideEffect.ShowCustomDialog -> {
+                                when (effect.code) {
+                                    1 -> viewModel.showDialog(MainDialogType.Exit)
+                                    2 -> viewModel.showDialog(MainDialogType.Update)
+                                }
+                            }
                         }
                     }
                 }
@@ -95,7 +112,14 @@ class MainActivity : androidx.activity.ComponentActivity() {
                     state = state,
                     teamNames = if (::teamInfo.isInitialized) teamInfo else emptyList(),
                     onRefresh = { refreshAct() },
-                    onBossClick = { bossInfo -> handleBossClick(bossInfo) },
+                    onBossClick = { bossInfo ->
+                        if (bossInfo.onOff == 1) {
+                            moveDialogInfo = Triple(bossInfo.streamerId, "${bossInfo.viewCnt} 명이 시청중입니다!\n이동할까요?", 1)
+                        } else {
+                            moveDialogInfo = Triple(bossInfo.streamerId, "시조새는 방송중이 아닙니다\nSOOP 으로 이동하시겠습니까?", 0)
+                        }
+                        firebaseAnalytics.logEvent("click_boss", bundleOf("click" to true))
+                    },
                     onBossMoreInfoClick = { bossInfo -> handleBossMoreInfoClick(bossInfo) },
                     onTeamClick = { teamName, teamList, underBoss -> moveTeamList(teamName, teamList, underBoss) },
                     onSearchClick = { handleSearchClick() },
@@ -105,6 +129,84 @@ class MainActivity : androidx.activity.ComponentActivity() {
                     adRequest = adRequest,
                     isCoachMarkVisible = state.isCoachMarkVisible,
                 )
+
+                // Dialogs
+                state.dialogType?.let { type ->
+                    when (type) {
+                        is MainDialogType.Exit -> {
+                            JosaeCustomDialog(
+                                question = stringResource(id = R.string.exit),
+                                warning = "너무 짧은 간격의 새로고침은 핸드폰에 무리를 줄 수 있습니다 :)",
+                                enableMarquee = true,
+                                okText = stringResource(id = R.string.exit_title),
+                                cancelText = stringResource(id = R.string.exit_cancel),
+                                onConfirm = { finish() },
+                                onDismiss = { viewModel.showDialog(null) },
+                            )
+                        }
+
+                        is MainDialogType.Update -> {
+                            JosaeCustomDialog(
+                                question = "새로운 버전이 출시되었습니다\n지금 업데이트 하시겠습니까?",
+                                okText = stringResource(id = R.string.update),
+                                cancelText = stringResource(id = R.string.later),
+                                onConfirm = {
+                                    firebaseAnalytics.logEvent("click_update", bundleOf("click" to true))
+                                    if (gotoMarket()) viewModel.showDialog(null)
+                                },
+                                onDismiss = {
+                                    firebaseAnalytics.logEvent("click_close_update", bundleOf("click" to true))
+                                    viewModel.showDialog(null)
+                                },
+                            )
+                        }
+
+                        is MainDialogType.Report -> {
+                            JosaeReportDialog(
+                                onDismiss = { viewModel.showDialog(null) },
+                                onSubmit = { streamer, content ->
+                                    if (streamer.isNotEmpty() && content.isNotEmpty()) {
+                                        viewModel.sendReport(listOf(streamer, content)) {
+                                            viewModel.showDialog(null)
+                                        }
+                                    } else {
+                                        toast("Streamer명과 건의사항을 확인해주세요")
+                                    }
+                                },
+                            )
+                        }
+
+                        is MainDialogType.Info -> {
+                            JosaeInfoDialog(
+                                streamerName = type.broadInfo.streamerName,
+                                ballonInfo = type.broadInfo.balloninfo,
+                                onDismiss = { viewModel.showDialog(null) },
+                            )
+                        }
+                    }
+                }
+
+                moveDialogInfo?.let { (streamerId, question, code) ->
+                    JosaeMoveDialog(
+                        question = question,
+                        okText = if (code == 0) stringResource(id = R.string.move_text) else stringResource(id = R.string.app_kor),
+                        cancelText = if (code == 0) stringResource(id = R.string.no_text) else stringResource(id = R.string.web_kor),
+                        isBroadOff = code == 0,
+                        onConfirm = {
+                            handleMoveConfirm(streamerId, code)
+                            moveDialogInfo = null
+                        },
+                        onCancel = {
+                            if (code == 1) {
+                                handleMoveWeb(streamerId)
+                            }
+                            moveDialogInfo = null
+                        },
+                        onDismiss = {
+                            moveDialogInfo = null
+                        },
+                    )
+                }
             }
         }
 
@@ -112,7 +214,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    showCustomDialog(1)
+                    viewModel.showDialog(MainDialogType.Exit)
                 }
             },
         )
@@ -141,31 +243,8 @@ class MainActivity : androidx.activity.ComponentActivity() {
         }
     }
 
-    private fun handleBossClick(v: BroadInfo) {
-        if (v.onOff == 1) {
-            val question = "${v.viewCnt} 명이 시청중입니다!\n이동할까요?"
-            popDialog(v.streamerId, question, 1)
-        } else {
-            val question = "시조새는 방송중이 아닙니다\nSOOP 으로 이동하시겠습니까?"
-            popDialog(v.streamerId, question, 0)
-        }
-        firebaseAnalytics.logEvent("click_boss", bundleOf("click" to true))
-    }
-
     private fun handleBossMoreInfoClick(v: BroadInfo) {
-        val dlg = Dialog(this)
-        val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
-        dlg.setContentView(dlgBinding.root)
-        dlgBinding.infoStreamerName.text = v.streamerName
-
-        v.balloninfo?.let {
-            dlgBinding.monthview.text = v.balloninfo!!.monthview
-            dlgBinding.monthmaxview.text = v.balloninfo!!.monthmaxview
-            dlgBinding.monthtime.text = v.balloninfo!!.monthtime
-            dlgBinding.monthpay.text = v.balloninfo!!.monthpay
-        }
-        dlg.show()
-        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        viewModel.showDialog(MainDialogType.Info(v))
         viewModel.incrementCoachMark()
         firebaseAnalytics.logEvent("click_boss_moreInfo", bundleOf("click" to true))
     }
@@ -192,28 +271,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
     }
 
     private fun handleReportClick() {
-        val dlg = Dialog(this, R.style.DialogStyle)
-        val dlgBinding = DialogMemberChangeReportBinding.inflate(layoutInflater)
-        dlg.setContentView(dlgBinding.root)
-        dlg.show()
-        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        dlgBinding.reportSubmit.setOnClickListener {
-            val streamer =
-                dlgBinding.reportStreamer.text
-                    .trim()
-                    .toString()
-            val content =
-                dlgBinding.suggest.text
-                    .trim()
-                    .toString()
-            if (streamer.isNotEmpty() && content.isNotEmpty()) {
-                viewModel.sendReport(listOf(streamer, content)) { dlg.dismiss() }
-            } else {
-                toast("Streamer명과 건의사항을 확인해주세요")
-            }
-        }
-        dlgBinding.reportClose.setOnClickListener { dlg.dismiss() }
+        viewModel.showDialog(MainDialogType.Report)
     }
 
     private fun moveTeamList(
@@ -233,101 +291,44 @@ class MainActivity : androidx.activity.ComponentActivity() {
         }
     }
 
-    private fun popDialog(
+    private fun handleMoveConfirm(
         streamerId: String,
-        question: String,
         code: Int,
     ) {
         var intent = Intent(Intent.ACTION_VIEW)
-        val dlg = Dialog(this)
-        val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
-        dlg.setContentView(dlgBinding.root)
-        dlgBinding.moveQuestion.text = question
         if (code == 0) {
-            dlgBinding.moveApp.text = "이동"
-            dlgBinding.moveWeb.text = "아니요"
-            dlgBinding.moveWeb.setTextColor(Color.parseColor("#99FFFFFF"))
-        }
-        dlg.show()
-        dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        dlgBinding.moveApp.setOnClickListener {
-            if (code == 0) {
-                intent.data = Uri.parse("afreeca://")
-                intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-                firebaseAnalytics.logEvent("move_app", bundleOf("click_boss" to true, "status" to "broad_off"))
-                try {
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    intent =
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(
-                                "http://www.afreecatv.com/total_search.html?szSearchType=total&szStype=di&szKeyword=%EC%8B%9C%EC%A1%B0%EC%83%88",
-                            ),
-                        )
-                    startActivity(intent)
-                }
-                dlg.dismiss()
-            } else {
-                intent.data = Uri.parse(goLiveUrlApp + streamerId)
-                intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-                firebaseAnalytics.logEvent("move_app", bundleOf("click_boss" to true, "status" to "broad_on"))
-                try {
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    intent =
-                        Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=kr.co.nowcom.mobile.afreeca"))
-                    startActivity(intent)
-                }
-                dlg.dismiss()
-            }
-        }
-
-        dlgBinding.moveWeb.setOnClickListener {
-            if (code == 1) {
-                intent = Intent(Intent.ACTION_VIEW, Uri.parse(goLiveUrlWeb + streamerId))
-                firebaseAnalytics.logEvent("move_web", bundleOf("move" to true))
+            intent.data = Uri.parse("afreeca://")
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+            firebaseAnalytics.logEvent("move_app", bundleOf("click_boss" to true, "status" to "broad_off"))
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                intent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(
+                            "http://www.afreecatv.com/total_search.html?szSearchType=total&szStype=di&szKeyword=%EC%8B%9C%EC%A1%B0%EC%83%88",
+                        ),
+                    )
                 startActivity(intent)
             }
-            dlg.dismiss()
+        } else {
+            intent.data = Uri.parse(goLiveUrlApp + streamerId)
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+            firebaseAnalytics.logEvent("move_app", bundleOf("click_boss" to true, "status" to "broad_on"))
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=kr.co.nowcom.mobile.afreeca"))
+                startActivity(intent)
+            }
         }
     }
 
-    private fun showCustomDialog(code: Int) {
-        val dlg = Dialog(this)
-        val dlgBinding = CustomDialogBinding.inflate(layoutInflater)
-        dlg.setContentView(dlgBinding.root)
-
-        when (code) {
-            1 -> {
-                dlg.show()
-                dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dlgBinding.warning.isSelected = true
-                dlgBinding.closeOkButton.setOnClickListener {
-                    finish()
-                    dlg.dismiss()
-                }
-                dlgBinding.closeNotOk.setOnClickListener { dlg.dismiss() }
-            }
-
-            2 -> {
-                dlgBinding.question.text = "새로운 버전이 출시되었습니다\n지금 업데이트 하시겠습니까?"
-                dlgBinding.warning.text = ""
-                dlgBinding.closeOkButton.text = "업데이트"
-                dlgBinding.closeNotOk.text = "나중에"
-                dlg.show()
-                dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dlgBinding.closeOkButton.setOnClickListener {
-                    firebaseAnalytics.logEvent("click_update", bundleOf("click" to true))
-                    if (gotoMarket()) dlg.dismiss()
-                }
-                dlgBinding.closeNotOk.setOnClickListener {
-                    firebaseAnalytics.logEvent("click_close_update", bundleOf("click" to true))
-                    dlg.dismiss()
-                }
-            }
-        }
+    private fun handleMoveWeb(streamerId: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(goLiveUrlWeb + streamerId))
+        firebaseAnalytics.logEvent("move_web", bundleOf("move" to true))
+        startActivity(intent)
     }
 
     private fun gotoMarket(): Boolean {
