@@ -130,7 +130,8 @@ class MainViewModel
                         _uiState.update { it.copy(isCrawlingForFirebase = false, isRefreshing = false) }
                     } else {
                         sendUpdateData(streamerData.filter { streamer -> streamer.teamCode != 403 }) { result: Boolean ->
-                            val name: String = streamerData.find { it.teamCode == 403 }?.streamerId ?: ""
+                            val name: String =
+                                streamerData.find { it.teamCode == 403 }?.streamerId ?: ""
                             if (result) {
                                 if (errorCnt != 0) {
                                     var n = 0
@@ -201,7 +202,8 @@ class MainViewModel
                 val childUpdates = hashMapOf<String, Any>()
                 childUpdates["/LoadingInfo/LastUpDateTime"] = System.currentTimeMillis()
                 slist.forEach { streamer ->
-                    childUpdates["/BjStatus/${streamer.teamCode}/${streamer.streamerId}"] = streamer.toMap()
+                    childUpdates["/BjStatus/${streamer.teamCode}/${streamer.streamerId}"] =
+                        streamer.toMap()
                 }
 
                 updateRepoDataUseCase(
