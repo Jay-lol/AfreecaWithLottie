@@ -1,24 +1,23 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
-    id("com.google.firebase.crashlytics")
-    id("com.google.gms.google-services")
-    id("dagger.hilt.android.plugin")
-}
-apply {
-    plugin("kotlin-android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "com.jay.josaeworld"
-    compileSdk = Android.COMPILE_SDK
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
     defaultConfig {
         applicationId = "com.jay.josaeworld"
-        minSdk = Android.MIN_SDK
-        targetSdk = Android.TARGET_SDK
-        versionCode = Versions.versionCode
-        versionName = Versions.versionName
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -27,7 +26,7 @@ android {
             manifestPlaceholders["appLabel"] = "조새크루"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
@@ -56,48 +55,53 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(Libs.KOTLIN)
-    implementation(Libs.CORE_KTX)
-    implementation(Libs.APPCOMPAT)
-    implementation(Libs.ANDROIDX_CONSTRAINTLAYOUT)
-    implementation(Libs.ANDROIDX_RECYCLERVIEW)
-    testImplementation(TestLibs.JUNIT)
-    androidTestImplementation(TestLibs.ANDROIDX_JUNIT)
+    
+    // Kotlin & Core
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.kotlinx.coroutines.android)
 
-    // Lottie for Android
-    implementation(Libs.LOTTIE)
+    // UI
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.cardview)
+    implementation(libs.lottie)
+    implementation(libs.github.clans.fab)
 
-    // Glide
-    implementation(Libs.GLIDE)
-    kapt(Libs.GLIDE_COMPILER)
+    // Images
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
 
-    // firebase
-    implementation(platform(Libs.FIREBASE))
-    implementation(Libs.FIREBASE_ANALYTICS)
-    implementation(Libs.FIREBASE_CRASHLYTICS)
-    implementation(Libs.FIREBASE_DATABASE)
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.database)
 
-    // swiperefreshlayout
-    implementation(Libs.SWRFLAYOUT)
+    // Networking
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
 
-    implementation(Libs.CARDVIEW)
-    implementation(Libs.GITHUB_CLANS_FAB)
+    // Ads
+    implementation(libs.play.services.ads)
 
-    // Retrofit
-    implementation(Libs.OKHTTP)
-    implementation(Libs.RETROFIT)
-    implementation(Libs.RETROFIT_CONVERTER)
+    // DI (Hilt)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
-    implementation(Libs.PLAY_SERVICES_ADS)
+    // Data Store
+    implementation(libs.androidx.datastore.preferences)
 
-    implementation(Libs.HILT)
-    kapt(Libs.HILT_COMPILER)
-
-    implementation(Libs.DATA_STORE)
-    implementation(Libs.COROUTINES)
+    // Test
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
 }
-repositories {
-    mavenCentral()
-}
+

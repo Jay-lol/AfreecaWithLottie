@@ -1,0 +1,86 @@
+[versions]
+# Android SDK & App Version
+compileSdk = "36"
+minSdk = "21"
+targetSdk = "36"
+versionCode = "48"
+versionName = "2.3.2"
+
+# Build Tools
+agp = "8.5.0"
+kotlin = "1.9.22"
+googleServices = "4.4.0"
+firebaseCrashlyticsPlugin = "2.9.9"
+hilt = "2.48"
+
+# AndroidX
+coreKtx = "1.12.0"
+appcompat = "1.6.1"
+constraintlayout = "2.1.4"
+recyclerview = "1.3.2"
+swiperefreshlayout = "1.1.0"
+cardview = "1.0.0"
+datastore = "1.0.0"
+
+# Firebase
+firebaseBom = "29.1.0"
+
+# Networking
+okhttp = "4.12.0"
+retrofit = "2.9.0"
+
+# UI & Misc
+lottie = "6.3.0"
+glide = "4.16.0"
+githubClansFab = "1.6.4"
+playServicesAds = "20.6.0"
+coroutines = "1.7.3"
+
+# Test
+junit = "4.13.2"
+androidxJunit = "1.1.5"
+
+[libraries]
+# AndroidX
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx" }
+
+# Networking
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+
+# DI (Hilt)
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+
+# UI & Misc
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+github-clans-fab = { group = "com.github.clans", name = "fab", version.ref = "githubClansFab" }
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# Test
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }

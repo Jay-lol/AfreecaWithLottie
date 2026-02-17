@@ -1,27 +1,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-    }
-
-    dependencies {
-        classpath("com.android.tools.build:gradle:${Versions.ANDROID_GRADLE_PLUGIN}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}")
-        // firebase
-        classpath("com.google.gms:google-services:${Versions.GOOGLE_SERVICES}")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS}")
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-        classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}")
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        maven { url = uri("https://jitpack.io") }
-    }
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.kapt) apply false
 }
 
 tasks.register("clean", Delete::class) {
