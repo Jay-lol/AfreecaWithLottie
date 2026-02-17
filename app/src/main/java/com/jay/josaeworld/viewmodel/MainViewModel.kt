@@ -62,6 +62,7 @@ class MainViewModel @Inject constructor(
         bjLists: Array<ArrayList<BroadInfo>>,
         bjDataList: Array<ArrayList<BroadInfo>>?
     ) {
+        _uiState.update { it.copy(isCrawlingForFirebase = true) }
         viewModelScope.launch {
             val bidList = arrayListOf<Pair<Int, String>>()
 
@@ -179,6 +180,10 @@ class MainViewModel @Inject constructor(
     fun createBJDataListener(teamSize: Int) {
         if (bjStatusListener != null) return
 
+        if (_uiState.value.mainBJDataList == null) {
+            _uiState.update { it.copy(isLoading = true) }
+        }
+
         bjStatusListener = listenBJUpToDateUseCase(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -223,7 +228,8 @@ class MainViewModel @Inject constructor(
                                 it.copy(
                                     mainBJDataList = recentBJList,
                                     allViewers = nAllviewers,
-                                    allBallons = nAllballon
+                                    allBallons = nAllballon,
+                                    isLoading = false
                                 ) 
                             }
                         } catch (e: Exception) {
