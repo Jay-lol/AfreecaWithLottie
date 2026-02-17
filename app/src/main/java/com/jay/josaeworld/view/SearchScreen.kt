@@ -50,7 +50,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.android.gms.ads.AdRequest
 import com.jay.josaeworld.R
-import com.jay.josaeworld.domain.model.response.SearchBJInfo
+import com.jay.josaeworld.domain.model.response.SearchStreamerInfo
 import com.jay.josaeworld.ui.component.AdBanner
 import com.jay.josaeworld.ui.component.LoadingOverlay
 import com.jay.josaeworld.ui.theme.MapleStory
@@ -60,7 +60,7 @@ import com.jay.josaeworld.viewmodel.SearchUiState
 fun SearchScreen(
     state: SearchUiState,
     adRequest: AdRequest,
-    onItemClick: (SearchBJInfo) -> Unit
+    onItemClick: (SearchStreamerInfo) -> Unit
 ) {
     val tightTextStyle = LocalTextStyle.current.copy(
         platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false),
@@ -115,7 +115,7 @@ fun SearchScreen(
                             contentPadding = PaddingValues(vertical = 8.dp)
                         ) {
                             items(state.items) { item ->
-                                SearchBJItem(
+                                SearchStreamerItem(
                                     item = item,
                                     onClick = { onItemClick(item) }
                                 )
@@ -168,8 +168,8 @@ fun SearchTopBar(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun SearchBJItem(
-    item: SearchBJInfo,
+fun SearchStreamerItem(
+    item: SearchStreamerInfo,
     onClick: () -> Unit
 ) {
     val tightTextStyle = LocalTextStyle.current.copy(

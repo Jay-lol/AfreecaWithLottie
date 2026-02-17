@@ -38,7 +38,7 @@ class BroadListViewModel @Inject constructor(
             compareBy(
                 { -(it.viewCnt.filter { c -> c.isDigit() }.toIntOrNull() ?: 0) },
                 { -it.onOff },
-                { it.bid != underBoss },
+                { it.streamerId != underBoss },
                 { -(it.balloninfo?.dayballon?.filter { c -> c.isDigit() }?.toIntOrNull() ?: 0) },
                 { -(it.balloninfo?.monthballon?.filter { c -> c.isDigit() }?.toIntOrNull() ?: 0) },
                 { -(it.fanCnt.filter { c -> c.isDigit() }.toIntOrNull() ?: 0) }

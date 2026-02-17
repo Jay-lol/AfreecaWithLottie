@@ -17,9 +17,9 @@ class DataRepositoryImpl @Inject constructor(
     private val database: FirebaseDatabase,
 ) : DataRepository {
 
-    override suspend fun getBjInfoWithCoroutines(bid: String): AfSearchResponse =
+    override suspend fun getStreamerInfoWithCoroutines(streamerId: String): AfSearchResponse =
         memberRetrofit
-            .getBjInfoWithCoroutines(requestHeader, bid)
+            .getStreamerInfoWithCoroutines(requestHeader, streamerId)
 
     override suspend fun searchJosaeWithCoroutines(): RealBroad =
         searchRetrofit
@@ -40,7 +40,7 @@ class DataRepositoryImpl @Inject constructor(
         database.getReference("Ballon").addListenerForSingleValueEvent(valueEventListener)
     }
 
-    override fun listenBJUpToDate(valueEventListener: ValueEventListener): ValueEventListener =
+    override fun listenStreamerUpToDate(valueEventListener: ValueEventListener): ValueEventListener =
         database.getReference("BjStatus").addValueEventListener(valueEventListener)
 
     override fun removeListener(valueEventListener: ValueEventListener) {

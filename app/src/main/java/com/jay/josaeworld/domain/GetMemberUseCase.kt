@@ -9,11 +9,11 @@ class GetMemberUseCase @Inject constructor(
 ) {
     data class Params(
         val teamCode: Int,
-        val bid: String,
+        val streamerId: String,
         val defaultLogoImgUrl: String,
         val liveImgUrl: String
     )
 
     suspend operator fun invoke(params: Params): AfSearchResponse =
-        repository.getBjInfoWithCoroutines(params.bid)
+        repository.getStreamerInfoWithCoroutines(params.streamerId)
 }

@@ -4,11 +4,11 @@ import com.google.firebase.database.ValueEventListener
 import com.jay.josaeworld.data.repository.DataRepository
 import javax.inject.Inject
 
-class ListenBJUpToDateUseCase @Inject constructor(
+class ListenStreamerUpToDateUseCase @Inject constructor(
     private val repository: DataRepository
 ) {
     operator fun invoke(valueEventListener: ValueEventListener) =
-        repository.listenBJUpToDate(valueEventListener)
+        repository.listenStreamerUpToDate(valueEventListener)
 
     fun removeListener(valueEventListener: ValueEventListener) {
         repository.removeListener(valueEventListener)

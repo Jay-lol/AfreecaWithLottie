@@ -15,7 +15,7 @@
         android:background="@android:color/transparent"
         android:gravity="center"
         android:paddingTop="20dp"
-        android:text="해당 BJ로 이동?"
+        android:text="해당 Streamer로 이동?"
         android:textAlignment="center"
         android:textColor="#CCCCCC"
         android:textSize="16sp"

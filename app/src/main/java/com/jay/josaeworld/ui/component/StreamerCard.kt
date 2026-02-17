@@ -51,8 +51,8 @@ import com.jay.josaeworld.ui.theme.MapleStory
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun BJCard(
-    bjInfo: BroadInfo,
+fun StreamerCard(
+    streamerInfo: BroadInfo,
     onClick: () -> Unit,
     onMoreInfoClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -61,8 +61,8 @@ fun BJCard(
     useProfileImage: Boolean = false, // 오프라인 시 Lottie 대신 프로필 이미지를 사용할지 여부
 ) {
     val random = remember { java.util.Random() }
-    val isOn = bjInfo.onOff == 1
-    val viewCountInt = bjInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
+    val isOn = streamerInfo.onOff == 1
+    val viewCountInt = streamerInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
     val isHighViewCount = isOn && viewCountInt >= 10000
 
     val tightTextStyle =
@@ -120,7 +120,7 @@ fun BJCard(
                 ) {
                     if (isOn) {
                         GlideImage(
-                            model = bjInfo.imgurl + "${random.nextInt(123456789)}",
+                            model = streamerInfo.imgurl + "${random.nextInt(123456789)}",
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
@@ -145,7 +145,7 @@ fun BJCard(
                             } else {
                                 // 일반 섹션 등: 방송 종료 시 프로필 이미지(원형) 표시
                                 GlideImage(
-                                    model = bjInfo.profilePhoto,
+                                    model = streamerInfo.profilePhoto,
                                     contentDescription = null,
                                     modifier =
                                         Modifier
@@ -213,7 +213,7 @@ fun BJCard(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        text = bjInfo.title,
+                        text = streamerInfo.title,
                         color = Color(0xE6FFFFFF),
                         fontSize = 16.sp,
                         lineHeight = 16.sp,
@@ -248,7 +248,7 @@ fun BJCard(
                                 modifier = Modifier.size(12.dp),
                             )
                             Text(
-                                text = bjInfo.fanCnt,
+                                text = streamerInfo.fanCnt,
                                 color = Color.White,
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
@@ -262,7 +262,7 @@ fun BJCard(
                                 modifier = Modifier.size(12.dp),
                             )
                             Text(
-                                text = bjInfo.okCnt,
+                                text = streamerInfo.okCnt,
                                 color = Color.White,
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
@@ -271,7 +271,7 @@ fun BJCard(
                             )
                         }
                         Text(
-                            text = bjInfo.bjname,
+                            text = streamerInfo.streamerName,
                             color = Color(0xFF8587FE),
                             fontSize = 13.sp,
                             lineHeight = 13.sp,
@@ -292,7 +292,7 @@ fun BJCard(
                                 modifier = Modifier.size(14.dp),
                             )
                             Text(
-                                text = if (isOn) bjInfo.viewCnt else "",
+                                text = if (isOn) streamerInfo.viewCnt else "",
                                 color = Color.White,
                                 fontSize = 12.sp,
                                 lineHeight = 12.sp,
@@ -323,11 +323,11 @@ fun BJCard(
                                 style = tightTextStyle,
                             )
                             val fanCntVal =
-                                bjInfo.incFanCnt
+                                streamerInfo.incFanCnt
                                     .filter { it.isDigit() || it == '-' }
                                     .toIntOrNull() ?: 0
                             Text(
-                                text = bjInfo.incFanCnt,
+                                text = streamerInfo.incFanCnt,
                                 color = if (fanCntVal < 0) Color(0xFFFF4A4A) else Color.White,
                                 fontSize = 9.sp,
                                 lineHeight = 9.sp,
@@ -343,7 +343,7 @@ fun BJCard(
                                 style = tightTextStyle,
                             )
                             Text(
-                                text = bjInfo.balloninfo?.dayballon ?: "-",
+                                text = streamerInfo.balloninfo?.dayballon ?: "-",
                                 color = Color(0xFF46E9FF),
                                 fontSize = 11.sp,
                                 lineHeight = 11.sp,
@@ -364,7 +364,7 @@ fun BJCard(
                                 style = tightTextStyle,
                             )
                             Text(
-                                text = bjInfo.balloninfo?.monthballon ?: "-",
+                                text = streamerInfo.balloninfo?.monthballon ?: "-",
                                 color = Color(0xFF46E9FF),
                                 fontSize = 11.sp,
                                 lineHeight = 11.sp,

@@ -10,13 +10,13 @@ import com.jay.josaeworld.di.UrlModule
 import com.jay.josaeworld.domain.GetBallonDataUseCase
 import com.jay.josaeworld.domain.GetMemberUseCase
 import com.jay.josaeworld.domain.GetUnderBossUseCase
-import com.jay.josaeworld.domain.ListenBJUpToDateUseCase
+import com.jay.josaeworld.domain.ListenStreamerUpToDateUseCase
 import com.jay.josaeworld.domain.UpdateRepoDataUseCase
 import com.jay.josaeworld.domain.goodBallonData
-import com.jay.josaeworld.domain.goodBjData
+import com.jay.josaeworld.domain.goodStreamerData
 import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
-import com.jay.josaeworld.domain.sortedBJList
+import com.jay.josaeworld.domain.sortedStreamerList
 import com.jay.josaeworld.domain.toBroadInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +40,7 @@ class MainViewModel
         private val updateRepoDataUseCase: UpdateRepoDataUseCase,
         private val getUnderBossUseCase: GetUnderBossUseCase,
         private val getBallonDataUseCase: GetBallonDataUseCase,
-        private val listenBJUpToDateUseCase: ListenBJUpToDateUseCase,
+        private val listenStreamerUpToDateUseCase: ListenStreamerUpToDateUseCase,
         private val dataStore: com.jay.josaeworld.data.UserPreferencesRepository,
         @UrlModule.DEFAULT_LOGO_IMG private val defaultLogoImgUrl: String,
         @UrlModule.LIVE_IMG_URL private val liveImgUrl: String,
@@ -51,7 +51,7 @@ class MainViewModel
         private val _sideEffect = MutableSharedFlow<MainSideEffect>()
         val sideEffect: SharedFlow<MainSideEffect> = _sideEffect.asSharedFlow()
 
-        private var bjStatusListener: ValueEventListener? = null
+        private var streamerStatusListener: ValueEventListener? = null
 
         init {
             observeCoachMark()
@@ -74,24 +74,24 @@ class MainViewModel
         /**
          비제이들 고유 아이디 가져와서 데이터 요청
          */
-        fun getRecentBJData(
-            bjLists: Array<ArrayList<BroadInfo>>,
-            bjDataList: Array<ArrayList<BroadInfo>>?,
+        fun getRecentStreamerData(
+            streamerLists: Array<ArrayList<BroadInfo>>,
+            streamerDataList: Array<ArrayList<BroadInfo>>?,
         ) {
             _uiState.update { it.copy(isCrawlingForFirebase = true) }
             viewModelScope.launch {
-                val bidList = arrayListOf<Pair<Int, String>>()
+                val streamerIdList = arrayListOf<Pair<Int, String>>()
 
-                for (team in bjLists) {
+                for (team in streamerLists) {
                     if (team.isEmpty()) continue
                     val index = team[0].teamCode
-                    for (member in team) bidList.add(Pair(index, member.bid))
+                    for (member in team) streamerIdList.add(Pair(index, member.streamerId))
                 }
 
-                val bjdata = java.util.Collections.synchronizedList(ArrayList<BroadInfo>())
+                val streamerdata = java.util.Collections.synchronizedList(ArrayList<BroadInfo>())
 
                 val jobs =
-                    bidList.map { item ->
+                    streamerIdList.map { item ->
                         async(Dispatchers.IO) {
                             val params =
                                 GetMemberUseCase.Params(
@@ -103,13 +103,13 @@ class MainViewModel
                             runCatching {
                                 memberUseCase(params)
                             }.onSuccess {
-                                bjdata.add(it.toBroadInfo(params))
+                                streamerdata.add(it.toBroadInfo(params))
                             }.onFailure {
-                                bjdata.add(
+                                streamerdata.add(
                                     BroadInfo(
                                         teamCode = 403,
                                         onOff = 1,
-                                        bid = params.bid,
+                                        streamerId = params.streamerId,
                                         balloninfo = BallonInfo(),
                                     ),
                                 )
@@ -122,27 +122,27 @@ class MainViewModel
                 }.onSuccess {
                     _uiState.update { it.copy(isLoading = false, isRefreshing = false) }
 
-                    val errorCnt: Int = bjdata.count { Bj -> Bj.teamCode == 403 }
+                    val errorCnt: Int = streamerdata.count { Streamer -> Streamer.teamCode == 403 }
 
-                    if (errorCnt == bjdata.size) {
+                    if (errorCnt == streamerdata.size) {
                         _sideEffect.emit(MainSideEffect.ShowError(4))
                         _uiState.update { it.copy(isCrawlingForFirebase = false, isRefreshing = false) }
                     } else {
-                        sendUpdateData(bjdata.filter { bj -> bj.teamCode != 403 }) { result: Boolean ->
-                            val name: String = bjdata.find { it.teamCode == 403 }?.bid ?: ""
+                        sendUpdateData(streamerdata.filter { streamer -> streamer.teamCode != 403 }) { result: Boolean ->
+                            val name: String = streamerdata.find { it.teamCode == 403 }?.streamerId ?: ""
                             if (result) {
                                 if (errorCnt != 0) {
                                     var n = 0
-                                    bjLists.forEach { n += it.size }
-                                    var bjname = "unknown"
+                                    streamerLists.forEach { n += it.size }
+                                    var streamerName = "unknown"
                                     try {
                                         var find = false
-                                        for (i in bjDataList!!) {
+                                        for (i in streamerDataList!!) {
                                             if (find) break
                                             for (member in i) {
-                                                if (member.bid == name) {
+                                                if (member.streamerId == name) {
                                                     find = true
-                                                    bjname = member.bjname
+                                                    streamerName = member.streamerName
                                                     break
                                                 }
                                             }
@@ -160,10 +160,10 @@ class MainViewModel
 
                                     viewModelScope.launch {
                                         if (errorCnt == 1) {
-                                            _sideEffect.emit(MainSideEffect.ShowToast("${n}명 중 SOOP 에러로\n  $bjname 정보 누락"))
+                                            _sideEffect.emit(MainSideEffect.ShowToast("${n}명 중 SOOP 에러로\n  $streamerName 정보 누락"))
                                         } else {
                                             _sideEffect.emit(
-                                                MainSideEffect.ShowToast("      ${n}명 중 응답 에러로\n $bjname 외 ${errorCnt - 1}명의 정보 누락"),
+                                                MainSideEffect.ShowToast("      ${n}명 중 응답 에러로\n $streamerName 외 ${errorCnt - 1}명의 정보 누락"),
                                             )
                                         }
                                     }
@@ -199,8 +199,8 @@ class MainViewModel
 
                 val childUpdates = hashMapOf<String, Any>()
                 childUpdates["/LoadingInfo/LastUpDateTime"] = System.currentTimeMillis()
-                slist.forEach { bj ->
-                    childUpdates["/BjStatus/${bj.teamCode}/${bj.bid}"] = bj.toMap()
+                slist.forEach { streamer ->
+                    childUpdates["/BjStatus/${streamer.teamCode}/${streamer.streamerId}"] = streamer.toMap()
                 }
 
                 updateRepoDataUseCase(
@@ -221,18 +221,18 @@ class MainViewModel
             }
         }
 
-        fun createBJDataListener(teamSize: Int) {
-            if (bjStatusListener != null) return
+        fun createStreamerDataListener(teamSize: Int) {
+            if (streamerStatusListener != null) return
 
-            if (_uiState.value.mainBJDataList == null) {
+            if (_uiState.value.mainStreamerDataList == null) {
                 _uiState.update { it.copy(isLoading = true) }
             }
 
-            bjStatusListener =
-                listenBJUpToDateUseCase(
+            streamerStatusListener =
+                listenStreamerUpToDateUseCase(
                     object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
-                            var recentBJList = Array(teamSize) { arrayListOf<BroadInfo>() }
+                            var recentStreamerList = Array(teamSize) { arrayListOf<BroadInfo>() }
                             ballonData { ballonMap ->
                                 try {
                                     for ((index, team) in snapshot.children.withIndex()) {
@@ -241,8 +241,8 @@ class MainViewModel
                                         for (member in team.value as HashMap<*, *>) {
                                             val v = member.value as HashMap<*, *>
                                             val b = ballonMap[member.key as String]
-                                            recentBJList[index].add(
-                                                v.goodBjData(
+                                            recentStreamerList[index].add(
+                                                v.goodStreamerData(
                                                     teamCode,
                                                     member.key as String,
                                                     b,
@@ -251,15 +251,15 @@ class MainViewModel
                                             )
                                         }
                                         if (index == teamSize - 2) {
-                                            recentBJList = recentBJList.sortedBJList()
+                                            recentStreamerList = recentStreamerList.sortedStreamerList()
                                         }
                                     }
-                                    Log.d(TAG, "MainViewModel ~ bjDataListener() 갱신 성공")
+                                    Log.d(TAG, "MainViewModel ~ streamerDataListener() 갱신 성공")
 
                                     var nAllviewers = 0
                                     var nAllballon = 0
 
-                                    for (team in recentBJList) {
+                                    for (team in recentStreamerList) {
                                         if (team.isEmpty()) continue
                                         for (member in team) {
                                             if (member.onOff == 1) {
@@ -276,7 +276,7 @@ class MainViewModel
 
                                     _uiState.update {
                                         it.copy(
-                                            mainBJDataList = recentBJList,
+                                            mainStreamerDataList = recentStreamerList,
                                             allViewers = nAllviewers,
                                             allBallons = nAllballon,
                                             isLoading = false,
@@ -374,16 +374,16 @@ class MainViewModel
             }
         }
 
-        fun removeBJDataListener() {
-            bjStatusListener?.let {
-                listenBJUpToDateUseCase.removeListener(it)
-                bjStatusListener = null
+        fun removeStreamerDataListener() {
+            streamerStatusListener?.let {
+                listenStreamerUpToDateUseCase.removeListener(it)
+                streamerStatusListener = null
             }
         }
 
         override fun onCleared() {
             super.onCleared()
-            removeBJDataListener()
+            removeStreamerDataListener()
         }
 
         fun setRefreshing(isRefreshing: Boolean) {
@@ -396,7 +396,7 @@ class MainViewModel
     }
 
 data class MainUiState(
-    val mainBJDataList: Array<ArrayList<BroadInfo>>? = null,
+    val mainStreamerDataList: Array<ArrayList<BroadInfo>>? = null,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isCrawlingForFirebase: Boolean = false,

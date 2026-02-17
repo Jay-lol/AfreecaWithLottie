@@ -22,14 +22,14 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.android.gms.ads.AdRequest
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.ui.component.AdBanner
-import com.jay.josaeworld.ui.component.BJCard
+import com.jay.josaeworld.ui.component.StreamerCard
 import com.jay.josaeworld.viewmodel.BroadListUiState
 
 @Composable
 fun BroadListScreen(
     state: BroadListUiState,
     adRequest: AdRequest,
-    onBJClick: (BroadInfo) -> Unit,
+    onStreamerClick: (BroadInfo) -> Unit,
     onMoreInfoClick: (BroadInfo) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -61,12 +61,12 @@ fun BroadListScreen(
                         .padding(paddingValues),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
-                items(state.items, key = { it.bid }) { bjInfo ->
-                    BJCard(
-                        bjInfo = bjInfo,
-                        onClick = { onBJClick(bjInfo) },
-                        onMoreInfoClick = { onMoreInfoClick(bjInfo) },
-                        isUnderBoss = bjInfo.bid == state.underBoss,
+                items(state.items, key = { it.streamerId }) { streamerInfo ->
+                    StreamerCard(
+                        streamerInfo = streamerInfo,
+                        onClick = { onStreamerClick(streamerInfo) },
+                        onMoreInfoClick = { onMoreInfoClick(streamerInfo) },
+                        isUnderBoss = streamerInfo.streamerId == state.underBoss,
                         useProfileImage = true,
                         modifier = Modifier.fillMaxWidth(),
                     )

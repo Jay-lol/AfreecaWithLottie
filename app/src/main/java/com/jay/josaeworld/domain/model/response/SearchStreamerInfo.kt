@@ -1,6 +1,6 @@
 package com.jay.josaeworld.domain.model.response
 
-data class SearchBJInfo(
+data class SearchStreamerInfo(
     val broad_title: String,
     val total_view_cnt: String,
     val user_id: String,

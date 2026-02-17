@@ -3,7 +3,7 @@ package com.jay.josaeworld.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jay.josaeworld.domain.SearchKeywordUseCase
-import com.jay.josaeworld.domain.model.response.SearchBJInfo
+import com.jay.josaeworld.domain.model.response.SearchStreamerInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +51,7 @@ class SearchViewModel @Inject constructor(
 }
 
 data class SearchUiState(
-    val items: List<SearchBJInfo>? = null,
+    val items: List<SearchStreamerInfo>? = null,
     val isLoading: Boolean = false
 )
 

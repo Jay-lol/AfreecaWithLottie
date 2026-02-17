@@ -8,34 +8,34 @@
     android:background="@drawable/alert_dialog2">
 
     <TextView
-        android:id="@+id/bj_description"
+        android:id="@+id/streamer_description"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:gravity="center"
-        android:text="BJ"
+        android:text="Streamer"
         android:textAlignment="center"
         android:textColor="#ffcccccc"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/reportBj"
+        app:layout_constraintEnd_toStartOf="@+id/reportStreamer"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/reportBj"
+        android:id="@+id/reportStreamer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="8dp"
-        android:hint="BJ 이름을 적어주세요"
+        android:hint="Streamer 이름을 적어주세요"
         android:textColor="#ffffffff"
         android:textColorHint="#85ffffff"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/bj_description"
+        app:layout_constraintBottom_toBottomOf="@+id/streamer_description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/bj_description"
-        app:layout_constraintTop_toTopOf="@id/bj_description"
+        app:layout_constraintStart_toEndOf="@+id/streamer_description"
+        app:layout_constraintTop_toTopOf="@id/streamer_description"
         app:layout_constraintVertical_bias="0" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="bj_description, reportBj" />
+        app:constraint_referenced_ids="streamer_description, reportStreamer" />
 
     <TextView
         android:id="@+id/content_description"

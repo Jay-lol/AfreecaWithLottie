@@ -8,7 +8,7 @@ import com.jay.josaeworld.domain.model.response.gsonParse.RealBroad
 
 class MockDataRepositoryImpl : DataRepository {
 
-    override suspend fun getBjInfoWithCoroutines(bid: String): AfSearchResponse {
+    override suspend fun getStreamerInfoWithCoroutines(streamerId: String): AfSearchResponse {
         TODO("Not yet implemented")
     }
 
@@ -32,7 +32,7 @@ class MockDataRepositoryImpl : DataRepository {
         TODO("Not yet implemented")
     }
 
-    override fun listenBJUpToDate(valueEventListener: ValueEventListener): ValueEventListener {
+    override fun listenStreamerUpToDate(valueEventListener: ValueEventListener): ValueEventListener {
         TODO("Not yet implemented")
     }
 

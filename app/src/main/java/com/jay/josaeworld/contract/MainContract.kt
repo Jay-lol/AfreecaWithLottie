@@ -8,7 +8,7 @@ import kotlinx.coroutines.Job
 interface MainContract {
 
     interface View : BaseView {
-        fun changeMainBJData(newBJDataList: Array<ArrayList<BroadInfo>>?)
+        fun changeMainStreamerData(newStreamerDataList: Array<ArrayList<BroadInfo>>?)
         fun stopLoadingAnimation()
         fun makeRefreshstate(state: Boolean)
         fun changeIsCrawlingForFirebaseState(state: Boolean)
@@ -17,13 +17,13 @@ interface MainContract {
     }
 
     interface Presenter : BasePresenter {
-        fun getRecentBJData(
-            bjLists: Array<ArrayList<BroadInfo>>,
-            bjDataList: Array<ArrayList<BroadInfo>>?
+        fun getRecentStreamerData(
+            streamerLists: Array<ArrayList<BroadInfo>>,
+            streamerDataList: Array<ArrayList<BroadInfo>>?
         ): Job
 
-        fun createBJDataListener(teamSize: Int)
-        fun removeBJDataListener()
+        fun createStreamerDataListener(teamSize: Int)
+        fun removeStreamerDataListener()
         fun getUnderBoss()
         fun sendReport(reportList: List<String>, function: () -> Unit)
     }

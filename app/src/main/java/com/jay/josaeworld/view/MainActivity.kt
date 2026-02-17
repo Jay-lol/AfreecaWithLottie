@@ -129,14 +129,14 @@ class MainActivity : androidx.activity.ComponentActivity() {
         if (now - time > 30000) {
             refreshAct()
         }
-        viewModel.createBJDataListener(teamInfo.size + 1)
+        viewModel.createStreamerDataListener(teamInfo.size + 1)
     }
 
     private fun refreshAct() {
         val state = viewModel.uiState.value
-        if (state.mainBJDataList != null && !state.isCrawlingForFirebase) {
+        if (state.mainStreamerDataList != null && !state.isCrawlingForFirebase) {
             viewModel.setRefreshing(true)
-            viewModel.getRecentBJData(state.mainBJDataList, state.mainBJDataList)
+            viewModel.getRecentStreamerData(state.mainStreamerDataList, state.mainStreamerDataList)
             firebaseAnalytics.logEvent("request_refresh", bundleOf("scroll_down" to true))
         }
     }
@@ -144,10 +144,10 @@ class MainActivity : androidx.activity.ComponentActivity() {
     private fun handleBossClick(v: BroadInfo) {
         if (v.onOff == 1) {
             val question = "${v.viewCnt} 명이 시청중입니다!\n이동할까요?"
-            popDialog(v.bid, question, 1)
+            popDialog(v.streamerId, question, 1)
         } else {
             val question = "시조새는 방송중이 아닙니다\nSOOP 으로 이동하시겠습니까?"
-            popDialog(v.bid, question, 0)
+            popDialog(v.streamerId, question, 0)
         }
         firebaseAnalytics.logEvent("click_boss", bundleOf("click" to true))
     }
@@ -156,7 +156,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
         val dlg = Dialog(this)
         val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
         dlg.setContentView(dlgBinding.root)
-        dlgBinding.infoBjname.text = v.bjname
+        dlgBinding.infoStreamerName.text = v.streamerName
 
         v.balloninfo?.let {
             dlgBinding.monthview.text = v.balloninfo!!.monthview
@@ -199,18 +199,18 @@ class MainActivity : androidx.activity.ComponentActivity() {
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dlgBinding.reportSubmit.setOnClickListener {
-            val bj =
-                dlgBinding.reportBj.text
+            val streamer =
+                dlgBinding.reportStreamer.text
                     .trim()
                     .toString()
             val content =
                 dlgBinding.suggest.text
                     .trim()
                     .toString()
-            if (bj.isNotEmpty() && content.isNotEmpty()) {
-                viewModel.sendReport(listOf(bj, content)) { dlg.dismiss() }
+            if (streamer.isNotEmpty() && content.isNotEmpty()) {
+                viewModel.sendReport(listOf(streamer, content)) { dlg.dismiss() }
             } else {
-                toast("BJ명과 건의사항을 확인해주세요")
+                toast("Streamer명과 건의사항을 확인해주세요")
             }
         }
         dlgBinding.reportClose.setOnClickListener { dlg.dismiss() }
@@ -234,7 +234,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
     }
 
     private fun popDialog(
-        bid: String,
+        streamerId: String,
         question: String,
         code: Int,
     ) {
@@ -270,7 +270,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
                 }
                 dlg.dismiss()
             } else {
-                intent.data = Uri.parse(goLiveUrlApp + bid)
+                intent.data = Uri.parse(goLiveUrlApp + streamerId)
                 intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                 firebaseAnalytics.logEvent("move_app", bundleOf("click_boss" to true, "status" to "broad_on"))
                 try {
@@ -286,7 +286,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
 
         dlgBinding.moveWeb.setOnClickListener {
             if (code == 1) {
-                intent = Intent(Intent.ACTION_VIEW, Uri.parse(goLiveUrlWeb + bid))
+                intent = Intent(Intent.ACTION_VIEW, Uri.parse(goLiveUrlWeb + streamerId))
                 firebaseAnalytics.logEvent("move_web", bundleOf("move" to true))
                 startActivity(intent)
             }
@@ -345,12 +345,12 @@ class MainActivity : androidx.activity.ComponentActivity() {
     override fun onStart() {
         super.onStart()
         if (::teamInfo.isInitialized) {
-            viewModel.createBJDataListener(teamInfo.size + 1)
+            viewModel.createStreamerDataListener(teamInfo.size + 1)
         }
     }
 
     override fun onStop() {
-        viewModel.removeBJDataListener()
+        viewModel.removeStreamerDataListener()
         super.onStop()
     }
 }

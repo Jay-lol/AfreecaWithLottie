@@ -16,7 +16,7 @@ import com.google.android.gms.ads.AdRequest
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.CustomDialog2Binding
 import com.jay.josaeworld.di.UrlModule
-import com.jay.josaeworld.domain.model.response.SearchBJInfo
+import com.jay.josaeworld.domain.model.response.SearchStreamerInfo
 import com.jay.josaeworld.extension.toast
 import com.jay.josaeworld.ui.theme.JosaeWorldTheme
 import com.jay.josaeworld.viewmodel.SearchSideEffect
@@ -62,9 +62,9 @@ class SearchActivity : ComponentActivity() {
         }
     }
 
-    private fun moveToLive(item: SearchBJInfo) {
-        val bid = item.user_id
-        val bjname = item.user_nick
+    private fun moveToLive(item: SearchStreamerInfo) {
+        val streamerId = item.user_id
+        val streamerName = item.user_nick
         val viewCnt = item.total_view_cnt
 
         var intent = Intent(Intent.ACTION_VIEW)
@@ -72,13 +72,13 @@ class SearchActivity : ComponentActivity() {
         val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
         dlg.setContentView(dlgBinding.root)
 
-        dlgBinding.moveQuestion.text = "$viewCnt 명이 시청중입니다!\n$bjname 방송으로 이동할까요?"
+        dlgBinding.moveQuestion.text = "$viewCnt 명이 시청중입니다!\n$streamerName 방송으로 이동할까요?"
 
         dlg.show()
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dlgBinding.moveApp.setOnClickListener {
-            intent.data = Uri.parse(goLiveUrlApp + bid)
+            intent.data = Uri.parse(goLiveUrlApp + streamerId)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             try {
                 startActivity(intent)
@@ -97,7 +97,7 @@ class SearchActivity : ComponentActivity() {
             intent =
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse(goLiveUrlWeb + bid),
+                    Uri.parse(goLiveUrlWeb + streamerId),
                 )
             startActivity(intent)
             dlg.dismiss()

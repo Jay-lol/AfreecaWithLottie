@@ -52,22 +52,22 @@ class BroadListActivity : ComponentActivity() {
                 BroadListScreen(
                     state = state,
                     adRequest = adRequest,
-                    onBJClick = { bjInfo ->
+                    onStreamerClick = { streamerInfo ->
                         firebaseAnalytics.logEvent(
                             "click_member",
                             bundleOf(
-                                "member_name" to bjInfo.bjname,
-                                "member_viewCnt" to bjInfo.viewCnt
+                                "member_name" to streamerInfo.streamerName,
+                                "member_viewCnt" to streamerInfo.viewCnt
                             )
                         )
-                        moveToLive(bjInfo)
+                        moveToLive(streamerInfo)
                     },
-                    onMoreInfoClick = { bjInfo ->
+                    onMoreInfoClick = { streamerInfo ->
                         firebaseAnalytics.logEvent(
                             "click_member_moreInfo",
-                            bundleOf("member_name" to bjInfo.bjname)
+                            bundleOf("member_name" to streamerInfo.streamerName)
                         )
-                        showMoreInfo(bjInfo)
+                        showMoreInfo(streamerInfo)
                     }
                 )
             }
@@ -76,8 +76,8 @@ class BroadListActivity : ComponentActivity() {
     }
 
     private fun moveToLive(v: BroadInfo) {
-        val bid = v.bid
-        val bjname = v.bjname
+        val streamerId = v.streamerId
+        val streamerName = v.streamerName
         val viewCnt = v.viewCnt
 
         var intent = Intent(Intent.ACTION_VIEW)
@@ -85,13 +85,13 @@ class BroadListActivity : ComponentActivity() {
         val dlgBinding = CustomDialog2Binding.inflate(layoutInflater)
         dlg.setContentView(dlgBinding.root)
 
-        dlgBinding.moveQuestion.text = "$viewCnt 명이 시청중입니다!\n$bjname 방송으로 이동할까요?"
+        dlgBinding.moveQuestion.text = "$viewCnt 명이 시청중입니다!\n$streamerName 방송으로 이동할까요?"
 
         dlg.show()
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dlgBinding.moveApp.setOnClickListener {
-            intent.data = Uri.parse(goLiveUrlApp + bid)
+            intent.data = Uri.parse(goLiveUrlApp + streamerId)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             try {
                 startActivity(intent)
@@ -108,7 +108,7 @@ class BroadListActivity : ComponentActivity() {
         dlgBinding.moveWeb.setOnClickListener {
             intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(goLiveUrlWeb + bid)
+                Uri.parse(goLiveUrlWeb + streamerId)
             )
             startActivity(intent)
             dlg.dismiss()
@@ -119,7 +119,7 @@ class BroadListActivity : ComponentActivity() {
         val dlg = Dialog(this)
         val dlgBinding = InfoDialogBinding.inflate(layoutInflater)
         dlg.setContentView(dlgBinding.root)
-        dlgBinding.infoBjname.text = v.bjname
+        dlgBinding.infoStreamerName.text = v.streamerName
 
         v.balloninfo?.run {
             dlgBinding.monthview.text = monthview

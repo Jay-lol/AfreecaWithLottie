@@ -71,7 +71,7 @@ import com.jay.josaeworld.domain.goodString
 import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.ui.component.AdBanner
-import com.jay.josaeworld.ui.component.BJCard
+import com.jay.josaeworld.ui.component.StreamerCard
 import com.jay.josaeworld.ui.component.LoadingOverlay
 import com.jay.josaeworld.ui.component.MainInfoSection
 import com.jay.josaeworld.ui.theme.MapleStory
@@ -136,9 +136,9 @@ fun MainScreen(
                     contentPadding = PaddingValues(bottom = 16.dp),
                 ) {
                     item {
-                        state.mainBJDataList?.lastOrNull()?.firstOrNull()?.let { bossInfo ->
-                            BJCard(
-                                bjInfo = bossInfo,
+                        state.mainStreamerDataList?.lastOrNull()?.firstOrNull()?.let { bossInfo ->
+                            StreamerCard(
+                                streamerInfo = bossInfo,
                                 onClick = { onBossClick(bossInfo) },
                                 onMoreInfoClick = { onBossMoreInfoClick(bossInfo) },
                                 isCoachMarkVisible = isCoachMarkVisible,
@@ -147,7 +147,7 @@ fun MainScreen(
                         }
                     }
 
-                    state.mainBJDataList?.let { allData ->
+                    state.mainStreamerDataList?.let { allData ->
                         val teamsData = allData.dropLast(1)
                         val filteredTeams =
                             teamsData.mapIndexedNotNull { index, teamList ->
@@ -343,9 +343,9 @@ fun BossSectionPreview() {
         BroadInfo(
             teamCode = 0,
             onOff = 1,
-            bid = "test",
+            streamerId = "test",
             title = "JosaeWorld에 오신 것을 환영합니다!",
-            bjname = "시조새",
+            streamerName = "시조새",
             viewCnt = "12,345",
             fanCnt = "50,000",
             okCnt = "1,234",
@@ -356,8 +356,8 @@ fun BossSectionPreview() {
                     monthballon = "150,000",
                 ),
         )
-    BJCard(
-        bjInfo = mockBoss,
+    StreamerCard(
+        streamerInfo = mockBoss,
         onClick = {},
         onMoreInfoClick = {},
         isCoachMarkVisible = true,
@@ -372,9 +372,9 @@ fun MainScreenPreview() {
         BroadInfo(
             teamCode = 0,
             onOff = 1,
-            bid = "test",
+            streamerId = "test",
             title = "방송 중입니다!",
-            bjname = "시조새",
+            streamerName = "시조새",
             viewCnt = "15,000",
             fanCnt = "100,000",
             okCnt = "1,000",
@@ -388,7 +388,7 @@ fun MainScreenPreview() {
 
     val state =
         MainUiState(
-            mainBJDataList = arrayOf(arrayListOf(mockBoss)),
+            mainStreamerDataList = arrayOf(arrayListOf(mockBoss)),
             allViewers = 25000,
             allBallons = 500000,
             isCoachMarkVisible = true,

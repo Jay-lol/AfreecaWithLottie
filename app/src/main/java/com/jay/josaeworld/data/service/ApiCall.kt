@@ -8,11 +8,11 @@ import retrofit2.http.Path
 
 interface ApiCall {
     /**
-     * BJ 정보
+     * Streamer 정보
      */
     interface Member {
         @GET("api/{user}/station")
-        suspend fun getBjInfoWithCoroutines(
+        suspend fun getStreamerInfoWithCoroutines(
             @Header("User-Agent") head: String,
             @Path("user") user: String
         ): AfSearchResponse

@@ -18,7 +18,7 @@ class MainPresenter @Inject constructor(
     private val updateRepoDataUseCase: UpdateRepoDataUseCase,
     private val getUnderBossUseCase: GetUnderBossUseCase,
     private val getBallonDataUseCase: GetBallonDataUseCase,
-    private val listenBJUpToDateUseCase: ListenBJUpToDateUseCase,
+    private val listenStreamerUpToDateUseCase: ListenStreamerUpToDateUseCase,
     @UrlModule.DEFAULT_LOGO_IMG private val defaultLogoImgUrl: String,
     @UrlModule.LIVE_IMG_URL private val liveImgUrl: String
 ) : MainContract.Presenter {
@@ -26,41 +26,41 @@ class MainPresenter @Inject constructor(
     private val TAG: String = "로그 ${this.javaClass.simpleName}"
 
     private val job = Job()
-    private var bjStatusListener: ValueEventListener? = null
+    private var streamerStatusListener: ValueEventListener? = null
 
     /**
      비제이들 고유 아이디 가져와서 데이터 요청
      */
-    override fun getRecentBJData(
-        bjLists: Array<ArrayList<BroadInfo>>,
-        bjDataList: Array<ArrayList<BroadInfo>>?
+    override fun getRecentStreamerData(
+        streamerLists: Array<ArrayList<BroadInfo>>,
+        streamerDataList: Array<ArrayList<BroadInfo>>?
     ) = CoroutineScope(Dispatchers.Main.immediate + job).launch {
-        val bidList = arrayListOf<Pair<Int, String>>()
+        val streamerIdList = arrayListOf<Pair<Int, String>>()
 
-        for (team in bjLists) {
+        for (team in streamerLists) {
             val index = team[0].teamCode
-            for (member in team) bidList.add(Pair(index, member.bid))
+            for (member in team) streamerIdList.add(Pair(index, member.streamerId))
         }
 
-        val bjdata = ArrayList<BroadInfo>()
+        val streamerdata = ArrayList<BroadInfo>()
 
-        val jobs = List(bidList.size) { index ->
+        val jobs = List(streamerIdList.size) { index ->
             launch(Dispatchers.IO) {
                 val params = GetMemberUseCase.Params(
-                    bidList[index].first,
-                    bidList[index].second,
+                    streamerIdList[index].first,
+                    streamerIdList[index].second,
                     defaultLogoImgUrl,
                     liveImgUrl
                 )
                 runCatching {
                     memberUseCase(params)
                 }.onSuccess {
-                    bjdata.add(it.toBroadInfo(params))
+                    streamerdata.add(it.toBroadInfo(params))
                 }.onFailure {
-                    bjdata.add(
+                    streamerdata.add(
                         BroadInfo(
                             teamCode = 403, onOff = 1,
-                            bid = params.bid, balloninfo = BallonInfo()
+                            streamerId = params.streamerId, balloninfo = BallonInfo()
                         )
                     )
                 }
@@ -73,29 +73,29 @@ class MainPresenter @Inject constructor(
             searchView?.stopLoadingAnimation()
             searchView?.makeRefreshstate(false)
 
-            val errorCnt: Int = bjdata.count { Bj -> Bj.teamCode == 403 }
+            val errorCnt: Int = streamerdata.count { Streamer -> Streamer.teamCode == 403 }
 
-            if (errorCnt == bjdata.size) {
+            if (errorCnt == streamerdata.size) {
                 // 전부 에러일 경우
                 searchView?.showError(4)
                 searchView?.changeIsCrawlingForFirebaseState(false)
             } else {
                 // 일부 비제이 정보만 누락된 경우
-                sendUpdateData(bjdata.filter { bj -> bj.teamCode != 403 }) { result: Boolean ->
-                    val name: String = bjdata.find { it.teamCode == 403 }?.bid ?: ""
+                sendUpdateData(streamerdata.filter { streamer -> streamer.teamCode != 403 }) { result: Boolean ->
+                    val name: String = streamerdata.find { it.teamCode == 403 }?.streamerId ?: ""
                     if (result) {
                         if (errorCnt != 0) {
                             var n = 0
-                            bjLists.forEach { n += it.size }
-                            var bjname = "unknown"
+                            streamerLists.forEach { n += it.size }
+                            var streamerName = "unknown"
                             try {
                                 var find = false
-                                for (i in bjDataList!!) {
+                                for (i in streamerDataList!!) {
                                     if (find) break
                                     for (member in i)
-                                        if (member.bid == name) {
+                                        if (member.streamerId == name) {
                                             find = true
-                                            bjname = member.bjname
+                                            streamerName = member.streamerName
                                             break
                                         }
                                 }
@@ -106,11 +106,11 @@ class MainPresenter @Inject constructor(
 
                                                             if (errorCnt == 1)
 
-                                                                searchView?.showToast("${n}명 중 SOOP 에러로\n  $bjname 정보 누락")
+                                                                searchView?.showToast("${n}명 중 SOOP 에러로\n  $streamerName 정보 누락")
 
                                                             else
 
-                                                                searchView?.showToast("      ${n}명 중 응답 에러로\n $bjname 외 ${errorCnt - 1}명의 정보 누락")
+                                                                searchView?.showToast("      ${n}명 중 응답 에러로\n $streamerName 외 ${errorCnt - 1}명의 정보 누락")
 
                             
                         }
@@ -136,9 +136,9 @@ class MainPresenter @Inject constructor(
             val childUpdates = hashMapOf<String, Any>()
             // 업데이트 시간
             childUpdates["/LoadingInfo/LastUpDateTime"] = System.currentTimeMillis()
-            // BJ 정보
-            slist.forEach { bj ->
-                childUpdates["/BjStatus/${bj.teamCode}/${bj.bid}"] = bj.toMap()
+            // Streamer 정보
+            slist.forEach { streamer ->
+                childUpdates["/BjStatus/${streamer.teamCode}/${streamer.streamerId}"] = streamer.toMap()
             }
 
             updateRepoDataUseCase(
@@ -161,17 +161,17 @@ class MainPresenter @Inject constructor(
 
     /**
      * 파이어베이스 서버에 리스너를 설정해서 최신 정보를 계속 업데이트
-     * newBJDataList : Array<ArrayList<BroadInfo>>?
+     * newStreamerDataList : Array<ArrayList<BroadInfo>>?
      */
-    override fun createBJDataListener(teamSize: Int) {
+    override fun createStreamerDataListener(teamSize: Int) {
         // 이미 등록 되어있으면 처리안되게 설정
-        if (bjStatusListener != null) return
+        if (streamerStatusListener != null) return
 
-        var recentBJList: Array<java.util.ArrayList<BroadInfo>>
-        bjStatusListener = listenBJUpToDateUseCase(
+        var recentStreamerList: Array<java.util.ArrayList<BroadInfo>>
+        streamerStatusListener = listenStreamerUpToDateUseCase(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    recentBJList = Array(teamSize) { arrayListOf() }
+                    recentStreamerList = Array(teamSize) { arrayListOf() }
                     ballonData { ballonMap ->
                         try {
                             for ((index, team) in snapshot.children.withIndex()) {
@@ -181,8 +181,8 @@ class MainPresenter @Inject constructor(
                                     val b =
                                         if (ballonMap.containsKey(member.key as String)) ballonMap[member.key as String]
                                         else null
-                                    recentBJList[index].add(
-                                        v.goodBjData(
+                                    recentStreamerList[index].add(
+                                        v.goodStreamerData(
                                             teamCode,
                                             member.key as String,
                                             b,
@@ -191,12 +191,12 @@ class MainPresenter @Inject constructor(
                                     )
                                 }
                                 if (index == teamSize - 2) {
-                                    recentBJList = recentBJList.sortedBJList()
+                                    recentStreamerList = recentStreamerList.sortedStreamerList()
                                 }
                             }
                             // 업데이트
-                            Log.d(TAG, "MainPresenter ~ bjDataListener() 갱신 성공")
-                            searchView?.changeMainBJData(recentBJList)
+                            Log.d(TAG, "MainPresenter ~ streamerDataListener() 갱신 성공")
+                            searchView?.changeMainStreamerData(recentStreamerList)
                         } catch (e: Exception) {
                             searchView?.stopLoadingAnimation()
                             searchView?.showToast("$e")
@@ -286,10 +286,10 @@ class MainPresenter @Inject constructor(
         }
     }
 
-    override fun removeBJDataListener() {
-        bjStatusListener?.let {
-            listenBJUpToDateUseCase.removeListener(it)
-            bjStatusListener = null
+    override fun removeStreamerDataListener() {
+        streamerStatusListener?.let {
+            listenStreamerUpToDateUseCase.removeListener(it)
+            streamerStatusListener = null
         }
     }
 
