@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -100,6 +101,12 @@ class MainActivity :
         refreshListener()
         initButtonListener()
         createAdmob()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showCustomDialog(1)
+            }
+        })
     }
 
     /**
@@ -456,10 +463,6 @@ class MainActivity :
 
     override fun changeIsCrawlingForFirebaseState(state: Boolean) {
         isCrawlingForFirebase = state
-    }
-
-    override fun onBackPressed() {
-        showCustomDialog(1)
     }
 
     override fun showError(code: Int) {
