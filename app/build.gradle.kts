@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.google.material)
     implementation(libs.kotlinx.coroutines.android)
 
     // UI

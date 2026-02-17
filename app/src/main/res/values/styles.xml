@@ -15,15 +15,18 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="fontFamily">@font/maplestory_light</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:navigationBarColor">@color/color_282828</item>
         <item name="android:windowActivityTransitions">true</item>
-        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:fitsSystemWindows">false</item>
     </style>
 
     <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
