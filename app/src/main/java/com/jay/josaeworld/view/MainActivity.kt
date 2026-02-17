@@ -14,6 +14,7 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -40,6 +41,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -512,10 +514,9 @@ class MainActivity :
                     }
                     dlg.show()
                     dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    CoroutineScope(Dispatchers.Main).launch {
+                    lifecycleScope.launch {
                         dataStore.incrementCoachMarkCount()
                         binding.bossView.coachClick.visibility = View.GONE
-                        cancel()
                     }
                     firebaseAnalytics.logEvent("click_boss_moreInfo", bundleOf("click" to true))
                 } catch (e: Exception) {
@@ -588,9 +589,11 @@ class MainActivity :
     }
 
     private fun showCoachMark() {
-        if (dataStore.coachMarkCount <= 1) {
-            binding.bossView.coachClick.visibility = View.VISIBLE
-            firebaseAnalytics.logEvent("show_coachmark", bundleOf("show" to true))
+        lifecycleScope.launch {
+            if (dataStore.coachMarkCount.first() <= 1) {
+                binding.bossView.coachClick.visibility = View.VISIBLE
+                firebaseAnalytics.logEvent("show_coachmark", bundleOf("show" to true))
+            }
         }
     }
 

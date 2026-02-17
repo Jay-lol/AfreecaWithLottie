@@ -4,9 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class UserPreferencesRepository @Inject constructor(
@@ -15,8 +14,8 @@ class UserPreferencesRepository @Inject constructor(
 
     private val KEY_CLICK_COACH_MARK_CNT = intPreferencesKey("click_coach_mark_cnt")
 
-    val coachMarkCount: Int
-        get() = runBlocking { dataStore.data.map { it[KEY_CLICK_COACH_MARK_CNT] ?: 0 }.first() }
+    val coachMarkCount: Flow<Int> = dataStore.data
+        .map { it[KEY_CLICK_COACH_MARK_CNT] ?: 0 }
 
     suspend fun incrementCoachMarkCount() {
         dataStore.edit {
