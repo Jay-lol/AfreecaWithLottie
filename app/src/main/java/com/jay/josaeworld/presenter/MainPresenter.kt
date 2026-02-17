@@ -104,10 +104,15 @@ class MainPresenter @Inject constructor(
                                 Log.e(TAG, "finishSendBjStatus: $e")
                             }
 
-                            if (errorCnt == 1)
-                                searchView?.showToast("${n}명 중 아프리카 에러로\n  $bjname 정보 누락")
-                            else
-                                searchView?.showToast("      ${n}명 중 응답 에러로\n $bjname 외 ${errorCnt - 1}명의 정보 누락")
+                                                            if (errorCnt == 1)
+
+                                                                searchView?.showToast("${n}명 중 SOOP 에러로\n  $bjname 정보 누락")
+
+                                                            else
+
+                                                                searchView?.showToast("      ${n}명 중 응답 에러로\n $bjname 외 ${errorCnt - 1}명의 정보 누락")
+
+                            
                         }
                     }
                     searchView?.changeIsCrawlingForFirebaseState(false)

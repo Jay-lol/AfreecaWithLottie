@@ -113,7 +113,7 @@ class MainViewModel @Inject constructor(
 
                                 viewModelScope.launch {
                                     if (errorCnt == 1)
-                                        _sideEffect.emit(MainSideEffect.ShowToast("${n}명 중 아프리카 에러로\n  $bjname 정보 누락"))
+                                        _sideEffect.emit(MainSideEffect.ShowToast("${n}명 중 SOOP 에러로\n  $bjname 정보 누락"))
                                     else
                                         _sideEffect.emit(MainSideEffect.ShowToast("      ${n}명 중 응답 에러로\n $bjname 외 ${errorCnt - 1}명의 정보 누락"))
                                 }

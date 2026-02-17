@@ -213,7 +213,7 @@ class MainActivity :
     }
 
     /**
-     * BJStatus를 아프리카 서버 기준으로 갱신시켜줍니다
+     * BJStatus를 SOOP 서버 기준으로 갱신시켜줍니다
      */
     private fun getNewBjData(bjlists: Array<ArrayList<BroadInfo>>) {
         Log.d(TAG, "MainActivity ~ getNewBjData() called")
@@ -518,7 +518,7 @@ class MainActivity :
                         val question = "${v.viewCnt} 명이 시청중입니다!\n이동할까요?"
                         popDialog(v.bid, question, 1)
                     } else {
-                        val question = "시조새는 방송중이 아닙니다\n아프리카로 이동하시겠습니까?"
+                        val question = "시조새는 방송중이 아닙니다\nSOOP 으로 이동하시겠습니까?"
                         popDialog(v.bid, question, 0)
                     }
                     firebaseAnalytics.logEvent("click_boss", bundleOf("click" to true))

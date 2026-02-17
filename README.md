@@ -2,7 +2,7 @@
 
 ---
 
-아프리카티비 리스트 불러오기
+SOOP 리스트 불러오기
 MVP Pattern
 로티 Animation 사용
 

@@ -10,7 +10,7 @@ internal fun Activity.showErrorToast(code: Int) {
     var msg = "Error"
     when (code) {
         1 -> {
-            msg = "        아프리카 서버 오류\n3초 후 밑으로 내려서 다시 로딩해 주세요"
+            msg = "        SOOP 서버 오류\n3초 후 밑으로 내려서 다시 로딩해 주세요"
         }
         2 -> {
             msg = "인터넷 연결을 확인해주세요"
