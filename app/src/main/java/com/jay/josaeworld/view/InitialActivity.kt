@@ -1,7 +1,5 @@
 package com.jay.josaeworld.view
 
-import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -9,10 +7,18 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,10 +30,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.airbnb.lottie.compose.*
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.CustomDialogBinding
 import com.jay.josaeworld.extension.toast
@@ -41,34 +51,19 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class InitialActivity : ComponentActivity() {
 
-    private val viewModel: InitialViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
             JosaeWorldTheme {
-                InitialScreenContent()
-            }
-        }
-
-        observeViewModel()
-        viewModel.getInitTeamData()
-    }
-
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.sideEffect.collect { effect ->
-                    when (effect) {
-                        is InitialSideEffect.NavigateToMain -> {
-                            handleNavigation(effect.newList, effect.time, effect.code)
-                        }
-                        is InitialSideEffect.ShowToast -> {
-                            toast(effect.message)
-                        }
+                InitialScreenContent(
+                    onNavigate = { newList, time, code ->
+                        handleNavigation(newList, time, code)
+                    },
+                    onToast = { message ->
+                        toast(message)
                     }
-                }
+                )
             }
         }
     }
@@ -88,8 +83,11 @@ class InitialActivity : ComponentActivity() {
     }
 
     private fun showUpdateDialog() {
-        val dlg = Dialog(this)
         val dlgBinding = CustomDialogBinding.inflate(layoutInflater)
+        val builder = AlertDialog.Builder(this)
+        builder.setView(dlgBinding.root)
+        val dlg = builder.create()
+
         dlgBinding.run {
             question.text = "업데이트를 필수로 진행해야 합니다!"
             warning.text = ""
@@ -108,7 +106,6 @@ class InitialActivity : ComponentActivity() {
             }
         }
 
-        dlg.setContentView(dlgBinding.root)
         dlg.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dlg.setCancelable(false)
         dlg.setCanceledOnTouchOutside(false)
@@ -123,13 +120,35 @@ class InitialActivity : ComponentActivity() {
 }
 
 @Composable
-private fun InitialScreenContent() {
+private fun InitialScreenContent(
+    viewModel: InitialViewModel = hiltViewModel(),
+    onNavigate: (List<String>, Long, Int) -> Unit,
+    onToast: (String) -> Unit
+) {
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is InitialSideEffect.NavigateToMain -> onNavigate(effect.newList, effect.time, effect.code)
+                is InitialSideEffect.ShowToast -> onToast(effect.message)
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getInitTeamData()
+    }
+
+    InitialScreenContentInner()
+}
+
+@Composable
+private fun InitialScreenContentInner() {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(androidx.compose.ui.graphics.Color(0xFF282828))
     ) {
-        // 배경 애니메이션 (전체 화면 유지)
+        // 배경 애니메이션
         val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("434-gradient-animated-background.json"))
         LottieAnimation(
             composition = bgComposition,
@@ -140,8 +159,8 @@ private fun InitialScreenContent() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding() // 상단 상태바 영역 패딩
-                .padding(horizontal = 32.dp), // 좌우 여백 추가
+                .statusBarsPadding()
+                .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
@@ -166,7 +185,7 @@ private fun InitialScreenContent() {
             )
         }
 
-        // 하단 텍스트 (네비게이션바 영역 패딩 추가)
+        // 하단 텍스트
         Text(
             text = "만든이 : °へ°",
             color = androidx.compose.ui.graphics.Color.White,
@@ -184,6 +203,6 @@ private fun InitialScreenContent() {
 @Composable
 private fun InitialActivityPreview() {
     JosaeWorldTheme {
-        InitialScreenContent()
+        InitialScreenContentInner()
     }
 }

@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.viewmodel)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.compose.runtime.livedata)
 
     // Images

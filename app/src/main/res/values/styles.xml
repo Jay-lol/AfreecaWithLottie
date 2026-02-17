@@ -1,7 +1,21 @@
 <resources>
+    <!-- 즉각적인 반응을 위한 런처 테마 -->
+    <style name="Theme.App.Launcher" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/color_282828</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- Splash Screen Theme (기존 유지하되 사용처 변경 가능) -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/color_282828</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/transparent_icon</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -12,28 +26,7 @@
         <item name="android:fitsSystemWindows">true</item>
     </style>
 
-        <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-
-            <item name="android:windowFullscreen">false</item>
-
-        </style>
-
-    
-
-        <!-- Splash Screen Theme -->
-
-        <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-
-            <item name="windowSplashScreenBackground">@color/colorPrimaryDark</item>
-
-            <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
-
-            <item name="postSplashScreenTheme">@style/AppTheme</item>
-
-        </style>
-
-    
-
-    </resources>
-
-    
+    <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowFullscreen">false</item>
+    </style>
+</resources>

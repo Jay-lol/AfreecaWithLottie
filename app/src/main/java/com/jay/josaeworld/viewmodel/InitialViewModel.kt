@@ -12,10 +12,7 @@ import com.jay.josaeworld.domain.GetInitTeamDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,9 +21,6 @@ class InitialViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val getInitTeamDataUseCase: GetInitTeamDataUseCase
 ) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(InitialUiState())
-    val uiState = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<InitialSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
@@ -92,16 +86,11 @@ class InitialViewModel @Inject constructor(
             else -> 0
         }
 
-        _uiState.update { it.copy(isLoading = false) }
         viewModelScope.launch {
             _sideEffect.emit(InitialSideEffect.NavigateToMain(newList, time, code))
         }
     }
 }
-
-data class InitialUiState(
-    val isLoading: Boolean = true
-)
 
 sealed class InitialSideEffect {
     data class NavigateToMain(val newList: List<String>, val time: Long, val code: Int) : InitialSideEffect()
