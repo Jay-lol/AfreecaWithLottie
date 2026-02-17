@@ -24,9 +24,10 @@
             app:lottie_fileName="10201-background-full-screen-night.json"
             app:lottie_loop="false" />
 
-        <include
-            android:id="@+id/view_main_info_data"
-            layout="@layout/view_main_info_data"
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/compose_main_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +40,7 @@
             app:layout_constraintBottom_toTopOf="@+id/gl_horizontal_center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_main_info_data" />
+            app:layout_constraintTop_toBottomOf="@+id/compose_main_info" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_horizontal_center"

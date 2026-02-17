@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -35,6 +37,8 @@ import com.jay.josaeworld.domain.makeCuteNickName
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.extension.showErrorToast
 import com.jay.josaeworld.extension.toast
+import com.jay.josaeworld.ui.component.MainInfoSection
+import com.jay.josaeworld.ui.theme.JosaeWorldTheme
 import com.jay.josaeworld.viewmodel.MainSideEffect
 import com.jay.josaeworld.viewmodel.MainViewModel
 import com.jay.josaeworld.view.BroadCastActivity.Companion.KEY_TEAM_NAME
@@ -110,6 +114,7 @@ class MainActivity :
         refreshListener()
         initButtonListener()
         createAdmob()
+        initComposeViews()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -168,6 +173,7 @@ class MainActivity :
         if (mainBJDataList != null && !isCrawlingForFirebase) {
             Log.d(TAG, "MainActivity ~ refreshListener() called")
             isCrawlingForFirebase = true
+            viewModel.setRefreshing(true)
             getNewBjData(mainBJDataList!!)
         }
     }
@@ -223,6 +229,18 @@ class MainActivity :
         viewModel.getRecentBJData(bjlists, mainBJDataList)
     }
 
+    private fun initComposeViews() {
+        binding.composeMainInfo.setContent {
+            JosaeWorldTheme {
+                val state by viewModel.uiState.collectAsState()
+                MainInfoSection(
+                    allViewers = state.allViewers,
+                    allBallons = state.allBallons
+                )
+            }
+        }
+    }
+
     private fun updateUIwithRecentList(bjlist: Array<ArrayList<BroadInfo>>) {
 
         if (!isCrawlingForFirebase) {
@@ -255,15 +273,7 @@ class MainActivity :
                 nAllviewers += viewCnt
             }
 
-            if (allViewers != nAllviewers) {
-                startCountAnimation(nAllviewers, 0)
-                allViewers = nAllviewers
-            }
-
-            if (allBallon != nAllballon) {
-                startCountAnimation(nAllballon, 1)
-                allBallon = nAllballon
-            }
+            viewModel.setAllInfo(nAllviewers, nAllballon)
 
             if (fragment == null) {
                 fragment = TeamListFragment.newInstance(teamInfo, bjlist, underBossList)
@@ -398,32 +408,6 @@ class MainActivity :
                 startActivity(intent)
             }
             dlg.dismiss()
-        }
-    }
-
-    private fun startCountAnimation(num: Int, code: Int) {
-        val animator = ValueAnimator.ofInt(0, num)
-        animator.duration = 1500
-        if (code == 0) {
-            try {
-                animator.addUpdateListener { animation ->
-                    val v = animation.animatedValue.toString()
-                    binding.viewMainInfoData.nAllViewer.text = v.goodString()
-                }
-                animator.start()
-            } catch (e: Exception) {
-                binding.viewMainInfoData.nAllViewer.text = num.toString()
-            }
-        } else {
-            try {
-                animator.addUpdateListener { animation ->
-                    val v = animation.animatedValue.toString()
-                    binding.viewMainInfoData.nAllBallon.text = v.goodString()
-                }
-                animator.start()
-            } catch (e: Exception) {
-                binding.viewMainInfoData.nAllBallon.text = num.toString()
-            }
         }
     }
 

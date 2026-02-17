@@ -86,7 +86,7 @@ class MainViewModel @Inject constructor(
 
                 if (errorCnt == bjdata.size) {
                     _sideEffect.emit(MainSideEffect.ShowError(4))
-                    _uiState.update { it.copy(isCrawlingForFirebase = false) }
+                    _uiState.update { it.copy(isCrawlingForFirebase = false, isRefreshing = false) }
                 } else {
                     sendUpdateData(bjdata.filter { bj -> bj.teamCode != 403 }) { result: Boolean ->
                         val name: String = bjdata.find { it.teamCode == 403 }?.bid ?: ""
@@ -119,7 +119,7 @@ class MainViewModel @Inject constructor(
                                 }
                             }
                         }
-                        _uiState.update { it.copy(isCrawlingForFirebase = false) }
+                        _uiState.update { it.copy(isCrawlingForFirebase = false, isRefreshing = false) }
                     }
                 }
             }.onFailure {
@@ -299,6 +299,10 @@ class MainViewModel @Inject constructor(
     fun setIsCrawlingForFirebase(isCrawling: Boolean) {
         _uiState.update { it.copy(isCrawlingForFirebase = isCrawling) }
     }
+
+    fun setAllInfo(allViewers: Int, allBallons: Int) {
+        _uiState.update { it.copy(allViewers = allViewers, allBallons = allBallons) }
+    }
 }
 
 data class MainUiState(
@@ -306,7 +310,9 @@ data class MainUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isCrawlingForFirebase: Boolean = false,
-    val underBossList: HashMap<String, String> = hashMapOf()
+    val underBossList: HashMap<String, String> = hashMapOf(),
+    val allViewers: Int = 0,
+    val allBallons: Int = 0
 )
 
 sealed class MainSideEffect {

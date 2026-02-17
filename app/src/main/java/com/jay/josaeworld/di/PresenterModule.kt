@@ -21,20 +21,12 @@ abstract class PresenterModule {
     abstract fun bindsSplashContractView(activity: SplashActivity): SplashContract.View
 
     @Binds
-    abstract fun bindsMainContractView(activity: MainActivity): MainContract.View
-
-    @Binds
     abstract fun bindsBroadContractView(activity: BroadCastActivity): BroadContract.View
 
     companion object {
         @Provides
         fun providesSplashActivity(activity: Activity): SplashActivity {
             return activity as SplashActivity
-        }
-
-        @Provides
-        fun providesActivity(activity: Activity): MainActivity {
-            return activity as MainActivity
         }
 
         @Provides

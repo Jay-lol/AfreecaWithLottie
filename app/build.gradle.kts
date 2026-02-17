@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.services)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -42,6 +43,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
 
     compileOptions {
@@ -72,6 +74,16 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.lottie)
     implementation(libs.github.clans.fab)
+
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.compose.viewmodel)
+    implementation(libs.androidx.compose.runtime.livedata)
 
     // Images
     implementation(libs.glide)
