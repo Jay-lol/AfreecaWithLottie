@@ -46,10 +46,14 @@ fun JosaeCustomDialog(
     okText: String = "나감",
     cancelText: String = "안나감",
     enableMarquee: Boolean = false,
+    properties: DialogProperties = DialogProperties(),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = properties,
+    ) {
         Surface(
             modifier =
                 Modifier
@@ -115,28 +119,30 @@ fun JosaeCustomDialog(
                             .fillMaxWidth()
                             .height(IntrinsicSize.Min),
                 ) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .height(60.dp)
-                                .clickable { onDismiss() },
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = cancelText,
-                            style =
-                                tightTextStyle.copy(
-                                    fontSize = 14.sp,
-                                    color = Color(0x99FFFFFF),
-                                ),
+                    if (cancelText.isNotEmpty()) {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .height(60.dp)
+                                    .clickable { onDismiss() },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = cancelText,
+                                style =
+                                    tightTextStyle.copy(
+                                        fontSize = 14.sp,
+                                        color = Color(0x99FFFFFF),
+                                    ),
+                            )
+                        }
+
+                        VerticalDivider(
+                            thickness = 1.dp,
+                            color = Color.Black,
                         )
                     }
-
-                    VerticalDivider(
-                        thickness = 1.dp,
-                        color = Color.Black,
-                    )
 
                     Box(
                         modifier =

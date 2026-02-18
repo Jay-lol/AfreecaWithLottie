@@ -46,7 +46,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class InitialActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -54,11 +53,12 @@ class InitialActivity : ComponentActivity() {
             JosaeWorldTheme {
                 InitialScreenContent(
                     onNavigate = { newList, time, code ->
-                        val intent = Intent(this, MainActivity::class.java).apply {
-                            putStringArrayListExtra(KEY_NEW_LIST, ArrayList(newList))
-                            putExtra(KEY_LAST_UPDATE_TIME, time)
-                            putExtra(KEY_UPDATE_CODE, code)
-                        }
+                        val intent =
+                            Intent(this, MainActivity::class.java).apply {
+                                putStringArrayListExtra(KEY_NEW_LIST, ArrayList(newList))
+                                putExtra(KEY_LAST_UPDATE_TIME, time)
+                                putExtra(KEY_UPDATE_CODE, code)
+                            }
                         startActivity(intent)
                         finish()
                     },
@@ -66,16 +66,17 @@ class InitialActivity : ComponentActivity() {
                         toast(message)
                     },
                     onForceUpdate = {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = Uri.parse("https://play.google.com/store/apps/details?id=com.jay.josaeworld")
-                        }
+                        val intent =
+                            Intent(Intent.ACTION_VIEW).apply {
+                                data = Uri.parse("https://play.google.com/store/apps/details?id=com.jay.josaeworld")
+                            }
                         try {
                             startActivity(intent)
                             finish()
                         } catch (e: Exception) {
                             toast("플레이스토어 연결 불가")
                         }
-                    }
+                    },
                 )
             }
         }
@@ -93,7 +94,7 @@ private fun InitialScreenContent(
     viewModel: InitialViewModel = hiltViewModel(),
     onNavigate: (List<String>, Long, Int) -> Unit,
     onToast: (String) -> Unit,
-    onForceUpdate: () -> Unit
+    onForceUpdate: () -> Unit,
 ) {
     var showUpdateDialog by remember { mutableStateOf(false) }
 
@@ -107,7 +108,10 @@ private fun InitialScreenContent(
                         onNavigate(effect.newList, effect.time, effect.code)
                     }
                 }
-                is InitialSideEffect.ShowToast -> onToast(effect.message)
+
+                is InitialSideEffect.ShowToast -> {
+                    onToast(effect.message)
+                }
             }
         }
     }
@@ -121,8 +125,13 @@ private fun InitialScreenContent(
             question = "업데이트를 필수로 진행해야 합니다!",
             okText = "업데이트",
             cancelText = "",
+            properties =
+                androidx.compose.ui.window.DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                ),
             onConfirm = onForceUpdate,
-            onDismiss = {} // Prevent dismissal
+            onDismiss = {}, // Prevent dismissal
         )
     }
 
@@ -132,24 +141,29 @@ private fun InitialScreenContent(
 @Composable
 private fun InitialScreenContentInner() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(androidx.compose.ui.graphics.Color(0xFF282828))
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    androidx.compose.ui.graphics
+                        .Color(0xFF282828),
+                ),
     ) {
         // 배경 애니메이션
         val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("434-gradient-animated-background.json"))
         LottieAnimation(
             composition = bgComposition,
             iterations = LottieConstants.IterateForever,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .padding(horizontal = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -158,18 +172,20 @@ private fun InitialScreenContentInner() {
             LottieAnimation(
                 composition = heroComposition,
                 iterations = LottieConstants.IterateForever,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
             )
 
             // 중앙 로고
             Image(
                 painter = painterResource(id = R.drawable.splash_logo3),
                 contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(210.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(210.dp),
             )
         }
 
@@ -179,10 +195,11 @@ private fun InitialScreenContentInner() {
             color = androidx.compose.ui.graphics.Color.White,
             fontSize = 14.sp,
             fontFamily = MapleStory,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .navigationBarsPadding()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .navigationBarsPadding()
+                    .padding(16.dp),
         )
     }
 }
