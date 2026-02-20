@@ -337,6 +337,56 @@ fun TeamItem(
     }
 }
 
+@Preview(showBackground = true, backgroundColor = 0xFF444444)
+@Composable
+fun TeamItemPreview() {
+    val mockMembers =
+        listOf(
+            BroadInfo(
+                teamCode = 1,
+                onOff = 1,
+                streamerId = "member1",
+                title = "방송 중",
+                streamerName = "멤버1",
+                viewCnt = "1,234",
+                fanCnt = "10,000",
+                okCnt = "100",
+                incFanCnt = "10",
+                balloninfo = BallonInfo(dayballon = "1,000", monthballon = "10,000"),
+            ),
+            BroadInfo(
+                teamCode = 1,
+                onOff = 0,
+                streamerId = "member2",
+                title = "",
+                streamerName = "멤버2",
+                viewCnt = "0",
+                fanCnt = "5,000",
+                okCnt = "0",
+                incFanCnt = "0",
+                balloninfo = BallonInfo(dayballon = "0", monthballon = "0"),
+            ),
+        )
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Box(modifier = Modifier.weight(1f)) {
+            TeamItem(teamName = "1팀", teamList = mockMembers, onClick = {})
+        }
+        Box(modifier = Modifier.weight(1f)) {
+            TeamItem(
+                teamName = "2팀",
+                teamList = mockMembers.map { it.copy(onOff = 0) },
+                onClick = {},
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 fun BossSectionPreview() {
@@ -387,9 +437,34 @@ fun MainScreenPreview() {
                 ),
         )
 
+    val mockTeam1 =
+        arrayListOf(
+            BroadInfo(
+                teamCode = 1, onOff = 1, streamerId = "m1", title = "방송 중",
+                streamerName = "멤버1", viewCnt = "1,234", fanCnt = "10,000",
+                okCnt = "100", incFanCnt = "10",
+                balloninfo = BallonInfo(dayballon = "1,000", monthballon = "10,000"),
+            ),
+            BroadInfo(
+                teamCode = 1, onOff = 0, streamerId = "m2", title = "",
+                streamerName = "멤버2", viewCnt = "0", fanCnt = "5,000",
+                okCnt = "0", incFanCnt = "0",
+                balloninfo = BallonInfo(dayballon = "0", monthballon = "0"),
+            ),
+        )
+    val mockTeam2 =
+        arrayListOf(
+            BroadInfo(
+                teamCode = 2, onOff = 0, streamerId = "m3", title = "",
+                streamerName = "멤버3", viewCnt = "0", fanCnt = "8,000",
+                okCnt = "0", incFanCnt = "0",
+                balloninfo = BallonInfo(dayballon = "0", monthballon = "0"),
+            ),
+        )
+
     val state =
         MainUiState(
-            mainStreamerDataList = arrayOf(arrayListOf(mockBoss)),
+            mainStreamerDataList = arrayOf(mockTeam1, mockTeam2, arrayListOf(mockBoss)),
             allViewers = 25000,
             allBallons = 500000,
             isCoachMarkVisible = true,
@@ -397,7 +472,7 @@ fun MainScreenPreview() {
 
     MainScreen(
         state = state,
-        teamNames = listOf("X"),
+        teamNames = listOf("1팀", "2팀"),
         onRefresh = {},
         onBossClick = {},
         onBossMoreInfoClick = {},
