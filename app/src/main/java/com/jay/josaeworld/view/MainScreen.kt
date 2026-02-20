@@ -142,6 +142,7 @@ fun MainScreen(
                                 onClick = { onBossClick(bossInfo) },
                                 onMoreInfoClick = { onBossMoreInfoClick(bossInfo) },
                                 isCoachMarkVisible = isCoachMarkVisible,
+                                isBoss = true,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }

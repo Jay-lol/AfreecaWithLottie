@@ -58,6 +58,7 @@ fun StreamerCard(
     onMoreInfoClick: () -> Unit,
     modifier: Modifier = Modifier,
     isCoachMarkVisible: Boolean = false,
+    isBoss: Boolean = false,
     isUnderBoss: Boolean = false,
     useProfileImage: Boolean = false, // 오프라인 시 Lottie 대신 프로필 이미지를 사용할지 여부
     useThumbnailPlaceholder: Boolean = false, // 썸네일 로딩 중 placeholder.png 표시 여부
@@ -66,6 +67,7 @@ fun StreamerCard(
     val isOn = streamerInfo.onOff == 1
     val viewCountInt = streamerInfo.viewCnt.filter { it.isDigit() }.toIntOrNull() ?: 0
     val isHighViewCount = isOn && viewCountInt >= 10000
+    val showHighlight = isHighViewCount || ((isBoss || isUnderBoss) && isOn)
 
     Box(
         modifier =
@@ -73,10 +75,9 @@ fun StreamerCard(
                 .padding(vertical = 4.dp),
         contentAlignment = Alignment.Center,
     ) {
-        // 배경 효과 (고시청자 또는 부수장)
-        if (isHighViewCount || isUnderBoss) {
-            val lottieFile = if (isHighViewCount) "lf30_editor_cecsqjtv.json" else "34763-hero-on-its-way.json"
-            val highlightComposition by rememberLottieComposition(LottieCompositionSpec.Asset(lottieFile))
+        // 배경 효과 (고시청자, 수장, 부수장 ON 시)
+        if (showHighlight) {
+            val highlightComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lf30_editor_cecsqjtv.json"))
             LottieAnimation(
                 composition = highlightComposition,
                 iterations = LottieConstants.IterateForever,
