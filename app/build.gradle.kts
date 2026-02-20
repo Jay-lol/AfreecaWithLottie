@@ -22,6 +22,15 @@ android {
     namespace = "com.jay.josaeworld"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(getSecret("KEYSTORE_PATH"))
+            storePassword = getSecret("KEYSTORE_PASSWORD")
+            keyAlias = getSecret("KEY_ALIAS")
+            keyPassword = getSecret("KEY_PASSWORD")
+        }
+    }
+
     defaultConfig {
         applicationId = "com.jay.josaeworld"
         minSdk = libs.versions.minSdk.get().toInt()
@@ -44,7 +53,7 @@ android {
     buildTypes {
         getByName("release") {
             manifestPlaceholders["appLabel"] = "조새크루"
-            
+
             // AdMob Configs
             resValue("string", "adMobId", getSecret("ADMOB_APP_ID"))
             resValue("string", "bannerId", getSecret("ADMOB_BANNER_ID"))
@@ -55,7 +64,7 @@ android {
                 "proguard-rules.pro"
             )
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
 
         getByName("debug") {
