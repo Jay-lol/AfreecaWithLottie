@@ -35,8 +35,10 @@ local.properties
 *.bundle
 captures/
 
-# Gemini Agent Context
+# AI Agent Context
 GEMINI.md
+CLAUDE.md
+.claude/
 
 # External Native Build
 .externalNativeBuild/
