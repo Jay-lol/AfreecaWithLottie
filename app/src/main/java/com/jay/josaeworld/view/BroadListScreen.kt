@@ -68,6 +68,7 @@ fun BroadListScreen(
                         onMoreInfoClick = { onMoreInfoClick(streamerInfo) },
                         isUnderBoss = streamerInfo.streamerId == state.underBoss,
                         useProfileImage = true,
+                        useThumbnailPlaceholder = true,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }

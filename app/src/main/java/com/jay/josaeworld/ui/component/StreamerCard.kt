@@ -60,6 +60,7 @@ fun StreamerCard(
     isCoachMarkVisible: Boolean = false,
     isUnderBoss: Boolean = false,
     useProfileImage: Boolean = false, // 오프라인 시 Lottie 대신 프로필 이미지를 사용할지 여부
+    useThumbnailPlaceholder: Boolean = false, // 썸네일 로딩 중 placeholder.png 표시 여부
 ) {
     val random = remember { java.util.Random() }
     val isOn = streamerInfo.onOff == 1
@@ -113,6 +114,9 @@ fun StreamerCard(
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
+                            requestBuilderTransform = { builder ->
+                                if (useThumbnailPlaceholder) builder.placeholder(R.drawable.placeholder) else builder
+                            },
                         )
                     } else {
                         Box(
