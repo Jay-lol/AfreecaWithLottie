@@ -105,7 +105,7 @@ fun HashMap<*, *>.goodStreamerData(
         onOff = (get("onOff") as? Long)?.toInt() ?: 0,
         streamerId = streamerId,
         title = get("title") as? String ?: "정보 갱신을 해주세요",
-        streamerName = get("streamerName") as? String ?: "새로운 멤버",
+        streamerName = get("bjname") as? String ?: "새로운 멤버",
         imgurl = get("imgUrl") as? String ?: defaultLogoImgUrl,
         viewCnt = get("viewCnt") as? String ?: "0",
         fanCnt = get("fanCnt") as? String ?: "0",
