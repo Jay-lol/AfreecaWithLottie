@@ -74,7 +74,7 @@ fun StreamerCard(
     ) {
         // 배경 효과 (고시청자, 수장, 부수장 ON 시)
         if (showHighlight) {
-            val highlightComposition by rememberLottieComposition(LottieCompositionSpec.Asset("lf30_editor_cecsqjtv.json"))
+            val highlightComposition by rememberLottieComposition(LottieCompositionSpec.Asset("streamer_highlight.json"))
             LottieAnimation(
                 composition = highlightComposition,
                 iterations = LottieConstants.IterateForever,
@@ -125,7 +125,7 @@ fun StreamerCard(
                                 // 보스 섹션 등: 방송 종료 시 나무늘보 Lottie 표시
                                 val restComposition by rememberLottieComposition(
                                     LottieCompositionSpec.Asset(
-                                        "8266-rest-sloth.json",
+                                        "rest_sloth.json",
                                     ),
                                 )
                                 LottieAnimation(
@@ -148,7 +148,7 @@ fun StreamerCard(
                         }
                     }
 
-                    val infoComposition by rememberLottieComposition(LottieCompositionSpec.Asset("12246-info.json"))
+                    val infoComposition by rememberLottieComposition(LottieCompositionSpec.Asset("more_info.json"))
                     LottieAnimation(
                         composition = infoComposition,
                         iterations = 1,
@@ -169,7 +169,7 @@ fun StreamerCard(
                         ) {
                             val clickComposition by rememberLottieComposition(
                                 LottieCompositionSpec.Asset(
-                                    "clickmark.json",
+                                    "click_coach_mark.json",
                                 ),
                             )
                             LottieAnimation(

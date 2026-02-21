@@ -93,7 +93,7 @@ fun MainScreen(
                 .pullRefresh(pullRefreshState),
     ) {
         // 배경 Lottie
-        val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("10201-background-full-screen-night.json"))
+        val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("bg_night.json"))
         LottieAnimation(
             composition = bgComposition,
             iterations = 1,
@@ -308,7 +308,7 @@ fun TeamItem(
                 contentAlignment = Alignment.Center,
             ) {
                 val lottieFile =
-                    if (isOn) "35627-weather-day-clear-sky.json" else "8438-mr-cookie-drink.json"
+                    if (isOn) "dance_monkey.json" else "rest_green_sloth.json"
                 val composition by rememberLottieComposition(LottieCompositionSpec.Asset(lottieFile))
                 LottieAnimation(
                     composition = composition,

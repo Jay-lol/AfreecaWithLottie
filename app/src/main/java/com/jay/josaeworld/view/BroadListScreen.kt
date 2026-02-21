@@ -35,7 +35,7 @@ fun BroadListScreen(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // 배경 Lottie
-        val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("10201-background-full-screen-night.json"))
+        val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("bg_night.json"))
         LottieAnimation(
             composition = bgComposition,
             iterations = 1,

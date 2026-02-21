@@ -150,7 +150,7 @@ private fun InitialScreenContentInner() {
                 ),
     ) {
         // 배경 애니메이션
-        val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("434-gradient-animated-background.json"))
+        val bgComposition by rememberLottieComposition(LottieCompositionSpec.Asset("intro_gradient_animated_background.json"))
         LottieAnimation(
             composition = bgComposition,
             iterations = LottieConstants.IterateForever,
@@ -168,7 +168,7 @@ private fun InitialScreenContentInner() {
             Spacer(modifier = Modifier.height(40.dp))
 
             // 상단 히어로 애니메이션
-            val heroComposition by rememberLottieComposition(LottieCompositionSpec.Asset("34763-hero-on-its-way.json"))
+            val heroComposition by rememberLottieComposition(LottieCompositionSpec.Asset("hero_on_its_way.json"))
             LottieAnimation(
                 composition = heroComposition,
                 iterations = LottieConstants.IterateForever,

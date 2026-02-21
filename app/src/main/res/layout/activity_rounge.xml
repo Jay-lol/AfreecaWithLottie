@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="8438-mr-cookie-drink2.json"
+        app:lottie_fileName="mr_cookie_drink.json"
         app:lottie_loop="true" />
 
     <WebView

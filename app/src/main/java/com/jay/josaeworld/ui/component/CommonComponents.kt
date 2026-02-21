@@ -56,7 +56,7 @@ fun LoadingOverlay() {
                 .clickable(enabled = false) {},
         contentAlignment = Alignment.Center,
     ) {
-        val composition by rememberLottieComposition(LottieCompositionSpec.Asset("8438-mr-cookie-drink2.json"))
+        val composition by rememberLottieComposition(LottieCompositionSpec.Asset("mr_cookie_drink.json"))
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
