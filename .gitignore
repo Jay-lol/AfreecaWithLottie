@@ -43,3 +43,4 @@ CLAUDE.md
 # External Native Build
 .externalNativeBuild/
 .cxx/
+/function-source.zip
