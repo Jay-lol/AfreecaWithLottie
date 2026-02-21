@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,7 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jay.josaeworld.R
@@ -43,11 +46,19 @@ fun MainInfoSection(
         label = "ballons",
     )
 
+    val tightTextStyle = LocalTextStyle.current.copy(
+        platformStyle = PlatformTextStyle(includeFontPadding = false),
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.Both,
+        ),
+    )
+
     Column(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp, bottom = 0.dp),
+                .padding(top = 8.dp, bottom = 0.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
@@ -58,8 +69,10 @@ fun MainInfoSection(
             Box(modifier = Modifier.weight(0.55f), contentAlignment = Alignment.CenterEnd) {
                 Text(
                     text = "전체 시청자 : ",
+                    style = tightTextStyle,
                     color = Color(0xFFBCBCBC),
                     fontSize = 18.sp,
+                    lineHeight = 18.sp,
                     fontFamily = MapleStory,
                 )
             }
@@ -67,15 +80,19 @@ fun MainInfoSection(
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = animatedViewers.toString().goodString(),
+                        style = tightTextStyle,
                         color = Color(0xFFEDFF49),
                         fontSize = 21.sp,
+                        lineHeight = 21.sp,
                         fontFamily = MapleStory,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = " 명",
+                        style = tightTextStyle,
                         color = Color(0xFFBCBCBC),
                         fontSize = 16.sp,
+                        lineHeight = 16.sp,
                         fontFamily = MapleStory,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 2.dp, bottom = 2.dp),
@@ -84,7 +101,7 @@ fun MainInfoSection(
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -94,22 +111,26 @@ fun MainInfoSection(
             Box(modifier = Modifier.weight(0.55f), contentAlignment = Alignment.CenterEnd) {
                 Text(
                     text = "이번 달 크루 풍력 : ",
+                    style = tightTextStyle,
                     color = Color(0xFFBCBCBC),
                     fontSize = 16.sp,
+                    lineHeight = 16.sp,
                     fontFamily = MapleStory,
                 )
             }
             Box(modifier = Modifier.weight(0.45f), contentAlignment = Alignment.CenterStart) {
                 Text(
                     text = animatedBallons.toString().goodString(),
+                    style = tightTextStyle,
                     color = Color(0xFF46E9FF),
                     fontSize = 18.sp,
+                    lineHeight = 18.sp,
                     fontFamily = MapleStory,
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -119,8 +140,10 @@ fun MainInfoSection(
             Box(modifier = Modifier.weight(0.55f), contentAlignment = Alignment.CenterEnd) {
                 Text(
                     text = "●출처: 풍투데이 ",
+                    style = tightTextStyle,
                     color = Color(0xB2FFFFFF),
                     fontSize = 12.sp,
+                    lineHeight = 12.sp,
                     fontFamily = MapleStory,
                 )
             }
