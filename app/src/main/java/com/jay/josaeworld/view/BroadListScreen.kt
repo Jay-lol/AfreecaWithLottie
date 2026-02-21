@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -62,6 +63,7 @@ fun BroadListScreen(
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 items(state.items, key = { it.streamerId }) { streamerInfo ->
+                    val isHighlighted = streamerInfo.streamerId == state.underBoss && streamerInfo.onOff == 1
                     StreamerCard(
                         streamerInfo = streamerInfo,
                         onClick = { onStreamerClick(streamerInfo) },
@@ -69,7 +71,7 @@ fun BroadListScreen(
                         isUnderBoss = streamerInfo.streamerId == state.underBoss,
                         useProfileImage = true,
                         useThumbnailPlaceholder = true,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().zIndex(if (isHighlighted) 0f else 1f),
                     )
                 }
             }
