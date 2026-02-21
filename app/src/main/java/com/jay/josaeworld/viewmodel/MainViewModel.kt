@@ -246,10 +246,10 @@ class MainViewModel
                                             val b = ballonMap[member.key as String]
                                             recentStreamerList[index].add(
                                                 v.goodStreamerData(
-                                                    teamCode,
-                                                    member.key as String,
-                                                    b,
-                                                    defaultLogoImgUrl,
+                                                    teamCode = teamCode,
+                                                    streamerId = member.key as String,
+                                                    b = b,
+                                                    defaultLogoImgUrl = defaultLogoImgUrl,
                                                 ),
                                             )
                                         }
@@ -416,9 +416,14 @@ data class MainUiState(
 
 sealed class MainDialogType {
     object Exit : MainDialogType()
+
     object Update : MainDialogType()
+
     object Report : MainDialogType()
-    data class Info(val broadInfo: BroadInfo) : MainDialogType()
+
+    data class Info(
+        val broadInfo: BroadInfo,
+    ) : MainDialogType()
 }
 
 sealed class MainSideEffect {

@@ -14,7 +14,7 @@ fun AfSearchResponse.toBroadInfo(params: GetMemberUseCase.Params): BroadInfo =
             balloninfo = BallonInfo(),
         )
 
-        val CLIENT_ID = station.user_id
+        val streamerId = station.user_id
 
         val onOff: Int = broad?.let { 1 } ?: 0
         val streamerName = station.user_nick
@@ -71,7 +71,7 @@ fun AfSearchResponse.toBroadInfo(params: GetMemberUseCase.Params): BroadInfo =
         BroadInfo(
             params.teamCode,
             onOff,
-            CLIENT_ID,
+            streamerId,
             title,
             streamerName,
             imgurl,
@@ -105,7 +105,7 @@ fun HashMap<*, *>.goodStreamerData(
         onOff = (get("onOff") as? Long)?.toInt() ?: 0,
         streamerId = streamerId,
         title = get("title") as? String ?: "정보 갱신을 해주세요",
-        streamerName = get("bjname") as? String ?: "새로운 멤버",
+        streamerName = get("streamerName") as? String ?: "새로운 멤버",
         imgurl = get("imgUrl") as? String ?: defaultLogoImgUrl,
         viewCnt = get("viewCnt") as? String ?: "0",
         fanCnt = get("fanCnt") as? String ?: "0",
