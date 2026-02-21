@@ -9,10 +9,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,58 +20,46 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import com.jay.josaeworld.R
 import com.jay.josaeworld.databinding.ButtonFloatingMenuBinding
 import com.jay.josaeworld.domain.goodString
 import com.jay.josaeworld.domain.model.response.BallonInfo
 import com.jay.josaeworld.domain.model.response.BroadInfo
 import com.jay.josaeworld.ui.component.AdBanner
-import com.jay.josaeworld.ui.component.StreamerCard
 import com.jay.josaeworld.ui.component.LoadingOverlay
 import com.jay.josaeworld.ui.component.MainInfoSection
+import com.jay.josaeworld.ui.component.StreamerCard
 import com.jay.josaeworld.ui.theme.MapleStory
 import com.jay.josaeworld.viewmodel.MainUiState
 
@@ -117,81 +103,78 @@ fun MainScreen(
 
         // 전체 수직 구조
         Column(modifier = Modifier.fillMaxSize()) {
-            // 1. 상단 컨텐츠 영역 (스크롤 가능)
+            // 1. 상단 컨텐츠 영역
             Column(
                 modifier =
                     Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .statusBarsPadding(),
+                        .statusBarsPadding()
+                        .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 MainInfoSection(
                     allViewers = state.allViewers,
                     allBallons = state.allBallons,
+                    modifier = Modifier.zIndex(1f),
                 )
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                ) {
-                    item {
-                        state.mainStreamerDataList?.lastOrNull()?.firstOrNull()?.let { bossInfo ->
-                            StreamerCard(
-                                streamerInfo = bossInfo,
-                                onClick = { onBossClick(bossInfo) },
-                                onMoreInfoClick = { onBossMoreInfoClick(bossInfo) },
-                                isCoachMarkVisible = isCoachMarkVisible,
-                                isBoss = true,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                    }
+                state.mainStreamerDataList?.lastOrNull()?.firstOrNull()?.let { bossInfo ->
+                    StreamerCard(
+                        streamerInfo = bossInfo,
+                        onClick = { onBossClick(bossInfo) },
+                        onMoreInfoClick = { onBossMoreInfoClick(bossInfo) },
+                        isCoachMarkVisible = isCoachMarkVisible,
+                        isBoss = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
 
-                    state.mainStreamerDataList?.let { allData ->
-                        val teamsData = allData.dropLast(1)
-                        val filteredTeams =
-                            teamsData.mapIndexedNotNull { index, teamList ->
-                                val teamName = teamNames.getOrNull(index) ?: ""
-                                if (teamName != "X" && teamList.isNotEmpty()) {
-                                    Triple(teamName, teamList, index)
-                                } else {
-                                    null
+                state.mainStreamerDataList?.let { allData ->
+                    val teamsData = allData.dropLast(1)
+                    val filteredTeams =
+                        teamsData.mapIndexedNotNull { index, teamList ->
+                            val teamName = teamNames.getOrNull(index) ?: ""
+                            if (teamName != "X" && teamList.isNotEmpty()) {
+                                Triple(teamName, teamList, index)
+                            } else {
+                                null
+                            }
+                        }
+
+                    val rows = filteredTeams.chunked(2)
+                    rows.forEach { row ->
+                        Row(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            row.forEach { (teamName, teamList, index) ->
+                                Box(modifier = Modifier.weight(1f)) {
+                                    TeamItem(
+                                        teamName = teamName,
+                                        teamList = teamList,
+                                        onClick = {
+                                            onTeamClick(
+                                                teamName,
+                                                teamList,
+                                                state.underBossList[teamName]
+                                                    ?: (index + 1).toString(),
+                                            )
+                                        },
+                                    )
                                 }
                             }
-
-                        val rows = filteredTeams.chunked(2)
-                        items(rows.size) { rowIndex ->
-                            Row(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                rows[rowIndex].forEach { (teamName, teamList, index) ->
-                                    Box(modifier = Modifier.weight(1f)) {
-                                        TeamItem(
-                                            teamName = teamName,
-                                            teamList = teamList,
-                                            onClick = {
-                                                onTeamClick(
-                                                    teamName,
-                                                    teamList,
-                                                    state.underBossList[teamName]
-                                                        ?: (index + 1).toString(),
-                                                )
-                                            },
-                                        )
-                                    }
-                                }
-                                if (rows[rowIndex].size == 1) {
-                                    Spacer(modifier = Modifier.weight(1f))
-                                }
+                            if (row.size == 1) {
+                                Spacer(modifier = Modifier.weight(1f))
                             }
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             // 2. 하단 고정 영역 (검색 바 + 광고)
@@ -440,24 +423,42 @@ fun MainScreenPreview() {
     val mockTeam1 =
         arrayListOf(
             BroadInfo(
-                teamCode = 1, onOff = 1, streamerId = "m1", title = "방송 중",
-                streamerName = "멤버1", viewCnt = "1,234", fanCnt = "10,000",
-                okCnt = "100", incFanCnt = "10",
+                teamCode = 1,
+                onOff = 1,
+                streamerId = "m1",
+                title = "방송 중",
+                streamerName = "멤버1",
+                viewCnt = "1,234",
+                fanCnt = "10,000",
+                okCnt = "100",
+                incFanCnt = "10",
                 balloninfo = BallonInfo(dayballon = "1,000", monthballon = "10,000"),
             ),
             BroadInfo(
-                teamCode = 1, onOff = 0, streamerId = "m2", title = "",
-                streamerName = "멤버2", viewCnt = "0", fanCnt = "5,000",
-                okCnt = "0", incFanCnt = "0",
+                teamCode = 1,
+                onOff = 0,
+                streamerId = "m2",
+                title = "",
+                streamerName = "멤버2",
+                viewCnt = "0",
+                fanCnt = "5,000",
+                okCnt = "0",
+                incFanCnt = "0",
                 balloninfo = BallonInfo(dayballon = "0", monthballon = "0"),
             ),
         )
     val mockTeam2 =
         arrayListOf(
             BroadInfo(
-                teamCode = 2, onOff = 0, streamerId = "m3", title = "",
-                streamerName = "멤버3", viewCnt = "0", fanCnt = "8,000",
-                okCnt = "0", incFanCnt = "0",
+                teamCode = 2,
+                onOff = 0,
+                streamerId = "m3",
+                title = "",
+                streamerName = "멤버3",
+                viewCnt = "0",
+                fanCnt = "8,000",
+                okCnt = "0",
+                incFanCnt = "0",
                 balloninfo = BallonInfo(dayballon = "0", monthballon = "0"),
             ),
         )
